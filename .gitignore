@@ -4,3 +4,17 @@ node_modules/
 .DS_Store
 .claude/
 dashboard-builder-source/
+
+# Other products — not part of this repo
+index.html
+design-studio-home.html
+image-library*.html
+reconciliation.html
+workflow-groups-concepts.html
+workflow-document-synthesis.md
+package.json
+package-lock.json
+Market Search/
+Team page/
+my-dashboard/
+ai-recommendations/

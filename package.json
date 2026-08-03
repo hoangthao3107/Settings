@@ -1,9 +1,0 @@
-{
-  "devDependencies": {
-    "@types/react-grid-layout": "^1.3.6"
-  },
-  "dependencies": {
-    "@visx/visx": "^3.12.0",
-    "react-grid-layout": "^2.2.3"
-  }
-}
