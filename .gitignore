@@ -5,6 +5,8 @@ node_modules/
 .claude/
 dashboard-builder-source/
 
+bor-letter-select-template.html
+
 # Other products — not part of this repo
 index.html
 design-studio-home.html
