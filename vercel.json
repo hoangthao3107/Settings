@@ -1,5 +1,12 @@
 {
   "buildCommand": null,
   "installCommand": null,
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/accounts-workspace.html",
+      "permanent": false
+    }
+  ]
 }
