@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+:root {
+  /* Text */
+  --color-text-primary: #1b1d1d;
+  --color-text-secondary: #525965;
+  --color-text-tertiary: #6a758a;
+  --color-text-quaternary: #97a0b4;
+  --color-text-on-interactive: #ffffff;
+  --color-text-interactive: #6a56f0;
+
+  /* Border */
+  --color-border-primary: #e7ebee;
+  --color-border-subtle: #f2f4f7;
+  --color-border-strong: #d0d5dd;
+  --color-border-secondary: #e4e7ec;
+  --color-border-accent: #6a56f0;
+
+  /* Background */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-muted: #f2f4f7;
+  --color-bg-accent-subtle: #f6f7fe;
+  --color-bg-accent-solid: #6a56f0;
+  --color-bg-overlay: #1b1d1d80;
+  --shadow-focus-ring-brand: #eae7fe;
+
+  /* Success / Error accents used by the recommendation card */
+  --color-success-solid: #17b26a;
+  --color-success-subtle: #d1fadf;
+  --color-error-solid: #f04438;
+  --color-error-subtle: #fee4e2;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+}

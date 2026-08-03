@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bill Reconciliation — Outmarket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       OUTMARKET DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --colors\/text\/primary:            #1b1d1d;
+      --colors\/text\/secondary:          #525965;
+      --colors\/text\/tertiary:           #6a758a;
+      --colors\/text\/quaternary:         #97a0b4;
+      --colors\/text\/on-interactive:     #ffffff;
+      --colors\/text\/interactive:        #6a56f0;
+      --colors\/text\/disabled\/primary:  #97a0b4;
+      --colors\/text\/error\/primary:     #f04438;
+      --colors\/text\/success\/secondary: #027a48;
+
+      --colors\/border\/border-primary:   #E7EBEE;
+      --colors\/border\/border-subtle:    #F2F4F7;
+      --colors\/border\/border-strong:    #D0D5DD;
+      --colors\/border\/border-secondary: #e4e7ec;
+      --colors\/border\/border-accent:    #6A56F0;
+      --colors\/border\/border-error:     #F04438;
+
+      --colors\/background\/bg-primary:   #ffffff;
+      --colors\/background\/bg-secondary: #f9fafb;
+      --bg-subtle:        #F9FAFB;
+      --bg-muted:         #F2F4F7;
+      --bg-active:        #ffffff;
+      --bg-accent-primary: #ede9fd;
+      --bg-accent-subtle:  #f5f3ff;
+      --bg-accent-solid:   #6a56f0;
+      --bg-success-primary: #d1fae5;
+      --bg-warning-primary: #fef3c7;
+      --bg-error-primary:   #fee2e2;
+
+      --spacing-xxs: 2px;
+      --spacing-xs:  4px;
+      --spacing-sm:  6px;
+      --spacing-md:  8px;
+      --spacing-lg:  12px;
+      --spacing-xl:  16px;
+      --spacing-2xl: 20px;
+      --spacing-4xl: 32px;
+      --spacing-6xl: 48px;
+
+      --radius-xs:   4px;
+      --radius-sm:   6px;
+      --radius-md:   8px;
+      --radius-xl:   12px;
+      --radius-full: 9999px;
+
+      --font-family\/font-family-body: 'Inter', sans-serif;
+      --font-size\/text-xs:  12px;
+      --font-size\/text-sm:  14px;
+      --font-size\/text-md:  16px;
+      --font-size\/text-lg:  18px;
+      --font-size\/display-xs: 24px;
+      --font-weight\/regular:  400;
+      --font-weight\/medium:   500;
+      --font-weight\/semibold: 600;
+      --font-weight\/bold:     700;
+      --line-height\/text-xs: 18px;
+      --line-height\/text-sm: 20px;
+      --line-height\/text-md: 24px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family\/font-family-body);
+      background: var(--bg-subtle);
+      color: var(--colors\/text\/primary);
+      font-size: var(--font-size\/text-sm);
+      line-height: var(--line-height\/text-sm);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============================================================
+       APP HEADER
+    ============================================================ */
+    .app-header {
+      background: var(--colors\/background\/bg-primary);
+      border-bottom: 1px solid var(--colors\/border\/border-primary);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .app-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-4xl);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xl);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      text-decoration: none;
+    }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-accent-solid);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-mark svg { width: 16px; height: 16px; }
+    .brand-name {
+      font-size: var(--font-size\/text-sm);
+      font-weight: var(--font-weight\/semibold);
+      color: var(--colors\/text\/primary);
+    }
+    .header-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--colors\/border\/border-primary);
+    }
+    .header-title {
+      font-size: var(--font-size\/text-sm);
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/secondary);
+    }
+
+    /* ============================================================
+       PAGE LAYOUT
+    ============================================================ */
+    .page-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--spacing-4xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4xl);
+    }
+
+    .page-hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacing-2xl);
+    }
+    .page-hero-text h1 {
+      font-size: var(--font-size\/display-xs);
+      font-weight: var(--font-weight\/bold);
+      color: var(--colors\/text\/primary);
+      line-height: 32px;
+      margin-bottom: var(--spacing-xs);
+    }
+    .page-hero-text p {
+      font-size: var(--font-size\/text-sm);
+      color: var(--colors\/text\/secondary);
+    }
+
+    /* ============================================================
+       SECTION WRAPPERS
+    ============================================================ */
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xl);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    .section-header h2 {
+      font-size: var(--font-size\/text-md);
+      font-weight: var(--font-weight\/semibold);
+      color: var(--colors\/text\/primary);
+    }
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px var(--spacing-md);
+      background: var(--bg-muted);
+      color: var(--colors\/text\/secondary);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size\/text-xs);
+      font-weight: var(--font-weight\/medium);
+    }
+
+    /* ============================================================
+       PLAN MAPPING CARDS
+    ============================================================ */
+    .mapping-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xl);
+    }
+    .mapping-card {
+      background: var(--colors\/background\/bg-primary);
+      border: 1px solid var(--colors\/border\/border-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-2xl);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xl);
+      min-width: 340px;
+      flex: 1;
+    }
+    .mapping-bill-side, .mapping-census-side {
+      flex: 1;
+      min-width: 0;
+    }
+    .mapping-source-label {
+      font-size: var(--font-size\/text-xs);
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--spacing-xs);
+    }
+    .mapping-plan-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--spacing-xs) var(--spacing-lg);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size\/text-sm);
+      font-weight: var(--font-weight\/medium);
+      white-space: nowrap;
+    }
+    .mapping-plan-pill.bill {
+      background: var(--bg-accent-subtle);
+      color: var(--colors\/text\/interactive);
+      border: 1px solid var(--bg-accent-primary);
+    }
+    .mapping-plan-pill.census {
+      background: var(--bg-success-primary);
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .mapping-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--colors\/text\/quaternary);
+      flex-shrink: 0;
+    }
+    .mapping-arrow svg { width: 20px; height: 20px; }
+    .mapping-census-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    /* ============================================================
+       OVERALL SUMMARY BAR
+    ============================================================ */
+    .overall-summary {
+      background: var(--colors\/background\/bg-primary);
+      border: 1px solid var(--colors\/border\/border-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-2xl) var(--spacing-4xl);
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .summary-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      padding: 0 var(--spacing-4xl);
+    }
+    .summary-stat:first-child { padding-left: 0; }
+    .summary-stat:last-child { padding-right: 0; }
+    .summary-stat-label {
+      font-size: var(--font-size\/text-xs);
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .summary-stat-value {
+      font-size: var(--font-size\/text-lg);
+      font-weight: var(--font-weight\/bold);
+      color: var(--colors\/text\/primary);
+      line-height: 28px;
+    }
+    .summary-stat-sub {
+      font-size: var(--font-size\/text-xs);
+      color: var(--colors\/text\/tertiary);
+    }
+    .summary-divider {
+      width: 1px;
+      height: 48px;
+      background: var(--colors\/border\/border-primary);
+      flex-shrink: 0;
+    }
+    .diff-pos { color: var(--colors\/text\/error\/primary) !important; }
+    .diff-neg { color: var(--colors\/text\/success\/secondary) !important; }
+    .diff-zero { color: var(--colors\/text\/quaternary) !important; }
+
+    /* ============================================================
+       RESULTS PANEL (plan tabs + views)
+    ============================================================ */
+    .results-panel {
+      background: var(--colors\/background\/bg-primary);
+      border: 1px solid var(--colors\/border\/border-primary);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    /* Plan tab bar */
+    .plan-tabs-bar {
+      display: flex;
+      border-bottom: 1px solid var(--colors\/border\/border-primary);
+      padding: 0 var(--spacing-2xl);
+      gap: 0;
+      overflow-x: auto;
+    }
+    .plan-tab-btn {
+      position: relative;
+      padding: var(--spacing-xl) var(--spacing-2xl);
+      font-size: var(--font-size\/text-sm);
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/secondary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .plan-tab-btn:hover { color: var(--colors\/text\/primary); }
+    .plan-tab-btn.active {
+      color: var(--colors\/text\/interactive);
+    }
+    .plan-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--bg-accent-solid);
+      border-radius: var(--radius-full);
+    }
+    .plan-tab-indicator {
+      display: inline-flex;
+      align-items: center;
+      margin-left: var(--spacing-xs);
+      padding: 1px 6px;
+      background: var(--bg-muted);
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/tertiary);
+    }
+    .plan-tab-btn.active .plan-tab-indicator {
+      background: var(--bg-accent-primary);
+      color: var(--colors\/text\/interactive);
+    }
+
+    /* Plan views */
+    .plan-view { display: none; }
+    .plan-view.active { display: block; }
+
+    /* Per-plan summary */
+    .plan-summary {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--colors\/border\/border-primary);
+      background: var(--bg-subtle);
+    }
+    .plan-summary-stat {
+      flex: 1;
+      padding: var(--spacing-xl) var(--spacing-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-right: 1px solid var(--colors\/border\/border-primary);
+    }
+    .plan-summary-stat:last-child { border-right: none; }
+    .plan-summary-label {
+      font-size: var(--font-size\/text-xs);
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .plan-summary-value {
+      font-size: var(--font-size\/text-md);
+      font-weight: var(--font-weight\/bold);
+      color: var(--colors\/text\/primary);
+    }
+    .plan-summary-sub {
+      font-size: var(--font-size\/text-xs);
+      color: var(--colors\/text\/tertiary);
+    }
+
+    /* Category filters */
+    .category-filters-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-xl) var(--spacing-2xl);
+      border-bottom: 1px solid var(--colors\/border\/border-primary);
+      overflow-x: auto;
+    }
+    .cat-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size\/text-sm);
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/secondary);
+      background: none;
+      border: 1px solid var(--colors\/border\/border-primary);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .cat-btn:hover { border-color: var(--colors\/border\/border-strong); color: var(--colors\/text\/primary); }
+    .cat-btn.active {
+      border-color: transparent;
+      color: var(--colors\/text\/on-interactive);
+    }
+    .cat-btn.active.cat-all       { background: var(--colors\/text\/primary); }
+    .cat-btn.active.cat-matched   { background: #027a48; }
+    .cat-btn.active.cat-disc      { background: #92400e; }
+    .cat-btn.active.cat-bill      { background: #1d4ed8; }
+    .cat-btn.active.cat-census    { background: #6d28d9; }
+
+    .cat-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: var(--font-weight\/bold);
+      background: rgba(0,0,0,0.12);
+    }
+    .cat-btn:not(.active) .cat-count {
+      background: var(--bg-muted);
+      color: var(--colors\/text\/secondary);
+    }
+
+    /* ============================================================
+       RECONCILIATION TABLE
+    ============================================================ */
+    .recon-table-wrap { overflow-x: auto; }
+    .recon-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size\/text-sm);
+    }
+    .recon-table thead tr {
+      background: var(--bg-subtle);
+    }
+    .recon-table th {
+      padding: var(--spacing-lg) var(--spacing-xl);
+      text-align: left;
+      font-size: var(--font-size\/text-xs);
+      font-weight: var(--font-weight\/semibold);
+      color: var(--colors\/text\/tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--colors\/border\/border-primary);
+      white-space: nowrap;
+    }
+    .recon-table th.col-cost { text-align: right; }
+    .recon-table td {
+      padding: var(--spacing-lg) var(--spacing-xl);
+      border-bottom: 1px solid var(--colors\/border\/border-subtle);
+      color: var(--colors\/text\/primary);
+      vertical-align: top;
+    }
+    .recon-table tbody tr:last-child td { border-bottom: none; }
+    .recon-table tbody tr:hover td { background: var(--bg-subtle); }
+    .recon-table td.col-cost { text-align: right; font-variant-numeric: tabular-nums; }
+    .recon-table td.col-diff { text-align: right; font-variant-numeric: tabular-nums; font-weight: var(--font-weight\/semibold); }
+
+    /* Section header rows */
+    .section-header-row td {
+      background: var(--bg-muted) !important;
+      font-weight: var(--font-weight\/semibold);
+      font-size: var(--font-size\/text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--spacing-md) var(--spacing-xl);
+      color: var(--colors\/text\/secondary);
+      border-bottom: 1px solid var(--colors\/border\/border-primary);
+    }
+    .section-header-row:hover td { background: var(--bg-muted) !important; }
+
+    /* Discrepancy highlights */
+    .cell-diff-highlight {
+      background: var(--bg-warning-primary) !important;
+      border-radius: var(--radius-xs);
+    }
+    .cell-diff-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .cell-diff-bill {
+      font-weight: var(--font-weight\/medium);
+      color: var(--colors\/text\/primary);
+    }
+    .cell-diff-census {
+      font-size: var(--font-size\/text-xs);
+      color: #92400e;
+    }
+    .cell-diff-arrow { color: #d97706; margin: 0 3px; }
+
+    /* Name cell */
+    .name-cell { display: flex; flex-direction: column; gap: 2px; }
+    .name-primary { font-weight: var(--font-weight\/medium); }
+    .name-fuzzy-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: var(--font-size\/text-xs);
+      color: #92400e;
+      background: var(--bg-warning-primary);
+      padding: 1px var(--spacing-xs);
+      border-radius: var(--radius-xs);
+      width: fit-content;
+    }
+
+    /* Empty state */
+    .empty-state {
+      padding: var(--spacing-6xl) var(--spacing-4xl);
+      text-align: center;
+      color: var(--colors\/text\/tertiary);
+    }
+    .empty-state-icon { font-size: 32px; margin-bottom: var(--spacing-md); }
+    .empty-state p { font-size: var(--font-size\/text-sm); }
+
+    /* Status dot legend */
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+    .dot-matched  { background: #027a48; }
+    .dot-disc     { background: #d97706; }
+    .dot-bill     { background: #2563eb; }
+    .dot-census   { background: #7c3aed; }
+
+    /* Muted dash for N/A cells */
+    .cell-na { color: var(--colors\/text\/quaternary); }
+  </style>
+</head>
+<body>
+
+  <!-- ── App Header ── -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="#">
+        <div class="brand-mark">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white" opacity="0.9"/>
+          </svg>
+        </div>
+        <span class="brand-name">Outmarket</span>
+      </a>
+      <div class="header-divider"></div>
+      <span class="header-title">Bill Reconciliation</span>
+    </div>
+  </header>
+
+  <!-- ── Page Content ── -->
+  <main class="page-content">
+
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <div class="page-hero-text">
+        <h1>Bill Reconciliation</h1>
+        <p>Compare carrier bill against census data to identify matches, discrepancies, and missing employees.</p>
+      </div>
+    </div>
+
+    <!-- Plan Mapping -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Plan Mapping</h2>
+        <span class="section-badge" id="mapping-count"></span>
+      </div>
+      <div class="mapping-grid" id="mapping-grid"></div>
+    </section>
+
+    <!-- Overall Summary -->
+    <div class="overall-summary" id="overall-summary"></div>
+
+    <!-- Reconciliation Results -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Reconciliation Results</h2>
+      </div>
+      <div class="results-panel">
+        <div class="plan-tabs-bar" id="plan-tabs"></div>
+        <div id="plan-views"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ================================================================
+       DEMO DATA
+    ================================================================ */
+    const PLAN_MAPPINGS = [
+      {
+        id: 'medical-ppo',
+        label: 'Medical PPO',
+        billPlan: 'Aetna Medical PPO',
+        censusPlans: ['Medical PPO']
+      },
+      {
+        id: 'medical-hmo',
+        label: 'Medical HMO',
+        billPlan: 'Aetna Medical HMO',
+        censusPlans: ['Medical HMO']
+      },
+      {
+        id: 'dental',
+        label: 'Dental',
+        billPlan: 'Aetna Dental',
+        censusPlans: ['Dental Basic', 'Dental Premium']
+      }
+    ];
+
+    const BILL_DATA = [
+      // Medical PPO — 5 employees
+      { name: 'Alice Chen',      tier: 'Employee + Spouse',  dob: '1985-03-12', cost: 820.00,  plan: 'Aetna Medical PPO' },
+      { name: 'Robert Williams', tier: 'Employee Only',      dob: '1978-07-24', cost: 450.00,  plan: 'Aetna Medical PPO' },
+      { name: 'Johnson, Mary',   tier: 'Employee + Family',  dob: '1990-11-05', cost: 1240.00, plan: 'Aetna Medical PPO' }, // fuzzy: "Last, First" format
+      { name: 'David Kim',       tier: 'Employee Only',      dob: '1982-04-18', cost: 450.00,  plan: 'Aetna Medical PPO' }, // discrepancy: tier + cost differ
+      { name: 'Laura Sanchez',   tier: 'Employee + Spouse',  dob: '1975-09-30', cost: 820.00,  plan: 'Aetna Medical PPO' }, // bill only
+
+      // Medical HMO — 4 employees
+      { name: 'James Park',    tier: 'Employee Only',    dob: '1988-01-15', cost: 320.00, plan: 'Aetna Medical HMO' },
+      { name: 'Emily Torres',  tier: 'Employee + Family', dob: '1983-06-22', cost: 890.00, plan: 'Aetna Medical HMO' },
+      { name: 'Michael Brown', tier: 'Employee + Spouse', dob: '1979-12-08', cost: 580.00, plan: 'Aetna Medical HMO' }, // discrepancy: cost differs
+      { name: 'Sarah Lee',     tier: 'Employee Only',    dob: '1993-08-14', cost: 320.00, plan: 'Aetna Medical HMO' }, // bill only
+
+      // Dental — 4 employees
+      { name: 'Patricia Moore',    tier: 'Employee Only',     dob: '1986-02-28', cost: 45.00,  plan: 'Aetna Dental' },
+      { name: 'Christopher Davis', tier: 'Employee + Family', dob: '1981-10-17', cost: 125.00, plan: 'Aetna Dental' },
+      { name: 'Amanda Wilson',     tier: 'Employee + Spouse', dob: '1987-05-03', cost: 85.00,  plan: 'Aetna Dental' }, // discrepancy: tier + cost differ
+      { name: 'Thomas Anderson',   tier: 'Employee Only',     dob: '1991-07-19', cost: 45.00,  plan: 'Aetna Dental' }, // bill only
+    ];
+
+    const CENSUS_DATA = [
+      // Medical PPO
+      { name: 'Alice Chen',      tier: 'Employee + Spouse', dob: '1985-03-12', cost: 820.00,  plan: 'Medical PPO' },
+      { name: 'Robert Williams', tier: 'Employee Only',     dob: '1978-07-24', cost: 450.00,  plan: 'Medical PPO' },
+      { name: 'Mary Johnson',    tier: 'Employee + Family', dob: '1990-11-05', cost: 1240.00, plan: 'Medical PPO' }, // fuzzy match for "Johnson, Mary"
+      { name: 'David Kim',       tier: 'Employee + Family', dob: '1982-04-18', cost: 520.00,  plan: 'Medical PPO' }, // discrepancy: tier + cost differ
+      { name: 'Kevin Nguyen',    tier: 'Employee Only',     dob: '1995-02-11', cost: 450.00,  plan: 'Medical PPO' }, // census only
+
+      // Medical HMO
+      { name: 'James Park',       tier: 'Employee Only',    dob: '1988-01-15', cost: 320.00, plan: 'Medical HMO' },
+      { name: 'Emily Torres',     tier: 'Employee + Family', dob: '1983-06-22', cost: 890.00, plan: 'Medical HMO' },
+      { name: 'Michael Brown',    tier: 'Employee + Spouse', dob: '1979-12-08', cost: 560.00, plan: 'Medical HMO' }, // discrepancy: cost differs
+      { name: 'Jessica Martinez', tier: 'Employee + Spouse', dob: '1984-03-25', cost: 580.00, plan: 'Medical HMO' }, // census only
+
+      // Dental Basic
+      { name: 'Patricia Moore',    tier: 'Employee Only',     dob: '1986-02-28', cost: 45.00,  plan: 'Dental Basic' },
+      { name: 'Christopher Davis', tier: 'Employee + Family', dob: '1981-10-17', cost: 125.00, plan: 'Dental Basic' },
+      { name: 'Amanda Wilson',     tier: 'Employee Only',     dob: '1987-05-03', cost: 45.00,  plan: 'Dental Basic' }, // discrepancy
+      { name: 'Nicole Thompson',   tier: 'Employee Only',     dob: '1989-11-30', cost: 45.00,  plan: 'Dental Basic' }, // census only
+
+      // Dental Premium
+      { name: 'George Harris', tier: 'Employee + Spouse', dob: '1977-08-12', cost: 95.00, plan: 'Dental Premium' }, // census only
+    ];
+
+    /* ================================================================
+       FUZZY NAME MATCHING
+    ================================================================ */
+    function normalizeName(name) {
+      name = name.toLowerCase().trim();
+      // Handle "Last, First Middle" → "first middle last"
+      if (name.includes(',')) {
+        const [last, first] = name.split(',').map(s => s.trim());
+        name = (first + ' ' + last).trim();
+      }
+      return name;
+    }
+
+    function levenshtein(a, b) {
+      const m = a.length, n = b.length;
+      const dp = Array.from({ length: m + 1 }, (_, i) =>
+        Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0)
+      );
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          dp[i][j] = a[i-1] === b[j-1]
+            ? dp[i-1][j-1]
+            : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+        }
+      }
+      return dp[m][n];
+    }
+
+    function fuzzyMatch(name1, name2) {
+      const n1 = normalizeName(name1);
+      const n2 = normalizeName(name2);
+      if (n1 === n2) return true;
+      return levenshtein(n1, n2) <= 2;
+    }
+
+    function isFuzzyOnly(name1, name2) {
+      return name1.trim().toLowerCase() !== name2.trim().toLowerCase();
+    }
+
+    /* ================================================================
+       RECONCILIATION ENGINE
+    ================================================================ */
+    function reconcilePlan(mapping) {
+      const billRecs  = BILL_DATA.filter(r => r.plan === mapping.billPlan);
+      const censusRecs = CENSUS_DATA.filter(r => mapping.censusPlans.includes(r.plan));
+
+      const matched      = [];
+      const discrepancies = [];
+      const billOnly     = [];
+      const availableCensus = new Set(censusRecs.map((_, i) => i));
+
+      for (const bill of billRecs) {
+        let matchIdx = -1;
+        for (const idx of availableCensus) {
+          if (fuzzyMatch(bill.name, censusRecs[idx].name)) {
+            matchIdx = idx;
+            break;
+          }
+        }
+
+        if (matchIdx === -1) {
+          billOnly.push({ bill });
+          continue;
+        }
+
+        const census = censusRecs[matchIdx];
+        availableCensus.delete(matchIdx);
+
+        const nameFuzzy  = isFuzzyOnly(bill.name, census.name);
+        const tierMatch  = bill.tier === census.tier;
+        const dobMatch   = bill.dob  === census.dob;
+        const costMatch  = Math.abs(bill.cost - census.cost) < 0.005;
+
+        if (tierMatch && dobMatch && costMatch) {
+          matched.push({ bill, census, nameFuzzy });
+        } else {
+          discrepancies.push({ bill, census, nameFuzzy, tierMatch, dobMatch, costMatch });
+        }
+      }
+
+      const censusOnly = [...availableCensus].map(i => ({ census: censusRecs[i] }));
+      return { matched, discrepancies, billOnly, censusOnly };
+    }
+
+    function computeTotals(result) {
+      let totalBill = 0, totalCensus = 0;
+      result.matched.forEach(r      => { totalBill += r.bill.cost;   totalCensus += r.census.cost; });
+      result.discrepancies.forEach(r => { totalBill += r.bill.cost;   totalCensus += r.census.cost; });
+      result.billOnly.forEach(r     => { totalBill += r.bill.cost; });
+      result.censusOnly.forEach(r   => { totalCensus += r.census.cost; });
+      const diff = totalBill - totalCensus;
+      return { totalBill, totalCensus, diff };
+    }
+
+    /* ================================================================
+       FORMATTERS
+    ================================================================ */
+    const fmt$ = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+    function fmtDiff(diff) {
+      if (Math.abs(diff) < 0.005) return { text: '$0.00', cls: 'diff-zero' };
+      const sign = diff > 0 ? '+' : '';
+      return { text: sign + fmt$(diff), cls: diff > 0 ? 'diff-pos' : 'diff-neg' };
+    }
+
+    function fmtDate(iso) {
+      const [y, m, d] = iso.split('-');
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return `${months[+m-1]} ${+d}, ${y}`;
+    }
+
+    /* ================================================================
+       RENDER: MAPPING CARDS
+    ================================================================ */
+    function renderMappingCards(allResults) {
+      document.getElementById('mapping-count').textContent = `${PLAN_MAPPINGS.length} plan${PLAN_MAPPINGS.length > 1 ? 's' : ''}`;
+
+      const grid = document.getElementById('mapping-grid');
+      grid.innerHTML = PLAN_MAPPINGS.map((m, i) => {
+        const result = allResults[i];
+        const totals = computeTotals(result);
+        const total  = result.matched.length + result.discrepancies.length + result.billOnly.length + result.censusOnly.length;
+        return `
+          <div class="mapping-card">
+            <div class="mapping-bill-side">
+              <div class="mapping-source-label">Bill</div>
+              <div class="mapping-plan-pill bill">${m.billPlan}</div>
+            </div>
+            <div class="mapping-arrow">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="mapping-census-side">
+              <div class="mapping-source-label">Census</div>
+              <div class="mapping-census-list">
+                ${m.censusPlans.map(cp => `<div class="mapping-plan-pill census">${cp}</div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* ================================================================
+       RENDER: OVERALL SUMMARY
+    ================================================================ */
+    function renderOverallSummary(allResults) {
+      let totalBill = 0, totalCensus = 0;
+      let totalMatched = 0, totalDisc = 0, totalBillOnly = 0, totalCensusOnly = 0;
+
+      allResults.forEach(r => {
+        const t = computeTotals(r);
+        totalBill   += t.totalBill;
+        totalCensus += t.totalCensus;
+        totalMatched    += r.matched.length;
+        totalDisc       += r.discrepancies.length;
+        totalBillOnly   += r.billOnly.length;
+        totalCensusOnly += r.censusOnly.length;
+      });
+
+      const diff = fmtDiff(totalBill - totalCensus);
+
+      document.getElementById('overall-summary').innerHTML = `
+        <div class="summary-stat">
+          <div class="summary-stat-label">Total Bill Cost</div>
+          <div class="summary-stat-value">${fmt$(totalBill)}</div>
+          <div class="summary-stat-sub">${BILL_DATA.length} employees across ${PLAN_MAPPINGS.length} plans</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Total Census Cost</div>
+          <div class="summary-stat-value">${fmt$(totalCensus)}</div>
+          <div class="summary-stat-sub">${CENSUS_DATA.length} employees across ${[...new Set(CENSUS_DATA.map(r => r.plan))].length} census plans</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Difference</div>
+          <div class="summary-stat-value ${diff.cls}">${diff.text}</div>
+          <div class="summary-stat-sub">${totalBill > totalCensus ? 'Bill exceeds census' : totalCensus > totalBill ? 'Census exceeds bill' : 'Fully balanced'}</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Employee Status</div>
+          <div class="summary-stat-value">${totalMatched + totalDisc + totalBillOnly + totalCensusOnly}</div>
+          <div class="summary-stat-sub">
+            <span style="color:#027a48">✓ ${totalMatched} matched</span>
+            &nbsp;·&nbsp;
+            <span style="color:#d97706">⚠ ${totalDisc} discrepancies</span>
+            &nbsp;·&nbsp;
+            <span style="color:#2563eb">${totalBillOnly} bill-only</span>
+            &nbsp;·&nbsp;
+            <span style="color:#7c3aed">${totalCensusOnly} census-only</span>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ================================================================
+       RENDER: TABLE ROWS
+    ================================================================ */
+    function nameCell(bill, census, nameFuzzy) {
+      const primaryName = bill ? bill.name : census.name;
+      if (!nameFuzzy) return `<div class="name-primary">${primaryName}</div>`;
+      const altName = bill ? census.name : bill.name;
+      return `
+        <div class="name-cell">
+          <div class="name-primary">${primaryName}</div>
+          <div class="name-fuzzy-note">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1C2.79 1 1 2.79 1 5s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm.5 6H4.5V4.5h1V7zm0-3H4.5v-1h1v1z" fill="#92400e"/></svg>
+            ≈ ${altName}
+          </div>
+        </div>`;
+    }
+
+    function fieldCell(billVal, censusVal, matches, isCost) {
+      if (matches) {
+        return isCost
+          ? `<td class="col-cost">${fmt$(billVal)}</td>`
+          : `<td>${billVal}</td>`;
+      }
+      const display = isCost
+        ? `<span class="cell-diff-bill">${fmt$(billVal)}</span><span class="cell-diff-census"><span class="cell-diff-arrow">↓</span>Census: ${fmt$(censusVal)}</span>`
+        : `<span class="cell-diff-bill">${billVal}</span><span class="cell-diff-census"><span class="cell-diff-arrow">↓</span>Census: ${censusVal}</span>`;
+      return `<td class="cell-diff-highlight ${isCost ? 'col-cost' : ''}"><div class="cell-diff-text">${display}</div></td>`;
+    }
+
+    function renderRows(rows, category) {
+      if (rows.length === 0) return '';
+
+      const labels = {
+        matched:  { dot: 'dot-matched', label: 'Matched' },
+        disc:     { dot: 'dot-disc',    label: 'Discrepancies' },
+        billOnly: { dot: 'dot-bill',    label: 'Bill Only' },
+        census:   { dot: 'dot-census',  label: 'Census Only' },
+      };
+
+      const { dot, label } = labels[category];
+      let html = `
+        <tr class="section-header-row" data-category="${category}">
+          <td colspan="7">
+            <span class="status-dot ${dot}"></span>${label} — ${rows.length} employee${rows.length > 1 ? 's' : ''}
+          </td>
+        </tr>`;
+
+      rows.forEach(r => {
+        if (category === 'matched') {
+          const diff = fmtDiff(r.bill.cost - r.census.cost);
+          html += `
+            <tr data-category="${category}">
+              <td>${nameCell(r.bill, r.census, r.nameFuzzy)}</td>
+              <td>${r.bill.tier}</td>
+              <td>${fmtDate(r.bill.dob)}</td>
+              <td class="col-cost">${fmt$(r.bill.cost)}</td>
+              <td class="col-cost">${fmt$(r.census.cost)}</td>
+              <td class="col-diff ${diff.cls}">${diff.text}</td>
+            </tr>`;
+        } else if (category === 'disc') {
+          const diff = fmtDiff(r.bill.cost - r.census.cost);
+          html += `
+            <tr data-category="${category}">
+              <td>${nameCell(r.bill, r.census, r.nameFuzzy)}</td>
+              ${fieldCell(r.bill.tier, r.census.tier, r.tierMatch, false)}
+              ${fieldCell(r.bill.dob  ? fmtDate(r.bill.dob) : '—', r.census.dob ? fmtDate(r.census.dob) : '—', r.dobMatch, false)}
+              <td class="col-cost">${fmt$(r.bill.cost)}</td>
+              <td class="col-cost">${fmt$(r.census.cost)}</td>
+              <td class="col-diff ${diff.cls}">${diff.text}</td>
+            </tr>`;
+        } else if (category === 'billOnly') {
+          const diff = fmtDiff(r.bill.cost);
+          html += `
+            <tr data-category="${category}">
+              <td><div class="name-primary">${r.bill.name}</div></td>
+              <td>${r.bill.tier}</td>
+              <td>${fmtDate(r.bill.dob)}</td>
+              <td class="col-cost">${fmt$(r.bill.cost)}</td>
+              <td class="col-cost cell-na">—</td>
+              <td class="col-diff ${diff.cls}">${diff.text}</td>
+            </tr>`;
+        } else if (category === 'census') {
+          const diff = fmtDiff(-r.census.cost);
+          html += `
+            <tr data-category="${category}">
+              <td><div class="name-primary">${r.census.name}</div></td>
+              <td>${r.census.tier}</td>
+              <td>${fmtDate(r.census.dob)}</td>
+              <td class="col-cost cell-na">—</td>
+              <td class="col-cost">${fmt$(r.census.cost)}</td>
+              <td class="col-diff ${diff.cls}">${diff.text}</td>
+            </tr>`;
+        }
+      });
+
+      return html;
+    }
+
+    /* ================================================================
+       RENDER: PLAN VIEW
+    ================================================================ */
+    function renderPlanView(mapping, result, index) {
+      const totals = computeTotals(result);
+      const diff   = fmtDiff(totals.diff);
+
+      const totalEmployees = result.matched.length + result.discrepancies.length + result.billOnly.length + result.censusOnly.length;
+
+      return `
+        <div class="plan-view ${index === 0 ? 'active' : ''}" id="view-${mapping.id}">
+
+          <!-- Per-plan summary -->
+          <div class="plan-summary">
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Total Bill</div>
+              <div class="plan-summary-value">${fmt$(totals.totalBill)}</div>
+              <div class="plan-summary-sub">${result.matched.length + result.discrepancies.length + result.billOnly.length} in bill</div>
+            </div>
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Total Census</div>
+              <div class="plan-summary-value">${fmt$(totals.totalCensus)}</div>
+              <div class="plan-summary-sub">${result.matched.length + result.discrepancies.length + result.censusOnly.length} in census</div>
+            </div>
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Difference</div>
+              <div class="plan-summary-value ${diff.cls}">${diff.text}</div>
+              <div class="plan-summary-sub">${totals.diff > 0 ? 'Bill exceeds census' : totals.diff < 0 ? 'Census exceeds bill' : 'Balanced'}</div>
+            </div>
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Matched</div>
+              <div class="plan-summary-value" style="color:#027a48">${result.matched.length}</div>
+              <div class="plan-summary-sub">of ${totalEmployees} employees</div>
+            </div>
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Discrepancies</div>
+              <div class="plan-summary-value" style="color:#d97706">${result.discrepancies.length}</div>
+              <div class="plan-summary-sub">need review</div>
+            </div>
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Bill Only</div>
+              <div class="plan-summary-value" style="color:#2563eb">${result.billOnly.length}</div>
+              <div class="plan-summary-sub">not in census</div>
+            </div>
+            <div class="plan-summary-stat">
+              <div class="plan-summary-label">Census Only</div>
+              <div class="plan-summary-value" style="color:#7c3aed">${result.censusOnly.length}</div>
+              <div class="plan-summary-sub">not in bill</div>
+            </div>
+          </div>
+
+          <!-- Category filters -->
+          <div class="category-filters-bar">
+            <button class="cat-btn cat-all active" onclick="switchCategory('${mapping.id}', 'all', this)">
+              All
+              <span class="cat-count">${totalEmployees}</span>
+            </button>
+            <button class="cat-btn cat-matched" onclick="switchCategory('${mapping.id}', 'matched', this)">
+              <span class="status-dot dot-matched"></span>Matched
+              <span class="cat-count">${result.matched.length}</span>
+            </button>
+            <button class="cat-btn cat-disc" onclick="switchCategory('${mapping.id}', 'disc', this)">
+              <span class="status-dot dot-disc"></span>Discrepancies
+              <span class="cat-count">${result.discrepancies.length}</span>
+            </button>
+            <button class="cat-btn cat-bill" onclick="switchCategory('${mapping.id}', 'billOnly', this)">
+              <span class="status-dot dot-bill"></span>Bill Only
+              <span class="cat-count">${result.billOnly.length}</span>
+            </button>
+            <button class="cat-btn cat-census" onclick="switchCategory('${mapping.id}', 'census', this)">
+              <span class="status-dot dot-census"></span>Census Only
+              <span class="cat-count">${result.censusOnly.length}</span>
+            </button>
+          </div>
+
+          <!-- Table -->
+          <div class="recon-table-wrap">
+            <table class="recon-table">
+              <thead>
+                <tr>
+                  <th>Employee Name</th>
+                  <th>Tier</th>
+                  <th>Date of Birth</th>
+                  <th class="col-cost">Bill Cost</th>
+                  <th class="col-cost">Census Cost</th>
+                  <th class="col-cost">Difference</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-${mapping.id}">
+                ${renderRows(result.matched, 'matched')}
+                ${renderRows(result.discrepancies, 'disc')}
+                ${renderRows(result.billOnly, 'billOnly')}
+                ${renderRows(result.censusOnly, 'census')}
+              </tbody>
+            </table>
+          </div>
+
+        </div>`;
+    }
+
+    /* ================================================================
+       PLAN TAB SWITCHING
+    ================================================================ */
+    function switchPlanTab(id) {
+      document.querySelectorAll('.plan-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.planId === id));
+      document.querySelectorAll('.plan-view').forEach(v => v.classList.toggle('active', v.id === `view-${id}`));
+    }
+
+    /* ================================================================
+       CATEGORY SWITCHING
+    ================================================================ */
+    function switchCategory(planId, category, btn) {
+      const view = document.getElementById(`view-${planId}`);
+
+      // Update active button
+      view.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Show/hide rows
+      const tbody = document.getElementById(`tbody-${planId}`);
+      tbody.querySelectorAll('tr').forEach(row => {
+        const cat = row.dataset.category;
+        if (!cat) return; // section header rows have no data-category
+        row.style.display = (category === 'all' || category === cat) ? '' : 'none';
+      });
+
+      // Show/hide section header rows
+      tbody.querySelectorAll('.section-header-row').forEach(row => {
+        const cat = row.dataset.category;
+        row.style.display = (category === 'all' || category === cat) ? '' : 'none';
+      });
+    }
+
+    /* ================================================================
+       INIT
+    ================================================================ */
+    function init() {
+      const allResults = PLAN_MAPPINGS.map(m => reconcilePlan(m));
+
+      renderMappingCards(allResults);
+      renderOverallSummary(allResults);
+
+      // Plan tabs
+      const tabsBar = document.getElementById('plan-tabs');
+      tabsBar.innerHTML = PLAN_MAPPINGS.map((m, i) => {
+        const result = allResults[i];
+        const total = result.matched.length + result.discrepancies.length + result.billOnly.length + result.censusOnly.length;
+        return `
+          <button class="plan-tab-btn ${i === 0 ? 'active' : ''}" data-plan-id="${m.id}" onclick="switchPlanTab('${m.id}')">
+            ${m.label}
+            <span class="plan-tab-indicator">${total}</span>
+          </button>`;
+      }).join('');
+
+      // Plan views
+      const viewsContainer = document.getElementById('plan-views');
+      viewsContainer.innerHTML = PLAN_MAPPINGS.map((m, i) => renderPlanView(m, allResults[i], i)).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>

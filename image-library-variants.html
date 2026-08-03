@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Library — Folder Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Outmarket Design Tokens (from Figma) ───────────────── */
+:root {
+  /* Text */
+  --color-text-primary:     #1b1d1d;
+  --color-text-secondary:   #343839;
+  --color-text-tertiary:    #525965;
+  --color-text-quaternary:  #97a0b4;
+  --color-text-interactive: #6a56f0;
+
+  /* Border */
+  --color-border-swatch:    #e7ebee;
+  --color-border-strong:    #d0d5dd;
+  --color-border-accent:    #6a56f0;
+
+  /* Background */
+  --color-bg-white:         #ffffff;
+  --color-bg-blanket:       #f9fafb;  /* image card bg */
+  --color-bg-overlay:       #f6f7fe;  /* active tab bg (from Figma) */
+  --color-bg-muted:         #f2f4f7;
+
+  /* Accent solid */
+  --color-accent-solid:     #6a56f0;
+
+  /* Radius */
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-xl:  12px;
+
+  /* Spacing */
+  --space-100:  4px;
+  --space-150:  6px;
+  --space-200:  8px;
+  --space-300:  12px;
+  --space-400:  16px;
+
+  /* Typography — matching Figma text styles */
+  --text-xs-size:    12px;
+  --text-xs-lh:      16px;
+  --text-sm-size:    14px;
+  --text-sm-lh:      20px;
+  --text-md-size:    16px;
+  --text-md-lh:      24px;
+
+  /* Shadow/Shadow-lg */
+  --shadow-lg: 0px 12px 16px -4px rgba(52,56,57,0.08), 0px 4px 6px -2px rgba(52,56,57,0.03);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #e8eaf0;
+  background-image: radial-gradient(circle, #bbbec9 1px, transparent 1px);
+  background-size: 24px 24px;
+  min-height: 100vh;
+  padding: 48px 40px 80px;
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.page-subtitle {
+  text-align: center;
+  margin-bottom: 48px;
+  font-size: 13px;
+  color: #888;
+}
+
+.stage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.state-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.state-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent-solid);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  background: rgba(106,86,240,0.1);
+  border-radius: 99px;
+}
+.state-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POPOVER SHELL  (matches Figma exactly)
+   ═══════════════════════════════════════════════════════════ */
+.il {
+  width: 420px;
+  height: 720px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.il-header {
+  /* height 72px = padding-y 16px × 2 + title 24px line-height + gap 12px */
+  padding: var(--space-400);
+  border-bottom: 1px solid var(--color-border-swatch);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-300);
+  flex-shrink: 0;
+}
+.il-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.il-title {
+  /* text-md/Semibold */
+  font-size: var(--text-md-size);
+  font-weight: 600;
+  line-height: var(--text-md-lh);
+  color: var(--color-text-primary);
+  letter-spacing: 0;
+}
+.il-new-cat-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 40px;
+  padding: var(--space-200) var(--space-400);
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  line-height: var(--text-sm-lh);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.il-new-cat-btn:hover { background: var(--color-bg-blanket); }
+
+/* ── Body ────────────────────────────────────────────────── */
+.il-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+/* Figma: width 150px, padding-right 16px, inner border-right */
+.il-sidebar-wrap {
+  width: 150px;
+  flex-shrink: 0;
+  padding-right: var(--space-400);
+  display: flex;
+  flex-direction: column;
+}
+.il-sidebar {
+  flex: 1;
+  border-right: 1px solid var(--color-border-swatch);
+  padding-left: var(--space-200);
+  padding-right: var(--space-200);
+  padding-top: var(--space-400);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.il-sidebar::-webkit-scrollbar { width: 3px; }
+.il-sidebar::-webkit-scrollbar-thumb { background: var(--color-border-swatch); border-radius: 2px; }
+
+.il-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 40px;
+  padding: var(--space-150) var(--space-300);
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.1s;
+}
+.il-tab:hover { background: var(--color-bg-muted); }
+.il-tab.active { background: var(--color-bg-overlay); }
+
+.il-tab-name {
+  /* text-xs/Medium */
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-lh);
+  color: var(--color-text-secondary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.il-tab.active .il-tab-name { color: var(--color-text-interactive); }
+
+.il-tab-count {
+  /* text-xs/Regular */
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-lh);
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  text-align: right;
+}
+.il-tab.active .il-tab-count { color: var(--color-text-interactive); }
+
+/* ── Content area ────────────────────────────────────────── */
+/* Figma: flex:1, overflow-y auto, padding: 16px right + top, 0 left */
+.il-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-400) var(--space-400) var(--space-400) 0;
+  display: flex;
+  flex-direction: column;
+}
+.il-content::-webkit-scrollbar { width: 3px; }
+.il-content::-webkit-scrollbar-thumb { background: var(--color-border-swatch); border-radius: 2px; }
+
+/* ── Folder rows ─────────────────────────────────────────── */
+.il-folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--space-300);
+}
+
+.il-folder-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 36px;
+  padding: 0 var(--space-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.1s;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.il-folder-row:hover { background: var(--color-bg-blanket); }
+
+.il-folder-icon {
+  color: var(--color-text-quaternary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.il-folder-name {
+  /* text-xs/Medium */
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-lh);
+  color: var(--color-text-secondary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.il-folder-count {
+  /* text-xs/Regular */
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-lh);
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.il-folder-chevron {
+  color: var(--color-text-quaternary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Divider before images */
+.il-section-divider {
+  height: 1px;
+  background: var(--color-border-swatch);
+  margin-bottom: var(--space-300);
+}
+
+/* ── Image grid ──────────────────────────────────────────── */
+/* Figma: 2-column, gap 8px */
+.il-img-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-200);
+}
+
+.il-img-card {
+  /* Figma: bg #f9fafb, border #e7ebee, padding 5px, radius 8px */
+  background: var(--color-bg-blanket);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-md);
+  padding: var(--space-100);    /* 4px ≈ space-100 (Figma uses 5px; closest token) */
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.il-img-card:hover {
+  border-color: var(--color-border-accent);
+  box-shadow: 0 0 0 2px rgba(106,86,240,0.12);
+}
+.il-img-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;   /* Figma uses object-contain */
+  background: var(--color-bg-blanket);
+  display: block;
+  border-radius: 4px;
+}
+
+/* ── Breadcrumb (folder drill-in) ────────────────────────── */
+.il-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 var(--space-200);
+  height: 36px;
+  margin-bottom: var(--space-300);
+  flex-shrink: 0;
+}
+.il-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  color: var(--color-text-interactive);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.il-back-btn:hover { background: var(--color-bg-overlay); }
+.il-breadcrumb-sep {
+  color: var(--color-border-strong);
+  font-size: 14px;
+  line-height: 1;
+}
+.il-breadcrumb-parent {
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+}
+.il-breadcrumb-current {
+  font-size: var(--text-xs-size);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.il-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--color-text-quaternary);
+}
+.il-empty-icon { color: var(--color-text-quaternary); }
+.il-empty-label {
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.il-footer {
+  padding: var(--space-300) var(--space-400);
+  border-top: 1px solid var(--color-border-swatch);
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  flex-shrink: 0;
+  background: var(--color-bg-white);
+}
+.il-btn-primary {
+  flex: 1;
+  height: 40px;
+  background: var(--color-accent-solid);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  line-height: var(--text-sm-lh);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-200);
+  transition: opacity 0.12s;
+}
+.il-btn-primary:hover { opacity: 0.88; }
+.il-btn-secondary {
+  flex: 1;
+  height: 40px;
+  background: var(--color-bg-white);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  line-height: var(--text-sm-lh);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-200);
+  transition: background 0.12s;
+}
+.il-btn-secondary:hover { background: var(--color-bg-blanket); }
+
+/* ── Upload destination sheet ────────────────────────────── */
+/* Overlays the popover body from below */
+.il-upload-sheet {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--color-bg-white);
+  border-top: 1px solid var(--color-border-swatch);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+/* Backdrop scrim above the sheet */
+.il-upload-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(27,29,29,0.24);
+  border-radius: var(--radius-xl);
+  z-index: 9;
+}
+
+.il-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--color-border-strong);
+  border-radius: 99px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+.il-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-300) var(--space-400);
+  border-bottom: 1px solid var(--color-border-swatch);
+  flex-shrink: 0;
+}
+.il-sheet-title {
+  font-size: var(--text-sm-size);
+  font-weight: 600;
+  line-height: var(--text-sm-lh);
+  color: var(--color-text-primary);
+}
+.il-sheet-close {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent;
+  color: var(--color-text-quaternary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.il-sheet-close:hover { background: var(--color-bg-muted); color: var(--color-text-primary); }
+
+.il-sheet-body {
+  padding: var(--space-300) var(--space-400);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-300);
+  overflow-y: auto;
+  max-height: 340px;
+}
+.il-sheet-body::-webkit-scrollbar { width: 3px; }
+.il-sheet-body::-webkit-scrollbar-thumb { background: var(--color-border-swatch); border-radius: 2px; }
+
+.il-sheet-label {
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-lh);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 2px;
+}
+
+/* Category option rows */
+.il-dest-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 40px;
+  padding: 0 var(--space-200);
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.1s;
+}
+.il-dest-option:hover { background: var(--color-bg-muted); }
+.il-dest-option.selected { background: var(--color-bg-overlay); }
+
+/* Radio circle */
+.il-radio {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.1s;
+}
+.il-dest-option.selected .il-radio {
+  border-color: var(--color-accent-solid);
+  background: var(--color-accent-solid);
+}
+.il-radio-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  display: none;
+}
+.il-dest-option.selected .il-radio-dot { display: block; }
+
+.il-dest-name {
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  line-height: var(--text-sm-lh);
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+.il-dest-option.selected .il-dest-name { color: var(--color-text-interactive); }
+.il-dest-count {
+  font-size: var(--text-xs-size);
+  color: var(--color-text-quaternary);
+  flex-shrink: 0;
+}
+
+/* Folder option — indented below a selected category */
+.il-folder-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 24px;  /* indent under category */
+  border-left: 2px solid var(--color-bg-overlay);
+  margin-left: 8px;
+}
+.il-folder-opt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 36px;
+  padding: 0 var(--space-200);
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.1s;
+}
+.il-folder-opt:hover { background: var(--color-bg-muted); }
+.il-folder-opt.selected { background: var(--color-bg-overlay); }
+.il-folder-opt-name {
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+.il-folder-opt.selected .il-folder-opt-name { color: var(--color-text-interactive); }
+.il-folder-opt-count {
+  font-size: var(--text-xs-size);
+  color: var(--color-text-quaternary);
+}
+/* The "No folder (add directly)" option */
+.il-folder-opt-none {
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+.il-sheet-footer {
+  padding: var(--space-300) var(--space-400) var(--space-400);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  flex-shrink: 0;
+}
+.il-browse-btn {
+  width: 100%;
+  height: 40px;
+  background: var(--color-accent-solid);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-200);
+  transition: opacity 0.12s;
+}
+.il-browse-btn:hover { opacity: 0.88; }
+.il-cancel-btn {
+  width: 100%;
+  height: 36px;
+  background: transparent;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: color 0.1s;
+}
+.il-cancel-btn:hover { color: var(--color-text-primary); }
+</style>
+</head>
+<body>
+
+<p class="page-title">Image Library · Folder + Upload Destination</p>
+<p class="page-subtitle">Folder rows · Folder drill-in · Upload to category & folder · 420×720px</p>
+
+<div class="stage">
+
+  <!-- ═══════════════ STATE 1: Category view with folders + images ═══════════════ -->
+  <div class="state-wrap">
+    <span class="state-tag">State 1</span>
+    <span class="state-name">Category view — folders + images</span>
+    <div class="il">
+      <!-- Header -->
+      <div class="il-header">
+        <div class="il-header-row">
+          <span class="il-title">Image Library</span>
+          <button class="il-new-cat-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            New category
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="il-body">
+        <!-- Sidebar -->
+        <div class="il-sidebar-wrap">
+          <div class="il-sidebar">
+            <button class="il-tab">
+              <span class="il-tab-name">Logo</span>
+              <span class="il-tab-count">153</span>
+            </button>
+            <button class="il-tab active">
+              <span class="il-tab-name">Backgrounds</span>
+              <span class="il-tab-count">23</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">Profiles</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">Clipboard</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="il-content">
+          <!-- 2 folder rows -->
+          <div class="il-folder-list">
+            <button class="il-folder-row" onclick="window.location.hash='folder'">
+              <!-- Folder icon -->
+              <span class="il-folder-icon">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="il-folder-name">Summer Campaign</span>
+              <span class="il-folder-count">8</span>
+              <span class="il-folder-chevron">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M4.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </button>
+            <button class="il-folder-row" onclick="window.location.hash='folder'">
+              <span class="il-folder-icon">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="il-folder-name">Winter Collection</span>
+              <span class="il-folder-count">12</span>
+              <span class="il-folder-chevron">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M4.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+          <!-- Divider before images -->
+          <div class="il-section-divider"></div>
+
+          <!-- 2-column image grid -->
+          <div class="il-img-grid" id="s1-grid">
+            <!-- images injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="il-footer">
+        <button class="il-btn-primary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4-5 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Upload image
+        </button>
+        <button class="il-btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 7.5v3M6.5 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          New folder
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STATE 2: Folder drill-in view ═══════════════ -->
+  <div class="state-wrap">
+    <span class="state-tag">State 2</span>
+    <span class="state-name">Folder view — after clicking a folder</span>
+    <div class="il">
+      <!-- Header -->
+      <div class="il-header">
+        <div class="il-header-row">
+          <span class="il-title">Image Library</span>
+          <button class="il-new-cat-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            New category
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="il-body">
+        <!-- Sidebar (same, active tab stays highlighted) -->
+        <div class="il-sidebar-wrap">
+          <div class="il-sidebar">
+            <button class="il-tab">
+              <span class="il-tab-name">Logo</span>
+              <span class="il-tab-count">153</span>
+            </button>
+            <button class="il-tab active">
+              <span class="il-tab-name">Backgrounds</span>
+              <span class="il-tab-count">23</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">Profiles</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">Clipboard</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+            <button class="il-tab">
+              <span class="il-tab-name">C3-Library</span>
+              <span class="il-tab-count">15</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Content: folder drill-in -->
+        <div class="il-content">
+          <!-- Breadcrumb -->
+          <div class="il-breadcrumb">
+            <button class="il-back-btn">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Back
+            </button>
+            <span class="il-breadcrumb-sep">/</span>
+            <span class="il-breadcrumb-parent">Backgrounds</span>
+            <span class="il-breadcrumb-sep">/</span>
+            <span class="il-breadcrumb-current">Summer Campaign</span>
+          </div>
+
+          <!-- Images inside the folder -->
+          <div class="il-img-grid" id="s2-grid">
+            <!-- images injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="il-footer">
+        <button class="il-btn-primary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4-5 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Upload to this folder
+        </button>
+        <button class="il-btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 7.5v3M6.5 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          New folder
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STATE 3: Upload destination picker ═══════════════ -->
+  <div class="state-wrap">
+    <span class="state-tag">State 3</span>
+    <span class="state-name">Upload — choose destination</span>
+    <div class="il" style="position:relative;">
+      <!-- Header -->
+      <div class="il-header">
+        <div class="il-header-row">
+          <span class="il-title">Image Library</span>
+          <button class="il-new-cat-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            New category
+          </button>
+        </div>
+      </div>
+
+      <!-- Body (blurred/dimmed) -->
+      <div class="il-body" style="opacity:0.4;pointer-events:none;">
+        <div class="il-sidebar-wrap">
+          <div class="il-sidebar">
+            <button class="il-tab"><span class="il-tab-name">Logo</span><span class="il-tab-count">153</span></button>
+            <button class="il-tab active"><span class="il-tab-name">Backgrounds</span><span class="il-tab-count">23</span></button>
+            <button class="il-tab"><span class="il-tab-name">Profiles</span><span class="il-tab-count">15</span></button>
+            <button class="il-tab"><span class="il-tab-name">Clipboard</span><span class="il-tab-count">15</span></button>
+            <button class="il-tab"><span class="il-tab-name">C3-Library</span><span class="il-tab-count">15</span></button>
+          </div>
+        </div>
+        <div class="il-content">
+          <div class="il-img-grid" id="s3-grid-bg"><!-- bg images --></div>
+        </div>
+      </div>
+
+      <!-- Footer (also dimmed) -->
+      <div class="il-footer" style="opacity:0.4;pointer-events:none;">
+        <button class="il-btn-primary">Upload image</button>
+        <button class="il-btn-secondary">New folder</button>
+      </div>
+
+      <!-- Backdrop scrim -->
+      <div class="il-upload-backdrop"></div>
+
+      <!-- Upload destination sheet (slides up) -->
+      <div class="il-upload-sheet">
+        <div class="il-sheet-handle"></div>
+
+        <div class="il-sheet-header">
+          <span class="il-sheet-title">Upload image to…</span>
+          <button class="il-sheet-close">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div class="il-sheet-body">
+          <!-- Category label -->
+          <div>
+            <div class="il-sheet-label">Category</div>
+            <div style="display:flex;flex-direction:column;gap:2px;margin-top:4px;">
+              <!-- Category options -->
+              <button class="il-dest-option">
+                <span class="il-radio"><span class="il-radio-dot"></span></span>
+                <span class="il-dest-name">Logo</span>
+                <span class="il-dest-count">153 images</span>
+              </button>
+              <button class="il-dest-option selected">
+                <span class="il-radio"><span class="il-radio-dot"></span></span>
+                <span class="il-dest-name">Backgrounds</span>
+                <span class="il-dest-count">23 images</span>
+              </button>
+
+              <!-- Folder options — expanded under selected category -->
+              <div class="il-folder-options">
+                <button class="il-folder-opt selected">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="#6a56f0" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  <span class="il-folder-opt-name">Summer Campaign</span>
+                  <span class="il-folder-opt-count">8</span>
+                </button>
+                <button class="il-folder-opt">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="#97a0b4" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  <span class="il-folder-opt-name">Winter Collection</span>
+                  <span class="il-folder-opt-count">12</span>
+                </button>
+                <button class="il-folder-opt">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="#97a0b4" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  <span class="il-folder-opt-name il-folder-opt-none">No folder — add directly to category</span>
+                </button>
+              </div>
+
+              <button class="il-dest-option">
+                <span class="il-radio"><span class="il-radio-dot"></span></span>
+                <span class="il-dest-name">Profiles</span>
+                <span class="il-dest-count">15 images</span>
+              </button>
+              <button class="il-dest-option">
+                <span class="il-radio"><span class="il-radio-dot"></span></span>
+                <span class="il-dest-name">Clipboard</span>
+                <span class="il-dest-count">15 images</span>
+              </button>
+              <button class="il-dest-option">
+                <span class="il-radio"><span class="il-radio-dot"></span></span>
+                <span class="il-dest-name">C3-Library</span>
+                <span class="il-dest-count">15 images</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sheet footer: CTA -->
+        <div class="il-sheet-footer">
+          <button class="il-browse-btn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4-5 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Browse files
+          </button>
+          <button class="il-cancel-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .stage -->
+
+<script>
+/* ── Image seeds for picsum ─────────────────────────────── */
+const CAT_SEEDS = [
+  'arch1','arch2','arch3','arch4','arch5','arch6',
+  'arch7','arch8','arch9','arch10','arch11','arch12',
+  'arch13','arch14'
+];
+
+const FOLDER_SEEDS = [
+  'sum1','sum2','sum3','sum4','sum5','sum6','sum7','sum8'
+];
+
+function imgCard(seed) {
+  return `
+    <div class="il-img-card">
+      <img class="il-img-thumb"
+           src="https://picsum.photos/seed/${seed}/200/200"
+           alt=""
+           loading="lazy">
+    </div>
+  `;
+}
+
+// State 1: category images (14 photos)
+document.getElementById('s1-grid').innerHTML =
+  CAT_SEEDS.map(imgCard).join('');
+
+// State 2: folder images (8 photos)
+document.getElementById('s2-grid').innerHTML =
+  FOLDER_SEEDS.map(imgCard).join('');
+
+// State 3: dimmed background grid (same as cat)
+document.getElementById('s3-grid-bg').innerHTML =
+  CAT_SEEDS.slice(0, 6).map(imgCard).join('');
+</script>
+</body>
+</html>

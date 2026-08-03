@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Broker of Record Letter — Select Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#6a56f0; --purple-light:#eae7fe; --purple-subtle:#f6f7fe;
+  --text-1:#343839; --text-2:#525965; --text-3:#6a758a; --text-placeholder:#97a0b4; --text-bold:#1b1d1d;
+  --border:#e7ebee; --border-input:#d0d5dd; --bg-canvas:#f2f4f7; --bg-nav:#f9fafb;
+  --white:#fff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:'Inter',sans-serif;background:var(--bg-canvas);color:var(--text-1);}
+button{cursor:pointer;font-family:inherit;}
+select{font-family:inherit;}
+
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── Nav rail ─────────────────────────────────────────── */
+.nav{width:76px;flex-shrink:0;background:var(--bg-nav);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;padding:20px 12px;gap:4px;}
+.nav-logo{width:24px;height:24px;background:var(--purple);border-radius:6px;margin-bottom:16px;}
+.nav-item{width:100%;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-3);}
+.nav-item svg{width:20px;height:20px;}
+.nav-item.active{background:var(--purple-light);color:var(--purple);}
+.nav-divider{width:100%;height:1px;background:var(--border-input);margin:8px 0;border-radius:10px;}
+
+/* ── Main column ──────────────────────────────────────── */
+.main-col{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;}
+
+/* Header */
+.top-header{height:64px;flex-shrink:0;background:var(--white);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:16px;}
+.breadcrumb .dim{color:var(--text-3);}
+.breadcrumb .cur{color:var(--text-2);font-weight:500;}
+.breadcrumb .chev{color:var(--border-input);font-size:14px;}
+.header-right{display:flex;align-items:center;gap:16px;}
+.icon-btn{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-3);background:none;border:none;}
+.icon-btn:hover{background:var(--bg-nav);}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#fcb69f,#ffecd2);
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#a05a2c;}
+
+/* Title block */
+.title-block{background:var(--white);border-bottom:1px solid var(--border);padding:24px 32px;flex-shrink:0;}
+.title-block h1{font-size:20px;font-weight:600;color:var(--text-1);margin-bottom:8px;}
+.title-block p{font-size:16px;color:var(--text-2);max-width:640px;line-height:24px;}
+
+/* Stepper toolbar */
+.toolbar{background:var(--white);border-bottom:1px solid var(--border);padding:16px 32px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;}
+.steps{display:flex;align-items:center;gap:8px;}
+.step{display:flex;align-items:center;gap:8px;}
+.step-num{width:24px;height:24px;border-radius:40px;display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:500;flex-shrink:0;}
+.step-label{font-size:14px;font-weight:500;white-space:nowrap;}
+.step.done{cursor:pointer;}
+.step.done .step-num{background:#12b76a;color:var(--white);font-size:12px;}
+.step.done .step-label{color:var(--text-3);}
+.step.active .step-num{background:var(--purple);color:var(--white);}
+.step.active .step-label{color:var(--purple);}
+.step.upcoming .step-num{background:#f2f4f7;color:var(--text-placeholder);}
+.step.upcoming .step-label{color:var(--text-placeholder);}
+.step-chev{color:var(--border-input);font-size:14px;}
+
+.btn{height:40px;border-radius:8px;padding:0 16px;font-size:14px;font-weight:500;border:none;
+  display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
+.btn-primary{background:var(--purple);color:var(--white);}
+.btn-primary:hover{background:#5843d6;}
+.btn-primary:disabled{background:#c9beff;cursor:not-allowed;}
+.btn-secondary{background:var(--white);color:var(--text-2);border:1px solid var(--border);}
+.btn-secondary:hover{background:#f9fafb;}
+.btn-ghost{background:none;color:var(--purple);padding:0 4px;font-weight:500;font-size:13px;height:auto;}
+.btn-ghost:hover{text-decoration:underline;}
+.btn-back{background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;color:var(--text-2);}
+
+.toolbar .btn{height:32px;padding:0 12px;}
+
+/* Canvas area (scrollable) */
+.canvas{flex:1;overflow-y:auto;padding:32px;position:relative;}
+.canvas-inner{max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-bottom:56px;}
+.canvas-inner.wide{max-width:1300px;}
+
+/* Cards */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.card-header{padding:16px 24px;border-bottom:1px solid var(--border);}
+.card-header h2{font-size:16px;font-weight:600;color:var(--text-1);}
+.card-header p.sub{font-size:13px;color:var(--text-3);margin-top:4px;font-weight:400;}
+.card-body{padding:24px;}
+
+.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0;}
+.field label{font-size:14px;font-weight:500;color:var(--text-1);}
+
+/* Letters list (sidebar, step 2) */
+.letters-list{display:flex;flex-direction:column;gap:12px;padding:16px;}
+.letter-item{border:1px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;}
+.letter-item.selected{border-color:var(--purple);background:var(--purple-subtle);}
+.letter-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 8px 0;}
+.letter-top.has-policies{margin-bottom:12px;}
+.letter-name{font-size:14px;font-weight:600;color:var(--text-1);}
+.letter-count{font-size:12px;color:var(--text-2);margin-top:2px;}
+.letter-tmpl-tag{font-size:11px;color:var(--text-3);margin-top:2px;}
+.letter-tmpl-tag.set{color:var(--purple);font-weight:500;}
+.letter-radio{width:20px;height:20px;border-radius:50%;border:1px solid var(--border-input);background:var(--white);flex-shrink:0;}
+.letter-radio.checked{border-color:var(--purple);background:var(--purple);box-shadow:inset 0 0 0 3px var(--white);}
+.letter-policies{background:#f9fafb;border-radius:4px;padding:12px 8px;display:flex;flex-direction:column;gap:12px;}
+.letter-item.selected .letter-policies{background:var(--white);}
+.policy-row{display:flex;justify-content:space-between;font-size:14px;font-weight:500;}
+.policy-row .num{color:var(--text-2);}
+.policy-row .amt{color:var(--text-1);}
+
+/* Sidebar "Inputs" collapsed accordion */
+.inputs-collapsed{background:var(--white);border:1px solid var(--border);border-radius:12px;
+  display:flex;align-items:center;justify-content:space-between;padding:16px;flex-shrink:0;color:var(--text-3);}
+.inputs-collapsed span{font-size:16px;font-weight:600;color:var(--text-1);}
+
+/* Disclaimer */
+.disclaimer{position:sticky;bottom:0;left:0;right:0;background:var(--bg-canvas);padding:12px 24px;
+  display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--text-bold);}
+.disclaimer a{color:var(--purple);text-decoration:none;font-weight:500;}
+
+/* ── Step 2 (Select letter templates, Figma 30774:112910) ── */
+.tsel-card{background:var(--white);border:1px solid var(--border);border-radius:12px;display:flex;overflow:hidden;}
+.tsel-left{width:500px;flex-shrink:0;display:flex;flex-direction:column;}
+.tsel-head{padding:24px 24px 16px;}
+.tsel-name{font-size:18px;font-weight:600;line-height:28px;color:var(--text-1);}
+.tsel-count{font-size:14px;line-height:20px;color:var(--text-2);margin-top:4px;}
+.tsel-divider{border-top:1px solid var(--border);margin:0 24px;}
+.tsel-label{font-size:14px;line-height:20px;color:var(--text-2);padding:12px 24px 8px;}
+.tsel-list{display:flex;flex-direction:column;gap:8px;padding:0 24px 24px;}
+.tsel-item{display:flex;align-items:center;gap:12px;height:44px;padding:0 16px;border:1px solid var(--border);
+  border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text-1);background:var(--white);}
+.tsel-item:hover{border-color:var(--border-input);}
+.tsel-item.selected{background:var(--purple-subtle);border-color:var(--purple-subtle);}
+.tsel-item .letter-radio{width:16px;height:16px;}
+.tsel-item .letter-radio.checked{box-shadow:inset 0 0 0 2.5px var(--white);}
+.tsel-create-item{display:flex;align-items:center;gap:8px;height:44px;padding:0 8px;border:none;background:none;
+  cursor:pointer;font-size:14px;font-weight:500;color:var(--text-2);align-self:flex-start;border-radius:8px;}
+.tsel-create-item:hover{background:#f9fafb;color:var(--text-1);}
+.tsel-right{flex:1;min-width:0;border-left:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:12px;}
+.tsel-preview-title{font-size:14px;line-height:20px;color:var(--text-2);display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tsel-preview-title b{color:var(--text-1);font-weight:600;}
+.tsel-duplicate-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:none;color:var(--purple);
+  font-size:13px;font-weight:500;cursor:pointer;padding:4px 0;flex-shrink:0;}
+.tsel-duplicate-btn:hover{text-decoration:underline;}
+.tsel-preview-panel{background:#f9fafb;border-radius:8px;padding:16px;flex:1;min-height:240px;max-height:280px;overflow-y:auto;}
+.a4.a4-flat{width:auto;padding:0;box-shadow:none;background:transparent;border-radius:0;}
+
+/* Modal (Outmarket standard pattern) */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);display:none;align-items:center;justify-content:center;z-index:100;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--white);border-radius:8px;width:520px;max-width:90vw;overflow:hidden;display:flex;flex-direction:column;max-height:85vh;}
+.modal-box.tmodal{width:900px;height:640px;max-height:88vh;position:relative;}
+#varTypeahead{position:absolute;z-index:20;background:var(--white);border:1px solid var(--border);border-radius:8px;
+  box-shadow:0 4px 12px rgba(16,24,40,.12);width:240px;max-height:220px;overflow-y:auto;display:none;padding:4px;}
+.typeahead-item{padding:8px;border-radius:6px;cursor:pointer;}
+.typeahead-item:hover,.typeahead-item.active{background:#f9fafb;}
+.typeahead-name{font-size:13px;font-weight:500;color:var(--text-1);}
+.typeahead-desc{font-size:11px;color:var(--text-3);margin-top:1px;}
+.typeahead-empty{font-size:12px;color:var(--text-3);padding:8px;}
+.modal-header{display:flex;gap:16px;align-items:center;padding:20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.modal-header .icon{width:48px;height:48px;border-radius:24px;background:var(--purple-subtle);display:flex;align-items:center;justify-content:center;color:var(--purple);flex-shrink:0;}
+.modal-header .titles{flex:1;min-width:0;}
+.modal-header .titles .t{font-weight:600;font-size:20px;color:var(--text-1);}
+.modal-header .titles .s{font-size:14px;color:var(--text-2);margin-top:4px;}
+.modal-close{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-3);background:none;border:none;flex-shrink:0;}
+.modal-close:hover{background:#f9fafb;}
+.modal-body{padding:0;display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+.modal-footer{border-top:1px solid var(--border);padding:20px;display:flex;gap:12px;justify-content:flex-end;flex-shrink:0;}
+.modal-hint{font-size:12px;color:var(--text-3);margin-top:6px;}
+.a4-editable{outline:none;border-radius:4px;}
+.a4-editable:hover,.a4-editable:focus{box-shadow:0 0 0 2px var(--purple-subtle);}
+
+/* Template editor modal: name row + editor/variables split */
+.modal-name-row{padding:20px 24px 0;flex-shrink:0;}
+.modal-name-row label{font-size:14px;font-weight:500;color:var(--text-1);margin-bottom:6px;display:block;}
+.modal-name-row input{width:100%;border:1px solid var(--border-input);border-radius:8px;padding:12px;font-size:14px;
+  font-family:inherit;color:var(--text-1);}
+.modal-name-row input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(106,86,240,.14);}
+.tmodal-editor-row{display:flex;gap:20px;padding:16px 24px 20px;flex:1;min-height:0;}
+
+/* AI inline widget (Gmail "Help me write" pattern, lives inside the text area) */
+.tmodal-editor-wrap{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;}
+.ai-toolbar-btn{color:var(--purple) !important;}
+.ai-inline-pill{position:absolute;left:14px;bottom:14px;display:inline-flex;align-items:center;gap:6px;
+  background:var(--white);border:1px solid var(--purple-light);color:var(--purple);font-size:13px;font-weight:500;
+  padding:7px 14px 7px 10px;border-radius:20px;cursor:pointer;box-shadow:0 1px 3px rgba(16,24,40,.08);z-index:5;}
+.ai-inline-pill:hover{background:var(--purple-subtle);border-color:var(--purple);}
+.ai-inline-prompt{position:absolute;left:14px;right:14px;bottom:14px;display:none;align-items:center;gap:8px;
+  background:var(--white);border:1px solid var(--purple);border-radius:10px;padding:6px 6px 6px 14px;
+  box-shadow:0 4px 16px rgba(16,24,40,.14);z-index:6;}
+.ai-inline-prompt.open{display:flex;}
+.ai-inline-prompt .ai-icon{color:var(--purple);flex-shrink:0;display:flex;}
+.ai-inline-prompt input{flex:1;min-width:0;border:none;outline:none;font-size:14px;font-family:inherit;
+  color:var(--text-1);background:transparent;}
+.ai-inline-cancel{width:26px;height:26px;border:none;background:none;color:var(--text-3);cursor:pointer;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.ai-inline-cancel:hover{background:#f2f4f7;}
+.ai-inline-submit{width:28px;height:28px;border-radius:50%;background:var(--purple);border:none;color:white;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.ai-inline-submit:hover{background:#5843d6;}
+.ai-inline-submit:disabled{background:#c9beff;cursor:not-allowed;}
+.ai-spinner{animation:ai-spin 0.8s linear infinite;}
+@keyframes ai-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.tmodal-editor-col{flex:1;min-width:0;display:flex;flex-direction:column;}
+.tmodal-toolbar{display:flex;align-items:center;gap:2px;border:1px solid var(--border-input);border-bottom:none;
+  border-radius:8px 8px 0 0;padding:6px 8px;background:#f9fafb;flex-shrink:0;}
+.tmodal-toolbar button{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;
+  border:none;border-radius:4px;color:var(--text-2);cursor:pointer;}
+.tmodal-toolbar button:hover{background:#eef0f2;}
+.tmodal-toolbar button.active{background:var(--purple-subtle);color:var(--purple);}
+.tmodal-toolbar-divider{width:1px;height:16px;background:var(--border-input);margin:0 4px;}
+.tmodal-block-select{border:none;background:none;font-size:13px;font-weight:500;color:var(--text-2);
+  font-family:inherit;padding:4px 4px;border-radius:4px;flex-shrink:0;}
+.tmodal-block-select:hover{background:#eef0f2;}
+.tmodal-block-select:focus{outline:none;}
+.tmodal-editor{flex:1;min-height:0;border:1px solid var(--border-input);border-radius:0 0 8px 8px;
+  padding:12px;font-size:14px;line-height:22px;color:var(--text-1);overflow-y:auto;}
+.tmodal-editor:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(106,86,240,.14);}
+.tmodal-editor p{margin-bottom:10px;}
+.tmodal-editor[contenteditable]:empty:before{content:attr(data-placeholder);color:var(--text-placeholder);}
+.var-badge{display:inline-block;background:#fef9c3;color:#854d0e;border:1px solid #fde68a;border-radius:4px;
+  padding:1px 6px;font-size:13px;font-weight:500;margin:0 1px;line-height:19px;}
+.tmodal-vars-col{width:250px;flex-shrink:0;border-left:1px solid var(--border);padding-left:20px;
+  display:flex;flex-direction:column;gap:10px;min-height:0;}
+.tmodal-vars-title{font-size:14px;font-weight:600;color:var(--text-1);flex-shrink:0;}
+.tmodal-vars-search{width:100%;border:1px solid var(--border-input);border-radius:8px;padding:8px 10px;
+  font-size:13px;font-family:inherit;flex-shrink:0;}
+.tmodal-vars-search:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(106,86,240,.14);}
+.tmodal-vars-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;min-height:0;}
+.tmodal-var-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;cursor:pointer;}
+.tmodal-var-row:hover{background:#f9fafb;}
+.tmodal-var-name{font-size:13px;font-weight:500;color:var(--text-1);flex-shrink:0;}
+.tmodal-var-desc{font-size:11px;color:var(--text-3);text-align:right;flex:1;min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;}
+.tmodal-vars-empty{font-size:13px;color:var(--text-3);padding:8px;}
+.tmodal-var-create{display:flex;align-items:center;gap:8px;padding:10px 8px;border:none;background:none;
+  cursor:pointer;font-size:13px;font-weight:500;color:var(--text-2);border-radius:8px;border-top:1px solid var(--border);
+  margin-top:4px;width:100%;flex-shrink:0;}
+.tmodal-var-create:hover{background:#f9fafb;color:var(--text-1);}
+.tmodal-var-form{display:flex;flex-direction:column;gap:8px;padding:10px 8px;border-top:1px solid var(--border);
+  margin-top:4px;flex-shrink:0;}
+.tmodal-var-form input{width:100%;border:1px solid var(--border-input);border-radius:6px;padding:8px 10px;
+  font-size:13px;font-family:inherit;}
+.tmodal-var-form input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(106,86,240,.14);}
+.tmodal-var-form-actions{display:flex;gap:8px;justify-content:flex-end;}
+
+/* ── Step 3 (Generate Letter) layout ─────────────────── */
+.gen-layout{display:flex;gap:16px;height:100%;padding:16px;background:var(--bg-canvas);}
+.gen-sidebar{width:400px;flex-shrink:0;display:flex;flex-direction:column;gap:16px;height:100%;}
+.gen-editor-wrap{flex:1;min-width:0;background:var(--white);border-radius:12px;border:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;}
+
+/* Proposal header */
+.proposal-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-shrink:0;}
+.proposal-header h3{font-size:18px;font-weight:600;color:var(--text-1);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-0.02em;}
+.ph-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-group{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+
+/* Rich-text toolbar */
+.rt-toolbar{display:flex;align-items:center;gap:8px;padding:12px 24px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.rt-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:none;
+  color:var(--text-2);border-radius:6px;flex-shrink:0;}
+.rt-btn:hover{background:#f6f7fe;}
+.rt-btn.accent{background:var(--purple-subtle);color:var(--purple);}
+.rt-btn.bordered{border:1px solid var(--border);}
+.rt-divider{width:1px;height:20px;background:var(--border-input);flex-shrink:0;}
+.rt-static-dropdown{display:flex;align-items:center;gap:4px;border:1px solid var(--border-input);border-radius:8px;
+  padding:6px 10px;font-size:14px;font-weight:500;color:var(--text-2);white-space:nowrap;flex-shrink:0;}
+.rt-fontsize{display:flex;align-items:center;border:1px solid var(--border-input);border-radius:8px;flex-shrink:0;}
+.rt-fontsize span{width:28px;text-align:center;font-size:14px;color:var(--text-1);}
+.rt-fontsize .rt-btn{border-radius:0;}
+.rt-select-wrap{position:relative;display:flex;align-items:center;flex-shrink:0;}
+.rt-dropdown-select{appearance:none;background:var(--white);border:1px solid var(--border-input);border-radius:8px;
+  padding:6px 30px 6px 12px;font-size:14px;font-weight:500;color:var(--text-2);height:32px;max-width:200px;}
+.rt-dropdown-select.placeholder{color:var(--text-placeholder);}
+.rt-select-chev{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text-3);font-size:10px;}
+
+.gen-editor-body{flex:1;overflow-y:auto;background:var(--bg-canvas);padding:40px;display:flex;justify-content:center;}
+.a4{background:var(--white);width:720px;padding:40px;box-shadow:0 0 12px rgba(16,24,40,.15),0 8px 4px rgba(16,24,40,.03);
+  border-radius:2px;height:fit-content;}
+.a4 h1{font-size:32px;font-weight:600;line-height:40px;margin-bottom:24px;color:var(--text-1);}
+.a4 .a4-meta p{font-size:16px;line-height:24px;color:var(--text-1);margin-bottom:4px;}
+.a4 .a4-meta b{font-weight:600;}
+.a4 .a4-divider{background:var(--border);height:1px;margin:24px 0;}
+.a4 p{font-size:16px;line-height:24px;color:var(--text-1);margin-bottom:12px;}
+.a4 .a4-empty{padding:80px 20px;text-align:center;}
+.a4-sig{margin-top:40px;padding-right:24px;width:261px;}
+.a4-sig-date{font-size:16px;color:var(--text-1);text-align:right;margin-bottom:12px;}
+.a4-sig-mark{height:62px;display:flex;align-items:flex-end;}
+.a4-sig-line{border-top:1px solid var(--border);margin:0 0 12px;}
+.a4-sig p{font-size:16px;line-height:24px;color:var(--text-1);margin-bottom:0;}
+
+/* Views */
+.view{display:none;height:100%;flex-direction:column;}
+.view.active{display:flex;}
+.step1-body{flex:1;overflow-y:auto;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Nav rail -->
+  <div class="nav">
+    <div class="nav-logo"></div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12l4 4v12H4z"/><path d="M16 4v4h4"/></svg>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/></svg>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+  </div>
+
+  <div class="main-col">
+    <!-- Header -->
+    <div class="top-header">
+      <div class="breadcrumb">
+        <button class="icon-btn" id="headerBackBtn" style="width:32px;height:32px;display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <span class="dim">Workflows</span>
+        <span class="chev">›</span>
+        <span class="cur">Broker of Record Letter</span>
+        <span class="chev" id="breadcrumbExtraChev" style="display:none;">›</span>
+        <span class="cur" id="breadcrumbExtra" style="display:none;max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button class="btn btn-secondary" id="shareBtn" style="display:none;margin-left:12px;height:32px;padding:0 12px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>
+          Share
+        </button>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></button>
+        <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+        <div class="avatar">LB</div>
+      </div>
+    </div>
+
+    <div class="title-block">
+      <h1 id="titleBlockTitle">Broker of Record Letter</h1>
+      <p id="titleBlockDesc">Extract policy information and generate Broker of Record letters grouped by carrier.</p>
+    </div>
+
+    <!-- Toolbar / stepper -->
+    <div class="toolbar">
+      <div class="steps" id="stepperRow"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-secondary" id="backBtn" style="display:none;">Back</button>
+        <button class="btn btn-primary" id="continueBtn">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 1: Input -->
+    <div class="view active" id="view-1">
+      <div class="canvas">
+        <div class="canvas-inner">
+          <div class="card" style="padding:24px;">
+            <div style="border:1px dashed var(--border-input);border-radius:8px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+              <div style="width:40px;height:40px;border-radius:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+              </div>
+              <div style="text-align:center;max-width:560px;">
+                <div style="font-size:18px;font-weight:600;margin-bottom:8px;">Upload Policy Documents</div>
+                <div style="font-size:14px;color:var(--text-2);">Upload policy documents to extract carriers and policy information.</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;width:100%;">
+                <div style="flex:1;height:1px;background:var(--border);"></div>
+                <span style="font-size:12px;color:var(--text-3);">OR</span>
+                <div style="flex:1;height:1px;background:var(--border);"></div>
+              </div>
+              <button class="btn btn-secondary">Select from Vault</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2>Input</h2></div>
+            <div class="card-body" style="display:flex;gap:16px;">
+              <div class="field">
+                <label>BOR Effective Date</label>
+                <div style="border:1px solid var(--border-input);border-radius:8px;padding:12px;font-size:14px;display:flex;justify-content:space-between;">
+                  <span>2026-01-31</span><span style="color:var(--text-3);">▾</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Appointed Brokerage or Agent</label>
+                <div style="border:1px solid var(--border-input);border-radius:8px;padding:12px;font-size:14px;">Lucas Boyd</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="disclaimer">
+          <span><b>Disclaimer:</b> AI results may contain errors — please review and verify all outputs before using.</span>
+          <a href="#">Learn more</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Select letter templates (matches Figma node 30774:112910) -->
+    <div class="view" id="view-2">
+      <div class="canvas">
+        <div class="canvas-inner wide">
+          <div id="tselList" style="display:flex;flex-direction:column;gap:16px;"></div>
+        </div>
+        <div class="disclaimer">
+          <span><b>Disclaimer:</b> AI results may contain errors — please review and verify all outputs before using.</span>
+          <a href="#">Learn more</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Generate Letter (matches Figma node 30738:109177) -->
+    <div class="view" id="view-3">
+      <div class="gen-layout">
+        <div class="gen-sidebar">
+          <div class="inputs-collapsed">
+            <span>Inputs</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column;">
+            <div class="card-header"><h2>Extracted Carriers</h2></div>
+            <div class="letters-list" id="genCarrierList" style="flex:1;overflow-y:auto;"></div>
+          </div>
+        </div>
+        <div class="gen-editor-wrap">
+          <div class="proposal-header">
+            <h3 id="genLetterTitle">Broker of Record Letter - Atlantic Casualty Insurance Company</h3>
+            <div class="ph-actions">
+              <div class="rt-select-wrap" title="Template">
+                <select id="genTemplateSelect" class="rt-dropdown-select">
+                  <option value="" disabled>Select a template</option>
+                </select>
+                <span class="rt-select-chev">▾</span>
+              </div>
+              <div class="btn-group">
+                <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11v9H3v-9zM7 11l3-8a2 2 0 0 1 2 2v4h5.5a1.5 1.5 0 0 1 1.45 1.87l-1.5 6A2 2 0 0 1 15.5 20H7"/></svg></button>
+                <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13V4h4v9M7 13l3 8a2 2 0 0 0 2-2v-4h5.5a1.5 1.5 0 0 0 1.45-1.87l-1.5-6A2 2 0 0 0 15.5 4H7"/></svg></button>
+              </div>
+              <div class="btn-group">
+                <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="1"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg></button>
+                <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M8 12h8M8 16h8"/></svg></button>
+                <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 13h1M9 17h1"/></svg></button>
+              </div>
+              <button class="rt-btn bordered"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
+              <button class="rt-btn bordered" id="saveAsTemplateBtn" title="Save as template">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="rt-toolbar">
+            <button class="rt-btn accent" title="AI"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6z"/></svg></button>
+            <div class="rt-divider"></div>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a5 5 0 0 1 0 10h-1"/></svg></button>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a5 5 0 0 0 0 10h1"/></svg></button>
+            <div class="rt-divider"></div>
+            <div class="rt-static-dropdown">San Serif <span style="color:var(--text-3);font-size:10px;">▾</span></div>
+            <div class="rt-fontsize">
+              <button class="rt-btn">−</button><span>16</span><button class="rt-btn">+</button>
+            </div>
+            <div class="rt-divider"></div>
+            <div class="rt-static-dropdown">Paragraph <span style="color:var(--text-3);font-size:10px;">▾</span></div>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 4a4 4 0 0 0-4 4v9M15 8H9a4 4 0 0 0 0 8h1"/></svg></button>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v16M18 4v16M6 4h12M9 20h6"/></svg></button>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16M6 4h12l-6 8z"/></svg></button>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4H18M8 4l4 8-4 8M16 4l-4 8 4 8"/></svg></button>
+            <div class="rt-divider"></div>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h15"/></svg></button>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/><path d="M9 6h11M9 12h11M9 18h11"/></svg></button>
+            <button class="rt-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
+          </div>
+          <div class="gen-editor-body">
+            <div class="a4" id="genA4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Save template modal -->
+<div class="modal-overlay" id="templateModalOverlay">
+  <div class="modal-box tmodal">
+    <div class="modal-header">
+      <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div class="titles">
+        <div class="t" id="modalTitle">Create new template</div>
+        <div class="s" id="modalSubtitle">Write reusable letter text — merge fields fill in per carrier automatically.</div>
+      </div>
+      <button class="modal-close" id="modalCloseBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-name-row">
+        <label>Template name</label>
+        <input type="text" id="newTmplName" placeholder="e.g. BOR Renewal Notice">
+      </div>
+      <div class="tmodal-editor-row">
+        <div class="tmodal-editor-col">
+          <div class="tmodal-toolbar">
+            <button type="button" id="tmodalAiToggleBtn" class="ai-toolbar-btn" title="Draft with AI"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6z"/></svg></button>
+            <div class="tmodal-toolbar-divider"></div>
+            <select id="tmodalBlockFormat" class="tmodal-block-select" title="Paragraph style">
+              <option value="p">Normal</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+            </select>
+            <div class="tmodal-toolbar-divider"></div>
+            <button type="button" data-cmd="bold" title="Bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 4h8a4 4 0 0 1 0 8H6zM6 12h9a4 4 0 0 1 0 8H6z"/></svg></button>
+            <button type="button" data-cmd="italic" title="Italic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 4h-9M15 4L9 20M5 20h9"/></svg></button>
+            <button type="button" data-cmd="underline" title="Underline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v6a6 6 0 0 0 12 0V4M4 20h16"/></svg></button>
+            <button type="button" data-cmd="strikeThrough" title="Strikethrough"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4H9.5a3.5 3.5 0 0 0 0 7h1"/><path d="M14 20H8a3.5 3.5 0 0 1 0-7"/><line x1="4" y1="12" x2="20" y2="12"/></svg></button>
+            <div class="tmodal-toolbar-divider"></div>
+            <button type="button" data-cmd="insertOrderedList" title="Numbered list"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.3-2-1"/></svg></button>
+            <button type="button" data-cmd="insertUnorderedList" title="Bullet list"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+            <div class="tmodal-toolbar-divider"></div>
+            <button type="button" data-cmd="outdent" title="Decrease indent"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 8 3 12 7 16"/><line x1="21" y1="6" x2="11" y2="6"/><line x1="21" y1="12" x2="11" y2="12"/><line x1="21" y1="18" x2="11" y2="18"/></svg></button>
+            <button type="button" data-cmd="indent" title="Increase indent"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 7 12 3 16"/><line x1="21" y1="6" x2="11" y2="6"/><line x1="21" y1="12" x2="11" y2="12"/><line x1="21" y1="18" x2="11" y2="18"/></svg></button>
+            <div class="tmodal-toolbar-divider"></div>
+            <button type="button" id="tmodalLinkBtn" title="Insert link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.07 0l1.5-1.5a5 5 0 0 0-7.07-7.07L10 6"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.5 1.5a5 5 0 0 0 7.07 7.07L14 18"/></svg></button>
+            <button type="button" data-cmd="removeFormat" title="Clear formatting"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="3" y1="3" x2="21" y2="21"/></svg></button>
+          </div>
+          <div class="tmodal-editor-wrap">
+            <div id="newTmplBody" class="tmodal-editor" contenteditable="true" data-placeholder="To Whom It May Concern:"></div>
+            <button type="button" id="aiInlinePill" class="ai-inline-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6z"/></svg>
+              Help me write
+            </button>
+            <div id="aiInlinePrompt" class="ai-inline-prompt">
+              <span class="ai-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6z"/></svg></span>
+              <input type="text" id="aiInlinePromptInput" placeholder="Describe the letter you want — e.g. a firmer tone for delinquent accounts">
+              <button type="button" id="aiInlineCancel" class="ai-inline-cancel" title="Cancel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+              <button type="button" id="aiInlineSubmit" class="ai-inline-submit" title="Generate"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+          <div class="modal-hint">Type freely, or click a variable on the right to insert it at your cursor.</div>
+        </div>
+        <div class="tmodal-vars-col">
+          <div class="tmodal-vars-title">Variables</div>
+          <input type="text" id="varSearch" class="tmodal-vars-search" placeholder="Search variables...">
+          <div class="tmodal-vars-list" id="varList"></div>
+          <div id="varCreateArea"></div>
+        </div>
+      </div>
+    </div>
+    <div id="varTypeahead"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn" disabled>Save template</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEMPLATES = [
+  { id:'auth', name:'BOR Authorization Letter',
+    body:`To Whom It May Concern:\n\nThis letter serves as official notice that effective [Effective Date], I/we hereby appoint [Brokerage/Agent Name] as our exclusive Broker of Record for our insurance policy currently placed with [Carrier Name]. This appointment replaces all previous appointments and shall remain in force until withdrawn or canceled by me/us in writing.\n\nThis letter also authorizes our newly appointed broker to request any and all information relating to our current and past insurance coverage, including but not limited to policy forms, rates, loss information, and claim data. We understand that this Broker of Record letter is irrevocable for the term of our current policy.\n\nSincerely,` },
+  { id:'transfer', name:'BOR Transfer Notice',
+    body:`To Whom It May Concern:\n\nPlease be advised that, effective [Effective Date], we are transferring our brokerage representation for the policy(ies) currently placed with [Carrier Name] to [Brokerage/Agent Name]. From that date forward, all servicing, correspondence, and negotiations regarding our coverage should be directed to our newly designated broker.\n\nWe kindly request that your records be updated to reflect this transfer and that all renewal information, policy documents, and related materials be routed accordingly.\n\nSincerely,` },
+  { id:'confirm', name:'BOR Appointment Confirmation',
+    body:`To Whom It May Concern:\n\nThis letter confirms the appointment of [Brokerage/Agent Name] as our Broker of Record for the policy(ies) held with [Carrier Name], effective [Effective Date]. This confirmation is provided at your request to validate the appointment previously communicated.\n\nOur appointed broker is authorized to act on our behalf in all matters relating to this coverage, including access to policy forms, rating information, loss history, and claims data.\n\nSincerely,` },
+  { id:'cancel', name:'BOR Cancellation Request',
+    body:`To Whom It May Concern:\n\nEffective [Effective Date], we hereby revoke the existing Broker of Record designation on the policy(ies) held with [Carrier Name]. Please remove the current broker of record from your files and direct all future correspondence regarding our coverage to [Brokerage/Agent Name] until further notice.\n\nWe appreciate your prompt attention to this change and ask that written confirmation be provided once your records have been updated.\n\nSincerely,` },
+];
+const TEMPLATE_LABELS = Object.fromEntries(TEMPLATES.map(t => [t.id, t.name]));
+const TEMPLATE_VARIABLES = [
+  { field:'[Carrier Name]', label:'Carrier Name', description:"The insurance carrier's name" },
+  { field:'[Brokerage/Agent Name]', label:'Brokerage/Agent Name', description:'Your brokerage or agent name' },
+  { field:'[Effective Date]', label:'Effective Date', description:'The BOR effective date' },
+];
+const STEP_LABELS = ['Input','Select Template','Generate Letter'];
+const STEP_META = [
+  { title:'Broker of Record Letter', desc:'Extract policy information and generate Broker of Record letters grouped by carrier.' },
+  { title:'Select letter templates', desc:'Choose a template for each carrier, these are used to generate the BOR letters.' },
+];
+const INPUT_DATA = { effectiveDate:'2026-01-31', brokerage:'Lucas Boyd' };
+
+function formatDate(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${months[m-1]} ${d}, ${y}`;
+}
+
+let currentStep = 1;
+let modalTargetLetterId = null;
+let letters = [
+  { id:'atlantic', name:'Atlantic Casualty Insurance Company', count:'1 Policy', policies:[{num:'M261001779-0', amt:'$14,495.00'}], template:'auth' },
+  { id:'cfc', name:'CFC Underwriting Ltd', count:'3 Policies', policies:[{num:'QRS1234567890', amt:'$15,890.50'},{num:'LOU1234816890', amt:'$12,120.00'}], template:'auth' },
+  { id:'berkshire', name:'Berkshire Hathaway', count:'5 Policies', policies:[{num:'ABC0987654321', amt:'$22,500.75'},{num:'XYZ5432109876', amt:'$9,750.25'},{num:'XYZ5432109876', amt:'$9,750.25'}], template:'auth' },
+];
+let selectedGenId = 'atlantic';
+
+function renderStepper(){
+  const row = document.getElementById('stepperRow');
+  row.innerHTML = '';
+  STEP_LABELS.forEach((label, i) => {
+    const stepIndex = i + 1;
+    const cls = stepIndex < currentStep ? 'done' : stepIndex === currentStep ? 'active' : 'upcoming';
+    const stepDiv = document.createElement('div');
+    stepDiv.className = 'step ' + cls;
+    const num = cls === 'done'
+      ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>'
+      : stepIndex;
+    stepDiv.innerHTML = `<div class="step-num">${num}</div><div class="step-label">${label}</div>`;
+    if (cls === 'done') stepDiv.addEventListener('click', () => showStep(stepIndex));
+    row.appendChild(stepDiv);
+    if (i < STEP_LABELS.length - 1) {
+      const chev = document.createElement('span');
+      chev.className = 'step-chev';
+      chev.textContent = '›';
+      row.appendChild(chev);
+    }
+  });
+}
+
+function reverseMergeBody(text, letter){
+  return text
+    .split(/\n{2,}/)
+    .map(p => p.trim())
+    .filter(Boolean)
+    .join('\n\n')
+    .replaceAll(letter.name, '[Carrier Name]')
+    .replaceAll(INPUT_DATA.brokerage, '[Brokerage/Agent Name]')
+    .replaceAll(formatDate(INPUT_DATA.effectiveDate), '[Effective Date]');
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function bodyToEditorHtml(bodyText){
+  const paragraphs = bodyText.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  if (!paragraphs.length) return '';
+  return paragraphs.map(p => {
+    let html = escapeHtml(p);
+    TEMPLATE_VARIABLES.forEach(v => {
+      const esc = v.field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      html = html.replace(new RegExp(esc, 'g'), `<span class="var-badge" contenteditable="false" data-field="${v.field}">${v.label}</span>`);
+    });
+    return `<p>${html}</p>`;
+  }).join('');
+}
+
+function extractEditorPlainText(container){
+  let text = '';
+  function walk(node){
+    node.childNodes.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        text += child.textContent;
+        return;
+      }
+      if (child.nodeType !== Node.ELEMENT_NODE) return;
+      if (child.classList && child.classList.contains('var-badge')) {
+        text += child.dataset.field;
+        return;
+      }
+      if (child.tagName === 'BR') {
+        text += '\n';
+        return;
+      }
+      const isBlock = ['P','DIV','H1','H2','H3','LI'].includes(child.tagName);
+      if (isBlock && text && !text.endsWith('\n')) text += '\n\n';
+      walk(child);
+      if (isBlock && !text.endsWith('\n')) text += '\n\n';
+    });
+  }
+  walk(container);
+  return text.replace(/\n{3,}/g, '\n\n').trim();
+}
+
+function insertVariableBadge(field, label){
+  const editor = document.getElementById('newTmplBody');
+  editor.focus();
+  const sel = window.getSelection();
+  let range;
+  if (sel.rangeCount && editor.contains(sel.anchorNode)) {
+    range = sel.getRangeAt(0);
+  } else {
+    range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+  }
+  range.deleteContents();
+  const badge = document.createElement('span');
+  badge.className = 'var-badge';
+  badge.contentEditable = 'false';
+  badge.dataset.field = field;
+  badge.textContent = label;
+  range.insertNode(badge);
+  const space = document.createTextNode(' ');
+  badge.after(space);
+  range.setStartAfter(space);
+  range.setEndAfter(space);
+  sel.removeAllRanges();
+  sel.addRange(range);
+  updateSaveBtnState();
+}
+
+/* ── Typeahead: type "[" in the editor to insert a variable ── */
+let typeaheadOpen = false;
+let typeaheadMatches = [];
+let typeaheadIndex = 0;
+let typeaheadRange = null;
+
+function closeTypeahead(){
+  typeaheadOpen = false;
+  document.getElementById('varTypeahead').style.display = 'none';
+}
+
+function renderTypeahead(){
+  const dd = document.getElementById('varTypeahead');
+  if (!typeaheadMatches.length) {
+    dd.innerHTML = `<div class="typeahead-empty">No matching variables</div>`;
+    return;
+  }
+  dd.innerHTML = typeaheadMatches.map((v, i) => `
+    <div class="typeahead-item${i === typeaheadIndex ? ' active' : ''}" data-index="${i}">
+      <div class="typeahead-name">${v.label}</div>
+      <div class="typeahead-desc">${v.description || ''}</div>
+    </div>
+  `).join('');
+  dd.querySelectorAll('.typeahead-item').forEach(el => {
+    el.addEventListener('mousedown', e => {
+      e.preventDefault();
+      insertTypeaheadSelection(parseInt(el.dataset.index, 10));
+    });
+  });
+}
+
+function insertTypeaheadSelection(index){
+  const v = typeaheadMatches[index];
+  if (!v || !typeaheadRange) return;
+  const { node, start, end } = typeaheadRange;
+  const range = document.createRange();
+  range.setStart(node, start);
+  range.setEnd(node, Math.min(end, node.length));
+  range.deleteContents();
+  const badge = document.createElement('span');
+  badge.className = 'var-badge';
+  badge.contentEditable = 'false';
+  badge.dataset.field = v.field;
+  badge.textContent = v.label;
+  range.insertNode(badge);
+  const space = document.createTextNode(' ');
+  badge.after(space);
+  const sel = window.getSelection();
+  const newRange = document.createRange();
+  newRange.setStartAfter(space);
+  newRange.setEndAfter(space);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+  closeTypeahead();
+  updateSaveBtnState();
+}
+
+function checkTypeaheadTrigger(){
+  const sel = window.getSelection();
+  if (!sel.rangeCount) { closeTypeahead(); return; }
+  const range = sel.getRangeAt(0);
+  const node = range.startContainer;
+  if (!range.collapsed || node.nodeType !== Node.TEXT_NODE) { closeTypeahead(); return; }
+  const cursorOffset = range.startOffset;
+  const textBefore = node.textContent.slice(0, cursorOffset);
+  const bracketIdx = textBefore.lastIndexOf('[');
+  if (bracketIdx === -1) { closeTypeahead(); return; }
+  const query = textBefore.slice(bracketIdx + 1);
+  if (query.includes(']') || query.length > 40) { closeTypeahead(); return; }
+  const caretRect = range.cloneRange().getClientRects()[0];
+  if (!caretRect) { closeTypeahead(); return; }
+
+  typeaheadOpen = true;
+  typeaheadRange = { node, start: bracketIdx, end: cursorOffset };
+  typeaheadMatches = TEMPLATE_VARIABLES.filter(v => v.label.toLowerCase().includes(query.toLowerCase()));
+  typeaheadIndex = 0;
+  renderTypeahead();
+
+  const dd = document.getElementById('varTypeahead');
+  const modalRect = document.querySelector('.modal-box.tmodal').getBoundingClientRect();
+  dd.style.left = (caretRect.left - modalRect.left) + 'px';
+  dd.style.top = (caretRect.bottom - modalRect.top + 4) + 'px';
+  dd.style.display = 'block';
+}
+
+function renderVarList(filter = ''){
+  const wrap = document.getElementById('varList');
+  const q = filter.trim().toLowerCase();
+  const matches = TEMPLATE_VARIABLES.filter(v => v.label.toLowerCase().includes(q));
+  if (!matches.length) {
+    wrap.innerHTML = `<div class="tmodal-vars-empty">No variables match "${filter}"</div>`;
+    return;
+  }
+  wrap.innerHTML = matches.map(v => `
+    <div class="tmodal-var-row" data-field="${v.field}" data-label="${v.label}">
+      <div class="tmodal-var-name">${v.label}</div>
+      <div class="tmodal-var-desc">${v.description || ''}</div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.tmodal-var-row').forEach(row => {
+    row.addEventListener('mousedown', e => {
+      e.preventDefault();
+      insertVariableBadge(row.dataset.field, row.dataset.label);
+    });
+  });
+}
+
+function resetVarCreateArea(){
+  document.getElementById('varCreateArea').innerHTML = `
+    <button type="button" class="tmodal-var-create" id="varCreateBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Create variable
+    </button>`;
+}
+function showVarCreateForm(){
+  document.getElementById('varCreateArea').innerHTML = `
+    <div class="tmodal-var-form">
+      <input type="text" id="newVarName" placeholder="Variable name (e.g. Policy Number)">
+      <div class="tmodal-var-form-actions">
+        <button type="button" class="btn btn-secondary" id="varCreateCancel" style="height:32px;padding:0 12px;">Cancel</button>
+        <button type="button" class="btn btn-primary" id="varCreateSave" style="height:32px;padding:0 12px;" disabled>Add</button>
+      </div>
+    </div>`;
+  const nameInput = document.getElementById('newVarName');
+  nameInput.focus();
+  nameInput.addEventListener('input', () => {
+    document.getElementById('varCreateSave').disabled = !nameInput.value.trim();
+  });
+}
+document.getElementById('varCreateArea').addEventListener('click', e => {
+  if (e.target.closest('#varCreateBtn')) {
+    showVarCreateForm();
+  } else if (e.target.closest('#varCreateCancel')) {
+    resetVarCreateArea();
+  } else if (e.target.closest('#varCreateSave')) {
+    const label = document.getElementById('newVarName').value.trim();
+    if (!label) return;
+    TEMPLATE_VARIABLES.push({ field:`[${label}]`, label, description:'Custom variable' });
+    resetVarCreateArea();
+    renderVarList(document.getElementById('varSearch').value);
+  }
+});
+
+function mergeTemplateBody(templateId, letter, { includeTitle = true, editable = false } = {}){
+  const t = TEMPLATES.find(x => x.id === templateId);
+  const merged = t.body
+    .replaceAll('[Effective Date]', formatDate(INPUT_DATA.effectiveDate))
+    .replaceAll('[Brokerage/Agent Name]', INPUT_DATA.brokerage)
+    .replaceAll('[Carrier Name]', letter.name);
+  const paragraphsHtml = merged.split('\n\n').map(p => `<p>${p}</p>`).join('');
+  const bodyParagraphs = editable
+    ? `<div id="genA4Body" class="a4-editable" contenteditable="true">${paragraphsHtml}</div>`
+    : paragraphsHtml;
+  const meta = `
+    <div class="a4-meta">
+      <p><b>Date:</b> ${formatDate(INPUT_DATA.effectiveDate)}</p>
+      <p><b>To:</b> ${letter.name}</p>
+      <p>Broker of Record Department</p>
+      <p><b>Re:</b> Appointment of Broker Record</p>
+    </div>
+    <div class="a4-divider"></div>`;
+  const signature = `
+    <div class="a4-sig">
+      <div class="a4-sig-date">${formatDate(INPUT_DATA.effectiveDate)}</div>
+      <div class="a4-sig-mark"><svg width="140" height="50" viewBox="0 0 140 50" fill="none"><path d="M5 35 Q20 10 35 30 T65 25 Q80 5 95 30 T130 20" stroke="#343839" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="a4-sig-line"></div>
+      <p>Authorized Signature</p>
+      <p>Kenneth Allen</p>
+      <p>CEO</p>
+    </div>`;
+  const title = includeTitle ? '<h1>BROKER OF RECORD LETTER</h1>' : '';
+  return `${title}${meta}${bodyParagraphs}${signature}`;
+}
+
+function renderSelectTemplates(){
+  const wrap = document.getElementById('tselList');
+  wrap.innerHTML = '';
+  letters.forEach(letter => {
+    const t = TEMPLATES.find(x => x.id === letter.template);
+    const card = document.createElement('div');
+    card.className = 'tsel-card';
+    card.innerHTML = `
+      <div class="tsel-left">
+        <div class="tsel-head">
+          <div class="tsel-name">${letter.name}</div>
+          <div class="tsel-count">${letter.count}</div>
+        </div>
+        <div class="tsel-divider"></div>
+        <div class="tsel-label">Select a template</div>
+        <div class="tsel-list">
+          ${TEMPLATES.map(tp => `
+            <div class="tsel-item${letter.template === tp.id ? ' selected' : ''}" data-letter="${letter.id}" data-tmpl="${tp.id}">
+              <div class="letter-radio${letter.template === tp.id ? ' checked' : ''}"></div>
+              <span>${tp.name}</span>
+            </div>`).join('')}
+          <button type="button" class="tsel-create-item" data-letter="${letter.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Create new template
+          </button>
+        </div>
+      </div>
+      <div class="tsel-right">
+        <div class="tsel-preview-title">
+          <span><b>Preview:</b> ${t.name} Template</span>
+          <button type="button" class="tsel-duplicate-btn" data-tmpl="${t.id}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="1"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>
+            Duplicate &amp; edit template
+          </button>
+        </div>
+        <div class="tsel-preview-panel"><div class="a4 a4-flat">${mergeTemplateBody(letter.template, letter, { includeTitle:false })}</div></div>
+      </div>`;
+    wrap.appendChild(card);
+  });
+
+  wrap.querySelectorAll('.tsel-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const letter = letters.find(l => l.id === el.dataset.letter);
+      letter.template = el.dataset.tmpl;
+      renderSelectTemplates();
+    });
+  });
+  wrap.querySelectorAll('.tsel-duplicate-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const src = TEMPLATES.find(x => x.id === btn.dataset.tmpl);
+      openTemplateModal(src.body, `${src.name} (Copy)`, 'duplicate');
+    });
+  });
+  wrap.querySelectorAll('.tsel-create-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openTemplateModal('', '', 'create', btn.dataset.letter);
+    });
+  });
+}
+
+function renderGenView(){
+  const wrap = document.getElementById('genCarrierList');
+  wrap.innerHTML = '';
+  letters.forEach(letter => {
+    const item = document.createElement('div');
+    const selected = letter.id === selectedGenId;
+    item.className = 'letter-item' + (selected ? ' selected' : '');
+    item.innerHTML = `
+      <div class="letter-top has-policies">
+        <div>
+          <div class="letter-name">${letter.name}</div>
+          <div class="letter-count">${letter.count}</div>
+          <div class="letter-tmpl-tag${letter.template ? ' set' : ''}">${TEMPLATE_LABELS[letter.template] || 'No template'}</div>
+        </div>
+        <div class="letter-radio${selected ? ' checked' : ''}"></div>
+      </div>
+      <div class="letter-policies">
+        ${letter.policies.map(p => `<div class="policy-row"><span class="num">${p.num}</span><span class="amt">${p.amt}</span></div>`).join('')}
+      </div>
+    `;
+    item.addEventListener('click', () => { selectedGenId = letter.id; renderGenView(); });
+    wrap.appendChild(item);
+  });
+
+  const active = letters.find(l => l.id === selectedGenId);
+  document.getElementById('genLetterTitle').textContent = `Broker of Record Letter - ${active.name}`;
+
+  const sel = document.getElementById('genTemplateSelect');
+  sel.innerHTML = `<option value="" disabled ${active.template?'':'selected'}>Select a template</option>` +
+    TEMPLATES.map(t => `<option value="${t.id}" ${active.template===t.id?'selected':''}>${t.name}</option>`).join('');
+  sel.classList.toggle('placeholder', !active.template);
+  sel.onchange = e => {
+    active.template = e.target.value;
+    renderGenView();
+  };
+
+  const a4 = document.getElementById('genA4');
+  a4.innerHTML = active.template
+    ? mergeTemplateBody(active.template, active, { editable:true })
+    : `<div class="a4-empty"><div style="font-size:16px;font-weight:600;color:var(--text-1);margin-bottom:8px;">No template selected</div><div style="font-size:14px;color:var(--text-3);">Choose a template from the toolbar above to generate this letter.</div></div>`;
+}
+
+function showStep(step){
+  currentStep = step;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + step).classList.add('active');
+
+  const isGenerate = step === STEP_LABELS.length;
+  document.querySelector('.title-block').style.display = isGenerate ? 'none' : 'block';
+  document.querySelector('.toolbar').style.display = isGenerate ? 'none' : 'flex';
+  document.getElementById('headerBackBtn').style.display = isGenerate ? 'flex' : 'none';
+  document.getElementById('breadcrumbExtra').style.display = isGenerate ? 'inline' : 'none';
+  document.getElementById('breadcrumbExtraChev').style.display = isGenerate ? 'inline' : 'none';
+  document.getElementById('shareBtn').style.display = isGenerate ? 'flex' : 'none';
+  if (!isGenerate) {
+    const meta = STEP_META[step - 1];
+    document.getElementById('titleBlockTitle').textContent = meta.title;
+    document.getElementById('titleBlockDesc').textContent = meta.desc;
+  }
+  if (step === 2) renderSelectTemplates();
+  if (isGenerate) {
+    document.getElementById('breadcrumbExtra').textContent = 'BOR Request - Outmarket AI & Chaucer Insurance - Lucas Boyd';
+    renderGenView();
+  }
+  document.getElementById('backBtn').style.display = step > 1 && !isGenerate ? 'flex' : 'none';
+  renderStepper();
+}
+
+document.getElementById('continueBtn').addEventListener('click', () => {
+  if (currentStep < STEP_LABELS.length) showStep(currentStep + 1);
+});
+document.getElementById('backBtn').addEventListener('click', () => {
+  if (currentStep > 1) showStep(currentStep - 1);
+});
+document.getElementById('headerBackBtn').addEventListener('click', () => showStep(currentStep - 1));
+
+/* ── Create / Save-as template modal ─────────────────── */
+function slugify(name){
+  return 'custom-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+}
+function updateSaveBtnState(){
+  const name = document.getElementById('newTmplName').value.trim();
+  const body = extractEditorPlainText(document.getElementById('newTmplBody')).trim();
+  document.getElementById('modalSaveBtn').disabled = !name || !body;
+}
+const MODAL_COPY = {
+  create: { title:'Create new template', subtitle:'Write reusable letter text — merge fields fill in per carrier automatically.' },
+  duplicate: { title:'Duplicate template', subtitle:'Starting from an existing template — tweak the wording below, then save it as a new one.' },
+  save: { title:'Save as template', subtitle:'Your edits below, with carrier details swapped back to merge fields, ready to reuse.' },
+};
+
+function openTemplateModal(prefillBody = '', prefillName = '', mode = 'create', targetLetterId = null){
+  modalTargetLetterId = targetLetterId;
+  const copy = MODAL_COPY[mode] || MODAL_COPY.create;
+  document.getElementById('modalTitle').textContent = copy.title;
+  document.getElementById('modalSubtitle').textContent = copy.subtitle;
+  document.getElementById('newTmplName').value = prefillName;
+  document.getElementById('newTmplBody').innerHTML = bodyToEditorHtml(prefillBody);
+  closeAiPrompt();
+  showAiPill();
+  document.getElementById('varSearch').value = '';
+  renderVarList();
+  resetVarCreateArea();
+  updateSaveBtnState();
+  document.getElementById('templateModalOverlay').classList.add('open');
+  const nameInput = document.getElementById('newTmplName');
+  nameInput.focus();
+  nameInput.select();
+}
+function closeTemplateModal(){
+  document.getElementById('templateModalOverlay').classList.remove('open');
+  closeTypeahead();
+}
+
+/* ── Draft with AI (simulated, Gmail "Help me write" pattern) ── */
+function isEditorEmpty(){
+  return document.getElementById('newTmplBody').textContent.trim() === '';
+}
+function showAiPill(){
+  document.getElementById('aiInlinePill').style.display = isEditorEmpty() ? 'inline-flex' : 'none';
+}
+function openAiPrompt(){
+  document.getElementById('aiInlinePill').style.display = 'none';
+  document.getElementById('aiInlinePrompt').classList.add('open');
+  const input = document.getElementById('aiInlinePromptInput');
+  input.value = '';
+  input.focus();
+}
+function closeAiPrompt(){
+  document.getElementById('aiInlinePrompt').classList.remove('open');
+  showAiPill();
+}
+const AI_DRAFTS = {
+  firm: `To Whom It May Concern:\n\nThis letter serves as formal notice that, as of [Effective Date], [Brokerage/Agent Name] is appointed as the exclusive Broker of Record for the policy(ies) held with [Carrier Name]. Prompt compliance with this appointment is required, and any correspondence directed to the prior broker of record will no longer be recognized as valid.\n\nPlease confirm receipt of this notice and update your records without delay.\n\nSincerely,`,
+  friendly: `To Whom It May Concern:\n\nWe hope this note finds you well! We wanted to let you know that, as of [Effective Date], we've asked [Brokerage/Agent Name] to take over as our Broker of Record for our policy(ies) with [Carrier Name].\n\nWe'd really appreciate your help getting everything transferred smoothly, and please don't hesitate to reach out if you have any questions.\n\nWarm regards,`,
+  concise: `To Whom It May Concern:\n\nAs of [Effective Date], [Brokerage/Agent Name] is our Broker of Record for the policy(ies) held with [Carrier Name]. Please update your records accordingly and route future correspondence to our new broker.\n\nThank you,`,
+  default: `To Whom It May Concern:\n\nThis letter serves as official notice that, as of [Effective Date], I/we hereby appoint [Brokerage/Agent Name] as our exclusive Broker of Record for our insurance policy currently placed with [Carrier Name]. This appointment replaces all previous appointments and shall remain in force until withdrawn or canceled by me/us in writing.\n\nSincerely,`,
+};
+function pickAiDraft(prompt){
+  const p = prompt.toLowerCase();
+  if (/firm|urgent|strict|serious|delinquent|overdue/.test(p)) return AI_DRAFTS.firm;
+  if (/friendly|polite|warm|kind|nice|casual/.test(p)) return AI_DRAFTS.friendly;
+  if (/short|concise|brief|quick|simple/.test(p)) return AI_DRAFTS.concise;
+  return AI_DRAFTS.default;
+}
+function suggestNameFromPrompt(prompt){
+  const words = prompt.trim().split(/\s+/).slice(0, 4).join(' ');
+  return 'BOR ' + words.charAt(0).toUpperCase() + words.slice(1);
+}
+function runAiGenerate(){
+  const promptInput = document.getElementById('aiInlinePromptInput');
+  const promptVal = promptInput.value.trim();
+  if (!promptVal) { promptInput.focus(); return; }
+  const submitBtn = document.getElementById('aiInlineSubmit');
+  if (submitBtn.disabled) return;
+  const originalHTML = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<svg class="ai-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9"/></svg>`;
+  setTimeout(() => {
+    const draftBody = pickAiDraft(promptVal);
+    document.getElementById('newTmplBody').innerHTML = bodyToEditorHtml(draftBody);
+    const nameInput = document.getElementById('newTmplName');
+    if (!nameInput.value.trim()) nameInput.value = suggestNameFromPrompt(promptVal);
+    updateSaveBtnState();
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalHTML;
+    closeAiPrompt();
+  }, 900);
+}
+document.getElementById('aiInlinePill').addEventListener('click', openAiPrompt);
+document.getElementById('tmodalAiToggleBtn').addEventListener('click', openAiPrompt);
+document.getElementById('aiInlineCancel').addEventListener('click', closeAiPrompt);
+document.getElementById('aiInlineSubmit').addEventListener('click', runAiGenerate);
+document.getElementById('aiInlinePromptInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); runAiGenerate(); }
+  else if (e.key === 'Escape') { e.preventDefault(); closeAiPrompt(); }
+});
+
+document.getElementById('saveAsTemplateBtn').addEventListener('click', () => {
+  const active = letters.find(l => l.id === selectedGenId);
+  const bodyEl = document.getElementById('genA4Body');
+  const prefill = active.template && bodyEl ? reverseMergeBody(bodyEl.innerText, active) : '';
+  openTemplateModal(prefill, '', 'save');
+});
+document.getElementById('modalCloseBtn').addEventListener('click', closeTemplateModal);
+document.getElementById('modalCancelBtn').addEventListener('click', closeTemplateModal);
+document.getElementById('templateModalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'templateModalOverlay') closeTemplateModal();
+});
+document.getElementById('newTmplName').addEventListener('input', updateSaveBtnState);
+document.getElementById('newTmplBody').addEventListener('input', () => {
+  updateSaveBtnState();
+  checkTypeaheadTrigger();
+  showAiPill();
+});
+document.getElementById('newTmplBody').addEventListener('keydown', e => {
+  if (!typeaheadOpen) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    typeaheadIndex = Math.min(typeaheadIndex + 1, typeaheadMatches.length - 1);
+    renderTypeahead();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    typeaheadIndex = Math.max(typeaheadIndex - 1, 0);
+    renderTypeahead();
+  } else if (e.key === 'Enter' || e.key === 'Tab') {
+    if (typeaheadMatches.length) {
+      e.preventDefault();
+      insertTypeaheadSelection(typeaheadIndex);
+    }
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeTypeahead();
+  }
+});
+document.getElementById('newTmplBody').addEventListener('blur', () => {
+  setTimeout(closeTypeahead, 150);
+});
+document.getElementById('varSearch').addEventListener('input', e => renderVarList(e.target.value));
+document.querySelectorAll('.tmodal-toolbar button[data-cmd]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('newTmplBody').focus();
+    document.execCommand(btn.dataset.cmd, false, null);
+    btn.classList.toggle('active', document.queryCommandState(btn.dataset.cmd));
+  });
+});
+document.getElementById('tmodalBlockFormat').addEventListener('change', e => {
+  document.getElementById('newTmplBody').focus();
+  document.execCommand('formatBlock', false, e.target.value);
+});
+document.getElementById('tmodalLinkBtn').addEventListener('click', () => {
+  const editor = document.getElementById('newTmplBody');
+  editor.focus();
+  const url = prompt('Link URL:', 'https://');
+  if (url) document.execCommand('createLink', false, url);
+});
+document.getElementById('modalSaveBtn').addEventListener('click', () => {
+  const name = document.getElementById('newTmplName').value.trim();
+  const body = extractEditorPlainText(document.getElementById('newTmplBody')).trim();
+  if (!name || !body) return;
+  const newTemplate = { id: slugify(name), name, body };
+  TEMPLATES.push(newTemplate);
+  TEMPLATE_LABELS[newTemplate.id] = newTemplate.name;
+  if (modalTargetLetterId) {
+    const target = letters.find(l => l.id === modalTargetLetterId);
+    if (target) target.template = newTemplate.id;
+  }
+  closeTemplateModal();
+  if (currentStep === 2) renderSelectTemplates();
+  if (currentStep === STEP_LABELS.length) renderGenView();
+});
+
+showStep(1);
+</script>
+</body>
+</html>

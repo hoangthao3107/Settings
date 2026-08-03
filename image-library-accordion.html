@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Library — Accordion option</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Outmarket Design Tokens (from Figma) ───────────────── */
+:root {
+  --color-text-primary:     #1b1d1d;
+  --color-text-secondary:   #343839;
+  --color-text-tertiary:    #525965;
+  --color-text-quaternary:  #97a0b4;
+  --color-text-interactive: #6a56f0;
+
+  --color-border-swatch:    #e7ebee;
+  --color-border-strong:    #d0d5dd;
+  --color-border-accent:    #6a56f0;
+
+  --color-bg-white:         #ffffff;
+  --color-bg-blanket:       #f9fafb;
+  --color-bg-overlay:       #f6f7fe;
+  --color-bg-muted:         #f2f4f7;
+
+  --color-accent-solid:     #6a56f0;
+
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-xl:  12px;
+
+  --space-100:  4px;
+  --space-150:  6px;
+  --space-200:  8px;
+  --space-300:  12px;
+  --space-400:  16px;
+
+  --text-xs-size: 12px;
+  --text-xs-lh:   16px;
+  --text-sm-size: 14px;
+  --text-sm-lh:   20px;
+  --text-md-size: 16px;
+  --text-md-lh:   24px;
+
+  --shadow-lg: 0px 12px 16px -4px rgba(52,56,57,0.08), 0px 4px 6px -2px rgba(52,56,57,0.03);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #e8eaf0;
+  background-image: radial-gradient(circle, #bbbec9 1px, transparent 1px);
+  background-size: 24px 24px;
+  min-height: 100vh;
+  padding: 48px 40px 80px;
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.page-subtitle {
+  text-align: center;
+  margin-bottom: 48px;
+  font-size: 13px;
+  color: #888;
+}
+
+.stage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.state-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.state-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent-solid);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  background: rgba(106,86,240,0.1);
+  border-radius: 99px;
+}
+.state-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POPOVER SHELL — 400 × 720px, no sidebar
+   ═══════════════════════════════════════════════════════════ */
+.il {
+  width: 400px;
+  height: 720px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.il-header {
+  height: 72px;
+  padding: var(--space-400);
+  border-bottom: 1px solid var(--color-border-swatch);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.il-title {
+  font-size: var(--text-md-size);
+  font-weight: 600;
+  line-height: var(--text-md-lh);
+  color: var(--color-text-primary);
+}
+.il-new-cat-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 40px;
+  padding: var(--space-200) var(--space-400);
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.il-new-cat-btn:hover { background: var(--color-bg-blanket); }
+
+/* ── Body ────────────────────────────────────────────────── */
+.il-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: var(--space-400) var(--space-400) 0;
+}
+.il-body::-webkit-scrollbar { width: 3px; }
+.il-body::-webkit-scrollbar-thumb { background: var(--color-border-swatch); border-radius: 2px; }
+
+/* ── Category list ───────────────────────────────────────── */
+.il-cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Category row ────────────────────────────────────────── */
+.il-cat-row {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 var(--space-400);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background 0.1s;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+.il-cat-row:hover { background: var(--color-bg-blanket); }
+.il-cat-row.open { background: var(--color-bg-overlay); border-radius: var(--radius-md) var(--radius-md) 0 0; }
+
+.il-cat-name {
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  line-height: var(--text-sm-lh);
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+.il-cat-row.open .il-cat-name { color: var(--color-text-interactive); font-weight: 600; }
+
+.il-cat-count {
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  color: var(--color-text-quaternary);
+  margin-right: var(--space-200);
+  flex-shrink: 0;
+}
+.il-cat-row.open .il-cat-count { color: var(--color-text-interactive); }
+
+.il-chevron {
+  color: var(--color-text-quaternary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+.il-cat-row.open .il-chevron { transform: rotate(90deg); color: var(--color-text-interactive); }
+
+/* ── Expanded category content ───────────────────────────── */
+.il-cat-content {
+  display: none;
+  flex-direction: column;
+  background: var(--color-bg-overlay);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 0 var(--space-400) var(--space-300);
+  margin-bottom: var(--space-100);
+}
+.il-cat-content.open { display: flex; }
+
+/* ── Folder rows (inside expanded category) ──────────────── */
+.il-folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--space-200);
+}
+
+.il-folder-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: 36px;
+  padding: 0 var(--space-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.1s;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.il-folder-row:hover { background: rgba(106,86,240,0.06); }
+
+.il-folder-icon { color: var(--color-text-quaternary); flex-shrink: 0; display: flex; align-items: center; }
+.il-folder-name {
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-lh);
+  color: var(--color-text-secondary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.il-folder-count {
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  color: var(--color-text-quaternary);
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+.il-folder-chevron { color: var(--color-text-quaternary); flex-shrink: 0; display: flex; align-items: center; }
+
+/* Divider between folders and images */
+.il-divider {
+  height: 1px;
+  background: var(--color-border-swatch);
+  margin: var(--space-200) 0 var(--space-300);
+}
+
+/* ── 3-column image grid ─────────────────────────────────── */
+/* Matches Figma: 3 cols, each ~114.67px, gap 12px */
+.il-img-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-300);
+}
+
+.il-img-card {
+  background: var(--color-bg-blanket);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  aspect-ratio: 1;
+}
+.il-img-card:hover {
+  border-color: var(--color-border-accent);
+  box-shadow: 0 0 0 2px rgba(106,86,240,0.12);
+}
+.il-img-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.il-footer {
+  padding: var(--space-300) var(--space-400);
+  border-top: 1px solid var(--color-border-swatch);
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  flex-shrink: 0;
+  background: var(--color-bg-white);
+}
+.il-btn-primary {
+  flex: 1;
+  height: 40px;
+  background: var(--color-accent-solid);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-200);
+  transition: opacity 0.12s;
+}
+.il-btn-primary:hover { opacity: 0.88; }
+.il-btn-secondary {
+  flex: 1;
+  height: 40px;
+  background: var(--color-bg-white);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-swatch);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-200);
+  transition: background 0.12s;
+}
+.il-btn-secondary:hover { background: var(--color-bg-blanket); }
+
+/* ── Folder drill-in header (State 2) ────────────────────── */
+.il-drill-header {
+  height: 72px;
+  padding: var(--space-400);
+  border-bottom: 1px solid var(--color-border-swatch);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-100);
+  flex-shrink: 0;
+}
+.il-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.il-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  color: var(--color-text-interactive);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.il-back-btn:hover { background: var(--color-bg-overlay); }
+.il-breadcrumb-sep { font-size: 12px; color: var(--color-border-strong); line-height: 1; }
+.il-breadcrumb-cat  { font-size: var(--text-xs-size); color: var(--color-text-tertiary); }
+.il-breadcrumb-cur  { font-size: var(--text-xs-size); font-weight: 600; color: var(--color-text-primary); }
+
+.il-drill-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.il-drill-title {
+  font-size: var(--text-md-size);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.il-drill-count {
+  font-size: var(--text-xs-size);
+  color: var(--color-text-quaternary);
+}
+
+/* Folder drill-in body */
+.il-drill-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-400);
+  min-height: 0;
+}
+.il-drill-body::-webkit-scrollbar { width: 3px; }
+.il-drill-body::-webkit-scrollbar-thumb { background: var(--color-border-swatch); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Image Library · Accordion Option</p>
+<p class="page-subtitle">Full-width accordion · Folders inside category · Folder drill-in · 400×720px</p>
+
+<div class="stage">
+
+  <!-- ═══════════════ STATE 1: Category expanded — folders + images ═══════════════ -->
+  <div class="state-wrap">
+    <span class="state-tag">State 1</span>
+    <span class="state-name">Category expanded — folders + images</span>
+    <div class="il">
+
+      <div class="il-header">
+        <span class="il-title">Image Library</span>
+        <button class="il-new-cat-btn">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          New category
+        </button>
+      </div>
+
+      <div class="il-body">
+        <div class="il-cat-list">
+
+          <!-- Category: Logo (collapsed) -->
+          <button class="il-cat-row">
+            <span class="il-cat-name">Logo</span>
+            <span class="il-cat-count">124 images</span>
+            <span class="il-chevron">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+          <!-- Category: Backgrounds (EXPANDED) -->
+          <button class="il-cat-row open">
+            <span class="il-cat-name">Backgrounds</span>
+            <span class="il-cat-count">23 images</span>
+            <span class="il-chevron">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+          <div class="il-cat-content open" id="cat-backgrounds">
+            <!-- 2 folder rows -->
+            <div class="il-folder-list">
+              <button class="il-folder-row">
+                <span class="il-folder-icon">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="il-folder-name">Summer Campaign</span>
+                <span class="il-folder-count">8</span>
+                <span class="il-folder-chevron">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </button>
+              <button class="il-folder-row">
+                <span class="il-folder-icon">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="il-folder-name">Winter Collection</span>
+                <span class="il-folder-count">12</span>
+                <span class="il-folder-chevron">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="il-divider"></div>
+
+            <!-- 3-col image grid -->
+            <div class="il-img-grid" id="s1-grid"></div>
+          </div>
+
+          <!-- Category: Icons (collapsed) -->
+          <button class="il-cat-row">
+            <span class="il-cat-name">Icons</span>
+            <span class="il-cat-count">89 images</span>
+            <span class="il-chevron">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+          <!-- Category: Profiles (collapsed) -->
+          <button class="il-cat-row">
+            <span class="il-cat-name">Profiles</span>
+            <span class="il-cat-count">45 images</span>
+            <span class="il-chevron">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+          <!-- Category: Clipboard (collapsed) -->
+          <button class="il-cat-row">
+            <span class="il-cat-name">Clipboard</span>
+            <span class="il-cat-count">15 images</span>
+            <span class="il-chevron">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+        </div>
+      </div><!-- end .il-body -->
+
+      <div class="il-footer">
+        <button class="il-btn-primary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4-5 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Upload image
+        </button>
+        <button class="il-btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 7.5v3M6.5 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          New folder
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════ STATE 2: Folder drill-in view ═══════════════ -->
+  <div class="state-wrap">
+    <span class="state-tag">State 2</span>
+    <span class="state-name">Folder drill-in — Summer Campaign</span>
+    <div class="il">
+
+      <!-- Drill-in header: breadcrumb + folder title -->
+      <div class="il-drill-header">
+        <div class="il-breadcrumb">
+          <button class="il-back-btn">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <span class="il-breadcrumb-sep">/</span>
+          <span class="il-breadcrumb-cat">Backgrounds</span>
+          <span class="il-breadcrumb-sep">/</span>
+          <span class="il-breadcrumb-cur">Summer Campaign</span>
+        </div>
+        <div class="il-drill-title-row">
+          <span class="il-drill-title">Summer Campaign</span>
+          <span class="il-drill-count">8 images</span>
+        </div>
+      </div>
+
+      <!-- Folder image grid -->
+      <div class="il-drill-body">
+        <div class="il-img-grid" id="s2-grid"></div>
+      </div>
+
+      <div class="il-footer">
+        <button class="il-btn-primary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4-5 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Upload to this folder
+        </button>
+        <button class="il-btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3h3l1.5 1.5H12.5C13.33 4.5 14 5.17 14 6v5.5C14 12.33 13.33 13 12.5 13h-9C2.67 13 2 12.33 2 11.5v-7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 7.5v3M6.5 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          New folder
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end .stage -->
+
+<script>
+const CAT_SEEDS  = ['arch1','arch2','arch3','arch4','arch5','arch6','arch7','arch8','arch9'];
+const FOLD_SEEDS = ['sum1','sum2','sum3','sum4','sum5','sum6','sum7','sum8'];
+
+function imgCard(seed) {
+  return `<div class="il-img-card"><img class="il-img-thumb" src="https://picsum.photos/seed/${seed}/160/160" alt="" loading="lazy"></div>`;
+}
+
+document.getElementById('s1-grid').innerHTML = CAT_SEEDS.map(imgCard).join('');
+document.getElementById('s2-grid').innerHTML = FOLD_SEEDS.map(imgCard).join('');
+
+/* Accordion toggle */
+document.querySelectorAll('.il-cat-row').forEach(row => {
+  row.addEventListener('click', () => {
+    const isOpen = row.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.il-cat-row').forEach(r => r.classList.remove('open'));
+    document.querySelectorAll('.il-cat-content').forEach(c => c.classList.remove('open'));
+    // Open clicked (unless it was already open)
+    if (!isOpen) {
+      row.classList.add('open');
+      const content = row.nextElementSibling;
+      if (content && content.classList.contains('il-cat-content')) {
+        content.classList.add('open');
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

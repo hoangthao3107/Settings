@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="teams-settings">
+    <div class="teams-settings__top-accent"></div>
+
+    <aside class="teams-settings__sidebar">
+      <div class="teams-settings__sidebar-logo">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none" aria-hidden="true">
+          <circle cx="19" cy="19" r="14" stroke="#FF5B1F" stroke-width="4"></circle>
+          <path d="M2 19H13" stroke="#FF5B1F" stroke-width="4" stroke-linecap="round"></path>
+          <path d="M25 19H36" stroke="#FF5B1F" stroke-width="4" stroke-linecap="round"></path>
+        </svg>
+      </div>
+
+      <div class="teams-settings__sidebar-separator"></div>
+
+      <div class="teams-settings__sidebar-group">
+        <button class="teams-settings__sidebar-button" aria-label="Home">
+          <span class="icon icon--home"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Folders">
+          <span class="icon icon--folder"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Support">
+          <span class="icon icon--heart"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Security">
+          <span class="icon icon--shield"></span>
+        </button>
+        <button class="teams-settings__sidebar-button is-active" aria-label="Teams">
+          <span class="icon icon--list"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Workflows">
+          <span class="icon icon--spark"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Policies">
+          <span class="icon icon--proposal"></span>
+        </button>
+      </div>
+
+      <div class="teams-settings__sidebar-separator is-lower"></div>
+
+      <div class="teams-settings__sidebar-group">
+        <button class="teams-settings__sidebar-button" aria-label="Documents">
+          <span class="icon icon--book"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Messages">
+          <span class="icon icon--message"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Launchpad">
+          <span class="icon icon--grid"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Analytics">
+          <span class="icon icon--chart"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Blocks">
+          <span class="icon icon--shapes"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="Builder">
+          <span class="icon icon--layout"></span>
+        </button>
+        <button class="teams-settings__sidebar-button" aria-label="System">
+          <span class="icon icon--database"></span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="teams-settings__main">
+      <header class="teams-settings__header">
+        <div class="teams-settings__header-title">Settings</div>
+
+        <div class="teams-settings__header-actions">
+          <button type="button" class="teams-settings__progress-pill">
+            <span class="teams-settings__progress-ring"></span>
+            <span>3 / 4</span>
+            <span class="icon icon--chevron-down small"></span>
+            <span class="teams-settings__status-dot"></span>
+          </button>
+
+          <button type="button" class="teams-settings__feedback-button">Feedback</button>
+          <button type="button" class="teams-settings__icon-ghost" aria-label="Notes"><span class="icon icon--book"></span></button>
+          <button type="button" class="teams-settings__icon-ghost" aria-label="Inbox"><span class="icon icon--message"></span></button>
+          <button type="button" class="teams-settings__icon-ghost" aria-label="Notifications">
+            <span class="icon icon--bell"></span>
+            <span class="teams-settings__header-badge">1</span>
+          </button>
+          <div class="teams-settings__avatar">MA</div>
+        </div>
+      </header>
+
+      <div class="teams-settings__settings-tabs">
+        <button class="teams-settings__settings-tab">Profile</button>
+        <button class="teams-settings__settings-tab">Company</button>
+        <button class="teams-settings__settings-tab">Users &amp; Billing</button>
+        <button class="teams-settings__settings-tab is-active">Teams</button>
+        <button class="teams-settings__settings-tab">Entity Groups</button>
+        <button class="teams-settings__settings-tab">Outmarket Console</button>
+      </div>
+
+      <div class="teams-settings__content" id="content">
+        <section class="teams-settings__left-panel">
+          <div class="teams-settings__left-head">
+            <div>
+              <h1>Teams</h1>
+              <p>4 teams</p>
+            </div>
+            <button id="open-modal" type="button" class="teams-settings__button teams-settings__button--purple">
+              <span class="icon icon--plus white"></span>
+              <span>Create Team</span>
+            </button>
+          </div>
+
+          <label class="teams-settings__search">
+            <span class="icon icon--search"></span>
+            <input type="text" placeholder="Search teams..." />
+          </label>
+
+          <div class="teams-settings__left-divider"></div>
+
+          <div class="teams-settings__organization-row">
+            <span class="teams-settings__toggle"><span class="teams-settings__toggle-knob"></span></span>
+            <span>Show all organization teams</span>
+          </div>
+
+          <div class="teams-settings__left-divider"></div>
+
+          <div class="teams-settings__team-list">
+            <button type="button" class="teams-settings__team-card" data-team="bug-bash">
+              <div class="teams-settings__team-card-head">
+                <span class="icon icon--members"></span>
+                <div class="teams-settings__team-card-title">Bug Bash Workflows Team</div>
+              </div>
+              <p class="teams-settings__team-card-summary">Focused team for workflow quality reviews.</p>
+              <div class="teams-settings__team-card-meta">
+                <span class="icon icon--members small"></span>
+                <span>7 Members</span>
+              </div>
+            </button>
+
+            <button type="button" class="teams-settings__team-card is-active" data-team="collab">
+              <div class="teams-settings__team-card-head">
+                <span class="icon icon--members"></span>
+                <div class="teams-settings__team-card-title">Collab Team</div>
+              </div>
+              <p class="teams-settings__team-card-summary">Cross-functional team for shared delivery work.</p>
+              <div class="teams-settings__team-card-meta">
+                <span class="icon icon--members small"></span>
+                <span>14 Members</span>
+              </div>
+            </button>
+
+            <button type="button" class="teams-settings__team-card" data-team="team-test">
+              <div class="teams-settings__team-card-head">
+                <span class="icon icon--members"></span>
+                <div class="teams-settings__team-card-title">Team Test</div>
+              </div>
+              <p class="teams-settings__team-card-summary">Sandbox team used for validation and QA checks.</p>
+              <div class="teams-settings__team-card-meta">
+                <span class="icon icon--members small"></span>
+                <span>2 Members</span>
+              </div>
+            </button>
+
+            <button type="button" class="teams-settings__team-card" data-team="all-members">
+              <div class="teams-settings__team-card-head">
+                <span class="icon icon--members"></span>
+                <div class="teams-settings__team-card-title">All Members</div>
+                <span class="icon icon--lock"></span>
+              </div>
+              <p class="teams-settings__team-card-summary">System team containing all members of the instance</p>
+              <div class="teams-settings__team-card-meta">
+                <span class="icon icon--members small"></span>
+                <span>303 Members</span>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <section class="teams-settings__detail-panel">
+          <div class="teams-settings__detail-header">
+            <div class="teams-settings__detail-title">
+              <span class="icon icon--members title"></span>
+              <h2 id="team-title">Collab Team</h2>
+            </div>
+
+            <div class="teams-settings__detail-stats">
+              <div class="teams-settings__detail-stat">
+                <span class="icon icon--members purple"></span>
+                <strong id="members-count">14</strong>
+                <span>Members</span>
+              </div>
+              <div class="teams-settings__detail-stat">
+                <span class="icon icon--shield orange"></span>
+                <strong id="admins-count">2</strong>
+                <span>Admins</span>
+              </div>
+            </div>
+          </div>
+
+          <p id="team-summary" class="teams-settings__detail-subtitle">Cross-functional team for shared delivery work.</p>
+
+          <div class="teams-settings__detail-tabs">
+            <button type="button" class="teams-settings__detail-tab is-active" data-view="team-members">
+              <span class="icon icon--members tab"></span>
+              <span>Team Members</span>
+              <em id="members-pill">14</em>
+            </button>
+            <button type="button" class="teams-settings__detail-tab" data-view="resources">
+              <span class="icon icon--folder tab"></span>
+              <span>Resources</span>
+              <em id="resources-pill">1</em>
+            </button>
+            <button type="button" class="teams-settings__detail-tab" data-view="resource-tree">
+              <span class="icon icon--tree tab"></span>
+              <span>Resource Tree</span>
+            </button>
+          </div>
+
+          <div id="detail-content"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="teams-settings__modal-layer hidden" id="modal-layer">
+    <div class="teams-settings__modal" role="dialog" aria-modal="true" aria-labelledby="create-team-title">
+      <h2 id="create-team-title">Create New Team</h2>
+
+      <label class="teams-settings__field">
+        <span>Team Name <em>*</em></span>
+        <input type="text" placeholder="Enter team name" />
+      </label>
+
+      <label class="teams-settings__field">
+        <span>Description</span>
+        <textarea placeholder="Enter team description (optional)"></textarea>
+      </label>
+
+      <div class="teams-settings__modal-actions">
+        <button id="close-modal" type="button" class="teams-settings__button teams-settings__button--secondary">Cancel</button>
+        <button type="button" class="teams-settings__button teams-settings__button--primary">Create Team</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
