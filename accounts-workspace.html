@@ -232,6 +232,47 @@ button{cursor:pointer;font-family:inherit;}
 .acct-empty-vault-btn{border:1px solid var(--border-primary);border-radius:var(--r-md);padding:8px 16px;font-size:14px;font-weight:500;color:var(--text-secondary);background:var(--bg-primary);cursor:pointer;font-family:inherit;transition:background .15s;}
 .acct-empty-vault-btn:hover{background:var(--bg-secondary);}
 .tool-card-req{font-size:14px;color:var(--text-tertiary);margin-top:1px;}
+
+/* ── Plans tab ── */
+.plan-line{border:1px solid var(--border-secondary);border-radius:var(--r-md);overflow:hidden;}
+.plan-line-hd{background:var(--bg-secondary);border-bottom:1px solid var(--border-subtle);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.plan-line-name{font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;}
+.plan-line-sub{font-size:12px;color:var(--text-tertiary);margin-top:2px;}
+.plan-card{padding:20px;border-bottom:1px solid var(--border-subtle);}
+.plan-card:last-child{border-bottom:none;}
+.plan-card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;}
+.plan-name{font-size:15px;font-weight:600;color:var(--text-primary);line-height:22px;}
+.plan-tags{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.plan-tag{font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;border:1px solid var(--border-subtle);color:var(--text-secondary);background:var(--bg-primary);white-space:nowrap;}
+.plan-tag.av{color:var(--purple);background:var(--purple-subtle);border-color:transparent;}
+.plan-enrolled{font-size:12px;color:var(--text-tertiary);white-space:nowrap;padding-top:2px;}
+.plan-body{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+.plan-col-label{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.plan-attrs{display:flex;flex-direction:column;}
+.plan-attr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;gap:12px;}
+.plan-attr:last-child{border-bottom:none;}
+.plan-attr-k{color:var(--text-tertiary);}
+.plan-attr-v{color:var(--text-primary);font-weight:500;font-variant-numeric:tabular-nums;text-align:right;}
+.plan-rt{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;}
+.plan-rt th{font-size:11px;font-weight:500;color:var(--text-tertiary);padding:0 0 7px;text-align:right;}
+.plan-rt th:first-child{text-align:left;}
+.plan-rt td{padding:6px 0;border-top:1px solid var(--border-subtle);text-align:right;}
+.plan-rt td:first-child{text-align:left;color:var(--text-tertiary);font-size:12px;}
+.plan-rt .rt-er{color:var(--text-tertiary);}
+.plan-rt .rt-ee{color:var(--text-secondary);}
+.plan-rt .rt-total{color:var(--text-primary);}
+.plan-source{display:flex;align-items:center;gap:5px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-subtle);font-size:11px;color:var(--text-tertiary);}
+/* Account defaults */
+.acct-defaults{border:1px solid var(--border-secondary);border-radius:var(--r-md);overflow:hidden;}
+.acct-defaults-hd{background:var(--bg-secondary);border-bottom:1px solid var(--border-subtle);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.acct-defaults-label{font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;}
+.acct-defaults-desc{font-size:12px;color:var(--text-tertiary);margin-top:2px;}
+.acct-defaults-body{padding:0 16px;}
+.acct-default-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-subtle);gap:16px;}
+.acct-default-row:last-child{border-bottom:none;}
+.acct-default-key{font-size:13px;color:var(--text-secondary);}
+.acct-default-val{font-size:13px;font-weight:500;color:var(--text-primary);}
+.acct-defaults-note{padding:10px 16px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--text-tertiary);display:flex;align-items:center;gap:5px;}
 /* ── Tab empty state ── */
 .tab-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:80px 24px;text-align:center;}
 .tab-es-icon{width:48px;height:48px;border-radius:var(--r-md);background:var(--bg-secondary);border:1px solid var(--border-secondary);display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);}
@@ -1480,6 +1521,7 @@ button{cursor:pointer;font-family:inherit;}
         <!-- Account tab bar -->
         <div class="account-tabs">
           <button class="atab active" data-tab="tab-overview" onclick="showAccountTab('tab-overview')">Overview</button>
+          <button class="atab" data-tab="tab-plans" onclick="showAccountTab('tab-plans')">Plans</button>
           <button class="atab" data-tab="tab-census" onclick="showAccountTab('tab-census')">Census</button>
           <button class="atab" data-tab="tab-enrollment" onclick="showAccountTab('tab-enrollment')">Enrollment</button>
           <button class="atab" data-tab="tab-contacts" onclick="showAccountTab('tab-contacts')">Contacts</button>
@@ -1776,6 +1818,347 @@ button{cursor:pointer;font-family:inherit;}
           </div>
 
         </div><!-- /tab-overview-empty -->
+
+        <!-- TAB: Plans (Cascade Logistics — in force) -->
+        <div class="atab-panel" id="tab-plans">
+
+          <!-- Header -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+            <div>
+              <div class="section-title">Plans in force</div>
+              <div class="section-sub">Effective Jan 1, 2025 · 3 lines of coverage</div>
+            </div>
+            <button class="btn btn-secondary" style="white-space:nowrap;flex-shrink:0;" onclick="openComparePlansModal()">Compare plans</button>
+          </div>
+
+          <!-- Account defaults -->
+          <div class="acct-defaults">
+            <div class="acct-defaults-hd">
+              <div>
+                <div class="acct-defaults-label">Account defaults</div>
+                <div class="acct-defaults-desc">Pre-fill values used by Cost Analysis and Contribution Analysis on every run</div>
+              </div>
+              <button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;flex-shrink:0;">Edit</button>
+            </div>
+            <div class="acct-defaults-body">
+              <div class="acct-default-row">
+                <span class="acct-default-key">Contribution strategy</span>
+                <span class="acct-default-val">80% employer · all tiers</span>
+              </div>
+              <div class="acct-default-row">
+                <span class="acct-default-key">Pay period</span>
+                <span class="acct-default-val">Semi-monthly <span style="font-size:12px;font-weight:400;color:var(--text-tertiary);">(24 / yr)</span></span>
+              </div>
+            </div>
+            <div class="acct-defaults-note">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M6.5 6v3M6.5 4v.5" stroke-linecap="round"/></svg>
+              These settings persist on the account and pre-fill every tool run — you won't be asked again.
+            </div>
+          </div>
+
+          <!-- Medical -->
+          <div class="plan-line">
+            <div class="plan-line-hd">
+              <div>
+                <div class="plan-line-name">Medical</div>
+                <div class="plan-line-sub">Anthem Blue Cross · 245 enrolled across 3 plans</div>
+              </div>
+            </div>
+
+            <!-- Anthem Gold PPO -->
+            <div class="plan-card">
+              <div class="plan-card-hd">
+                <div>
+                  <div class="plan-name">Anthem Gold PPO</div>
+                  <div class="plan-tags">
+                    <span class="plan-tag">PPO</span>
+                    <span class="plan-tag av">80% AV</span>
+                    <span style="font-size:12px;color:var(--text-tertiary);">Anthem Blue Cross</span>
+                  </div>
+                </div>
+                <div class="plan-enrolled">87 enrolled</div>
+              </div>
+              <div class="plan-body">
+                <div>
+                  <div class="plan-col-label">Plan attributes</div>
+                  <div class="plan-attrs">
+                    <div class="plan-attr"><span class="plan-attr-k">Deductible (ind / fam)</span><span class="plan-attr-v">$500 / $1,000</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">OOP max (ind / fam)</span><span class="plan-attr-v">$3,000 / $6,000</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Coinsurance</span><span class="plan-attr-v">20% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">PCP copay</span><span class="plan-attr-v">$25</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Specialist copay</span><span class="plan-attr-v">$50</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Rx (T1 / T2 / T3 / T4)</span><span class="plan-attr-v">$10 / $35 / $70 / 20%</span></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-col-label">Monthly rates &amp; contribution</div>
+                  <table class="plan-rt">
+                    <thead><tr><th>Tier</th><th>Total</th><th>Employer</th><th>Employee</th></tr></thead>
+                    <tbody>
+                      <tr><td>EE Only</td><td class="rt-total">$524</td><td class="rt-er">$419</td><td class="rt-ee">$105</td></tr>
+                      <tr><td>EE + Spouse</td><td class="rt-total">$1,048</td><td class="rt-er">$838</td><td class="rt-ee">$210</td></tr>
+                      <tr><td>EE + Child(ren)</td><td class="rt-total">$994</td><td class="rt-er">$795</td><td class="rt-ee">$199</td></tr>
+                      <tr><td>Family</td><td class="rt-total">$1,468</td><td class="rt-er">$1,174</td><td class="rt-ee">$294</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="plan-source">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 1.5H3a1.5 1.5 0 00-1.5 1.5v6A1.5 1.5 0 003 10.5h6A1.5 1.5 0 0010.5 9V5L7 1.5z"/><polyline points="7,1.5 7,5 10.5,5"/></svg>
+                    From Blue Cross Plan Design 2025.pdf
+                  </div>
+                </div>
+              </div>
+            </div><!-- /Gold PPO -->
+
+            <!-- Anthem Gold HMO -->
+            <div class="plan-card">
+              <div class="plan-card-hd">
+                <div>
+                  <div class="plan-name">Anthem Gold HMO</div>
+                  <div class="plan-tags">
+                    <span class="plan-tag">HMO</span>
+                    <span class="plan-tag av">80% AV</span>
+                    <span style="font-size:12px;color:var(--text-tertiary);">Anthem Blue Cross</span>
+                  </div>
+                </div>
+                <div class="plan-enrolled">103 enrolled</div>
+              </div>
+              <div class="plan-body">
+                <div>
+                  <div class="plan-col-label">Plan attributes</div>
+                  <div class="plan-attrs">
+                    <div class="plan-attr"><span class="plan-attr-k">Deductible (ind / fam)</span><span class="plan-attr-v">$350 / $700</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">OOP max (ind / fam)</span><span class="plan-attr-v">$2,500 / $5,000</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Coinsurance</span><span class="plan-attr-v">20% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">PCP copay</span><span class="plan-attr-v">$20</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Specialist copay</span><span class="plan-attr-v">$40</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Rx (T1 / T2 / T3 / T4)</span><span class="plan-attr-v">$10 / $30 / $60 / 20%</span></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-col-label">Monthly rates &amp; contribution</div>
+                  <table class="plan-rt">
+                    <thead><tr><th>Tier</th><th>Total</th><th>Employer</th><th>Employee</th></tr></thead>
+                    <tbody>
+                      <tr><td>EE Only</td><td class="rt-total">$486</td><td class="rt-er">$389</td><td class="rt-ee">$97</td></tr>
+                      <tr><td>EE + Spouse</td><td class="rt-total">$972</td><td class="rt-er">$778</td><td class="rt-ee">$194</td></tr>
+                      <tr><td>EE + Child(ren)</td><td class="rt-total">$921</td><td class="rt-er">$737</td><td class="rt-ee">$184</td></tr>
+                      <tr><td>Family</td><td class="rt-total">$1,360</td><td class="rt-er">$1,088</td><td class="rt-ee">$272</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="plan-source">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 1.5H3a1.5 1.5 0 00-1.5 1.5v6A1.5 1.5 0 003 10.5h6A1.5 1.5 0 0010.5 9V5L7 1.5z"/><polyline points="7,1.5 7,5 10.5,5"/></svg>
+                    From Blue Cross Plan Design 2025.pdf
+                  </div>
+                </div>
+              </div>
+            </div><!-- /Gold HMO -->
+
+            <!-- Anthem Bronze HDHP -->
+            <div class="plan-card">
+              <div class="plan-card-hd">
+                <div>
+                  <div class="plan-name">Anthem Bronze HDHP</div>
+                  <div class="plan-tags">
+                    <span class="plan-tag">PPO</span>
+                    <span class="plan-tag av">60% AV</span>
+                    <span class="plan-tag">HSA-eligible</span>
+                    <span style="font-size:12px;color:var(--text-tertiary);">Anthem Blue Cross</span>
+                  </div>
+                </div>
+                <div class="plan-enrolled">55 enrolled</div>
+              </div>
+              <div class="plan-body">
+                <div>
+                  <div class="plan-col-label">Plan attributes</div>
+                  <div class="plan-attrs">
+                    <div class="plan-attr"><span class="plan-attr-k">Deductible (ind / fam)</span><span class="plan-attr-v">$1,500 / $3,000</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">OOP max (ind / fam)</span><span class="plan-attr-v">$5,000 / $10,000</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Coinsurance</span><span class="plan-attr-v">30% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">PCP copay</span><span class="plan-attr-v">After deductible</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Specialist copay</span><span class="plan-attr-v">After deductible</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Rx</span><span class="plan-attr-v">After deductible</span></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-col-label">Monthly rates &amp; contribution</div>
+                  <table class="plan-rt">
+                    <thead><tr><th>Tier</th><th>Total</th><th>Employer</th><th>Employee</th></tr></thead>
+                    <tbody>
+                      <tr><td>EE Only</td><td class="rt-total">$342</td><td class="rt-er">$274</td><td class="rt-ee">$68</td></tr>
+                      <tr><td>EE + Spouse</td><td class="rt-total">$684</td><td class="rt-er">$547</td><td class="rt-ee">$137</td></tr>
+                      <tr><td>EE + Child(ren)</td><td class="rt-total">$649</td><td class="rt-er">$519</td><td class="rt-ee">$130</td></tr>
+                      <tr><td>Family</td><td class="rt-total">$958</td><td class="rt-er">$766</td><td class="rt-ee">$192</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="plan-source">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 1.5H3a1.5 1.5 0 00-1.5 1.5v6A1.5 1.5 0 003 10.5h6A1.5 1.5 0 0010.5 9V5L7 1.5z"/><polyline points="7,1.5 7,5 10.5,5"/></svg>
+                    From Blue Cross Plan Design 2025.pdf
+                  </div>
+                </div>
+              </div>
+            </div><!-- /Bronze HDHP -->
+          </div><!-- /Medical -->
+
+          <!-- Dental -->
+          <div class="plan-line">
+            <div class="plan-line-hd">
+              <div>
+                <div class="plan-line-name">Dental</div>
+                <div class="plan-line-sub">MetLife · 245 enrolled across 2 plans</div>
+              </div>
+            </div>
+
+            <!-- MetLife Basic PPO -->
+            <div class="plan-card">
+              <div class="plan-card-hd">
+                <div>
+                  <div class="plan-name">MetLife Basic PPO</div>
+                  <div class="plan-tags">
+                    <span class="plan-tag">PPO</span>
+                    <span style="font-size:12px;color:var(--text-tertiary);">MetLife</span>
+                  </div>
+                </div>
+                <div class="plan-enrolled">186 enrolled</div>
+              </div>
+              <div class="plan-body">
+                <div>
+                  <div class="plan-col-label">Plan attributes</div>
+                  <div class="plan-attrs">
+                    <div class="plan-attr"><span class="plan-attr-k">Annual maximum</span><span class="plan-attr-v">$1,500</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Deductible (ind / fam)</span><span class="plan-attr-v">$50 / $150</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Preventive</span><span class="plan-attr-v">100%</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Basic restorative</span><span class="plan-attr-v">80% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Major restorative</span><span class="plan-attr-v">50% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Orthodontia</span><span class="plan-attr-v">50%, $1,500 lifetime</span></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-col-label">Monthly rates &amp; contribution</div>
+                  <table class="plan-rt">
+                    <thead><tr><th>Tier</th><th>Total</th><th>Employer</th><th>Employee</th></tr></thead>
+                    <tbody>
+                      <tr><td>EE Only</td><td class="rt-total">$28</td><td class="rt-er">$22</td><td class="rt-ee">$6</td></tr>
+                      <tr><td>EE + Spouse</td><td class="rt-total">$58</td><td class="rt-er">$46</td><td class="rt-ee">$12</td></tr>
+                      <tr><td>EE + Child(ren)</td><td class="rt-total">$62</td><td class="rt-er">$50</td><td class="rt-ee">$12</td></tr>
+                      <tr><td>Family</td><td class="rt-total">$92</td><td class="rt-er">$74</td><td class="rt-ee">$18</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="plan-source">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 1.5H3a1.5 1.5 0 00-1.5 1.5v6A1.5 1.5 0 003 10.5h6A1.5 1.5 0 0010.5 9V5L7 1.5z"/><polyline points="7,1.5 7,5 10.5,5"/></svg>
+                    From MetLife Dental Certificate 2025.pdf
+                  </div>
+                </div>
+              </div>
+            </div><!-- /Dental Basic -->
+
+            <!-- MetLife Enhanced PPO -->
+            <div class="plan-card">
+              <div class="plan-card-hd">
+                <div>
+                  <div class="plan-name">MetLife Enhanced PPO</div>
+                  <div class="plan-tags">
+                    <span class="plan-tag">PPO</span>
+                    <span style="font-size:12px;color:var(--text-tertiary);">MetLife</span>
+                  </div>
+                </div>
+                <div class="plan-enrolled">59 enrolled</div>
+              </div>
+              <div class="plan-body">
+                <div>
+                  <div class="plan-col-label">Plan attributes</div>
+                  <div class="plan-attrs">
+                    <div class="plan-attr"><span class="plan-attr-k">Annual maximum</span><span class="plan-attr-v">$2,500</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Deductible (ind / fam)</span><span class="plan-attr-v">$25 / $75</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Preventive</span><span class="plan-attr-v">100%</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Basic restorative</span><span class="plan-attr-v">90% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Major restorative</span><span class="plan-attr-v">70% after ded.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Orthodontia</span><span class="plan-attr-v">60%, $2,000 lifetime</span></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-col-label">Monthly rates &amp; contribution</div>
+                  <table class="plan-rt">
+                    <thead><tr><th>Tier</th><th>Total</th><th>Employer</th><th>Employee</th></tr></thead>
+                    <tbody>
+                      <tr><td>EE Only</td><td class="rt-total">$42</td><td class="rt-er">$34</td><td class="rt-ee">$8</td></tr>
+                      <tr><td>EE + Spouse</td><td class="rt-total">$86</td><td class="rt-er">$69</td><td class="rt-ee">$17</td></tr>
+                      <tr><td>EE + Child(ren)</td><td class="rt-total">$89</td><td class="rt-er">$71</td><td class="rt-ee">$18</td></tr>
+                      <tr><td>Family</td><td class="rt-total">$132</td><td class="rt-er">$106</td><td class="rt-ee">$26</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="plan-source">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 1.5H3a1.5 1.5 0 00-1.5 1.5v6A1.5 1.5 0 003 10.5h6A1.5 1.5 0 0010.5 9V5L7 1.5z"/><polyline points="7,1.5 7,5 10.5,5"/></svg>
+                    From MetLife Dental Certificate 2025.pdf
+                  </div>
+                </div>
+              </div>
+            </div><!-- /Dental Enhanced -->
+          </div><!-- /Dental -->
+
+          <!-- Vision -->
+          <div class="plan-line">
+            <div class="plan-line-hd">
+              <div>
+                <div class="plan-line-name">Vision</div>
+                <div class="plan-line-sub">VSP · 198 enrolled</div>
+              </div>
+            </div>
+
+            <!-- VSP Choice Plus -->
+            <div class="plan-card">
+              <div class="plan-card-hd">
+                <div>
+                  <div class="plan-name">VSP Choice Plus</div>
+                  <div class="plan-tags">
+                    <span class="plan-tag">Choice Plus network</span>
+                    <span style="font-size:12px;color:var(--text-tertiary);">VSP</span>
+                  </div>
+                </div>
+                <div class="plan-enrolled">198 enrolled</div>
+              </div>
+              <div class="plan-body">
+                <div>
+                  <div class="plan-col-label">Plan attributes</div>
+                  <div class="plan-attrs">
+                    <div class="plan-attr"><span class="plan-attr-k">Exam copay</span><span class="plan-attr-v">$10 · every 12 mo.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Frame allowance</span><span class="plan-attr-v">$175 · every 24 mo.</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Lenses</span><span class="plan-attr-v">Covered in full</span></div>
+                    <div class="plan-attr"><span class="plan-attr-k">Contact lens allowance</span><span class="plan-attr-v">$175 (in lieu of glasses)</span></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-col-label">Monthly rates &amp; contribution</div>
+                  <table class="plan-rt">
+                    <thead><tr><th>Tier</th><th>Total</th><th>Employer</th><th>Employee</th></tr></thead>
+                    <tbody>
+                      <tr><td>EE Only</td><td class="rt-total">$8</td><td class="rt-er">$6</td><td class="rt-ee">$2</td></tr>
+                      <tr><td>EE + Spouse</td><td class="rt-total">$16</td><td class="rt-er">$13</td><td class="rt-ee">$3</td></tr>
+                      <tr><td>EE + Child(ren)</td><td class="rt-total">$14</td><td class="rt-er">$11</td><td class="rt-ee">$3</td></tr>
+                      <tr><td>Family</td><td class="rt-total">$22</td><td class="rt-er">$18</td><td class="rt-ee">$4</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="plan-source">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 1.5H3a1.5 1.5 0 00-1.5 1.5v6A1.5 1.5 0 003 10.5h6A1.5 1.5 0 0010.5 9V5L7 1.5z"/><polyline points="7,1.5 7,5 10.5,5"/></svg>
+                    From VSP Vision Schedule 2025.pdf
+                  </div>
+                </div>
+              </div>
+            </div><!-- /VSP -->
+          </div><!-- /Vision -->
+
+        </div><!-- /tab-plans -->
+
+        <!-- TAB: Plans — empty (no docs uploaded) -->
+        <div class="atab-panel" id="tab-plans-empty">
+          <div class="tab-empty-state">
+            <div class="tab-es-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2L3 6v6c0 4.418 3.582 8 8 8s8-3.582 8-8V6l-8-4z" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="tab-es-title">No plans on file</div>
+            <div class="tab-es-desc">Upload an SBC, rate sheet, or contribution schedule and plan details will appear here automatically.</div>
+            <button class="btn btn-secondary" onclick="showAccountTab('tab-documents-empty')">Upload documents</button>
+          </div>
+        </div><!-- /tab-plans-empty -->
 
         <!-- TAB: Contacts -->
         <div class="atab-panel" id="tab-contacts">
@@ -2128,6 +2511,7 @@ button{cursor:pointer;font-family:inherit;}
         <!-- Account tab bar -->
         <div class="account-tabs">
           <button class="atab active" data-tab="tab-overview-nb" onclick="showAccountTab('tab-overview-nb')">Overview</button>
+          <button class="atab" data-tab="tab-plans-nb" onclick="showAccountTab('tab-plans-nb')">Plans</button>
           <button class="atab" data-tab="tab-census-nb" onclick="showAccountTab('tab-census-nb')">Census</button>
           <button class="atab" data-tab="tab-enrollment-nb" onclick="showAccountTab('tab-enrollment-nb')">Enrollment</button>
           <button class="atab" data-tab="tab-contacts-nb" onclick="showAccountTab('tab-contacts-nb')">Contacts</button>
@@ -2216,6 +2600,24 @@ button{cursor:pointer;font-family:inherit;}
           </div><!-- /section tools -->
 
         </div><!-- /tab-overview-nb -->
+
+        <!-- TAB: Plans — Meridian (new business, no plans in force) -->
+        <div class="atab-panel" id="tab-plans-nb">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+            <div>
+              <div class="section-title">Plans in force</div>
+              <div class="section-sub">No current benefit program on file</div>
+            </div>
+          </div>
+          <div class="tab-empty-state" style="padding:48px 24px;">
+            <div class="tab-es-icon">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2L3 6v6c0 4.418 3.582 8 8 8s8-3.582 8-8V6l-8-4z" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="tab-es-title">No plans in force</div>
+            <div class="tab-es-desc">Meridian Health Group is a new client with no current benefit program. Carrier quotes are on file — once a plan is selected and employees enroll, it will appear here.</div>
+            <button class="btn btn-secondary" onclick="openComparePlansModal()">View carrier quotes</button>
+          </div>
+        </div><!-- /tab-plans-nb -->
 
         <!-- TAB: Contacts -->
         <div class="atab-panel" id="tab-contacts-nb">
@@ -4400,6 +4802,7 @@ function showDetail() {
 function showAccountTab(tabId) {
   var emptyTabMap = {
     'tab-overview':   'tab-overview-empty',
+    'tab-plans':      'tab-plans-empty',
     'tab-census':     'tab-census-empty',
     'tab-enrollment': 'tab-enrollment-empty',
     'tab-contacts':   'tab-contacts-empty',
