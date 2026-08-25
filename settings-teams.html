@@ -1,0 +1,1737 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teams — Outmarket Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1b1d1d;
+      --muted: #525965;
+      --faint: #6a758a;
+      --line: #e7ebee;
+      --line-subtle: #f2f4f7;
+      --line-strong: #d0d5dd;
+      --canvas: #fff;
+      --nav: #f9fafb;
+      --purple: #6a56f0;
+      --purple-light: #eae7fe;
+      --purple-wash: #f6f7fe;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      overflow: hidden;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 14px/20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible { outline: 2px solid rgba(106,86,240,.45); outline-offset: 2px; }
+
+    .app { width: 100%; min-width: 1120px; height: 100vh; display: flex; }
+
+    .rail {
+      width: 76px;
+      flex: 0 0 76px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      background: var(--nav);
+      border-right: 1px solid var(--line);
+    }
+    .brand {
+      width: 76px;
+      height: 64px;
+      flex: 0 0 64px;
+      display: grid;
+      place-items: center;
+    }
+    .brand-mark {
+      width: 20px;
+      height: 14px;
+      position: relative;
+      border-top: 3px solid #ff5a36;
+      border-bottom: 3px solid #ff5a36;
+      border-radius: 50%;
+      transform: skewX(-16deg);
+    }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 7px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ff5a36;
+    }
+    .rail-divider { width: 44px; height: 1px; margin: 0 0 8px; background: var(--line-strong); flex: 0 0 1px; }
+    .rail-scroll { width: 100%; flex: 1; padding: 0 16px 16px; overflow: hidden; }
+    .rail-group { display: flex; flex-direction: column; gap: 4px; }
+    .rail-group + .rail-group { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line-strong); }
+    .rail-item {
+      width: 44px;
+      height: 40px;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      background: transparent;
+    }
+    .rail-item:hover { background: var(--purple-wash); }
+    .rail-item.active { color: var(--purple); background: var(--purple-light); }
+    .rail-item img { width: 20px; height: 20px; object-fit: contain; display: block; }
+
+    .workspace { min-width: 0; flex: 1; height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      height: 64px;
+      flex: 0 0 64px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .topbar-title { font-size: 16px; line-height: 24px; color: var(--ink); }
+    .topbar-actions { display: flex; align-items: center; gap: 4px; }
+    .top-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: transparent;
+    }
+    .top-icon:hover { background: var(--purple-wash); }
+    .top-icon img { width: 20px; height: 20px; object-fit: contain; }
+    .notification-dot { width: 6px; height: 6px; position: absolute; top: 7px; right: 7px; border: 1px solid #fff; border-radius: 50%; background: #f04438; }
+    .avatar { width: 40px; height: 40px; margin-left: 4px; border-radius: 50%; overflow: hidden; background: #ffdbc8; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 13%; }
+
+    .settings-tabs {
+      height: 48px;
+      flex: 0 0 48px;
+      padding: 0 24px;
+      display: flex;
+      align-items: stretch;
+      gap: 4px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .settings-tab {
+      height: 48px;
+      padding: 0 12px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      background: transparent;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+    .settings-tab:hover { color: var(--ink); }
+    .settings-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    .content { min-height: 0; flex: 1; padding: 24px; overflow: hidden; background: #fff; }
+    .page-heading { height: 60px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .page-heading h1 { margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -.01em; }
+    .page-heading p { margin: 4px 0 0; color: var(--muted); font-size: 16px; line-height: 24px; }
+    .primary-button {
+      height: 44px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      background: var(--purple);
+      font-weight: 500;
+    }
+    .primary-button:hover { background: #5d49e4; }
+    .primary-button img { width: 16px; height: 16px; filter: brightness(0) invert(1); }
+    .page-view-tabs { padding: 4px; display: flex; align-items: center; gap: 4px; border-radius: 12px; background: #f2f4f7; }
+    .page-view-tab { height: 32px; padding: 0 12px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; font-size: 14px; font-weight: 500; }
+    .page-view-tab:hover { color: var(--ink); }
+    .page-view-tab.active { color: var(--purple); background: #fff; box-shadow: 0 1px 2px rgba(10,13,18,.08); }
+
+    .teams-shell {
+      height: calc(100% - 76px);
+      margin-top: 16px;
+      min-height: 440px;
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .teams-shell.page-view-users { grid-template-columns: minmax(0, 1fr); }
+    .teams-shell.page-view-users > .teams-panel:first-child { display: none; }
+    .teams-shell.page-view-users > .teams-panel + .teams-panel { border-left: 0; }
+    .teams-shell.page-view-users .resource-header { display: none; }
+    .teams-shell.page-view-users .members-body { display: none; }
+    .teams-shell[hidden] { display: none; }
+    .teams-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+    .teams-panel + .teams-panel { border-left: 1px solid var(--line); }
+    .teams-panel-header { flex: 0 0 138px; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 16px; border-bottom: 1px solid #E7EBEE; }
+    .panel-title-row { height: 50px; flex: 0 0 50px; display: flex; align-items: center; gap: 4px; }
+    .panel-title-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .panel-title-copy h2, .resource-header h2 { margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; }
+    .panel-title-copy p, .resource-header p { margin: 0; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .panel-actions { display: flex; align-items: center; }
+    .plain-icon-button { width: 40px; height: 40px; padding: 0; border: 0; border-radius: 8px; display: grid; place-items: center; background: transparent; }
+    .plain-icon-button:hover { background: var(--purple-wash); }
+    .plain-icon-button img { width: 20px; height: 20px; object-fit: contain; }
+    .teams-panel-divider { height: 1px; flex: 0 0 1px; background: var(--line); }
+    .team-filter {
+      height: 20px;
+      margin-top: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+    .team-filter label { flex: 1; color: #343839; white-space: nowrap; font-weight: 500; line-height: 20px; }
+    .switch {
+      width: 36px;
+      height: 20px;
+      padding: 2px;
+      border: 0;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      appearance: none;
+      background: #f2f4f7;
+      transition: background-color .12s ease, box-shadow .12s ease;
+    }
+    .switch::before {
+      content: "";
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1.4px 2.8px rgba(0,0,0,.2), inset 0 -0.7px .7px rgba(0,0,0,.1);
+      transition: box-shadow .12s ease;
+    }
+    .switch[aria-pressed="true"] { justify-content: flex-end; background: var(--purple); }
+    .switch[aria-pressed="true"]::before { box-shadow: 0 1.4px 2.8px rgba(0,0,0,.2), inset 0 1.4px 1.4px #fff, inset 0 -0.7px .7px rgba(0,0,0,.1); }
+    .switch:not([aria-pressed="true"]):hover { background: #e7ebee; }
+    .switch[aria-pressed="true"]:hover { background: #8375f4; }
+    .switch:not([aria-pressed="true"]):active { background: #97a0b4; }
+    .switch[aria-pressed="true"]:active { background: #5639ec; }
+    .switch:focus-visible { outline: 0; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #8375f4; }
+    .switch[aria-disabled="true"], .switch:disabled { background: #f2f4f7; cursor: not-allowed; }
+    .switch[aria-disabled="true"]::before, .switch:disabled::before { box-shadow: none; }
+    /* Resource permissions use the published Checkbox component. */
+    .resource-row .switch {
+      width: 20px !important;
+      height: 20px !important;
+      min-width: 20px;
+      flex: 0 0 20px;
+      padding: 0;
+      border: 1px solid #d0d5dd !important;
+      border-radius: 4px !important;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      box-shadow: none;
+      transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .resource-row .switch::before { width: 0; height: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+    .resource-row .switch[aria-checked="true"], .resource-row .switch[aria-checked="mixed"] { border-color: #6a56f0 !important; background: #6a56f0; }
+    .resource-row .switch[aria-checked="true"]::before { content: ""; width: 10px; height: 8px; border: 0; border-radius: 0; background: url("assets/figma-teams/checkbox-check.svg") center / 10px 8px no-repeat; transform: none; }
+    .resource-row .switch[aria-checked="mixed"]::before { content: ""; width: 10px; height: 2px; border: 0; border-radius: 2px; background: #fff; transform: none; }
+    .resource-row .switch:not([aria-checked="true"]):not([aria-checked="mixed"]):hover { border-color: #97a0b4 !important; background: #f9fafb; }
+    .resource-row .switch[aria-checked="true"]:hover, .resource-row .switch[aria-checked="mixed"]:hover { border-color: #8375f4 !important; background: #8375f4; }
+    .resource-row .switch:focus-visible { outline: 0; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #8375f4; }
+    .teams-list { min-height: 0; flex: 1; padding: 8px; overflow: auto; }
+    .team-item {
+      width: 100%;
+      min-height: 78px;
+      padding: 16px 12px;
+      border: 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      background: #fff;
+    }
+    .team-item:hover { background: #fafaff; }
+    .team-item.selected { background: var(--purple-wash); }
+    .team-icon { width: 40px; height: 40px; flex: 0 0 40px; padding: 10px; border-radius: 50%; display: grid; place-items: center; background: #f2f4f7; }
+    .team-item.selected .team-icon { background: #fff; }
+    .team-icon img { width: 20px; height: 20px; object-fit: contain; }
+    .team-copy { min-width: 0; }
+    .team-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font-size: 16px; line-height: 24px; font-weight: 500; }
+    .team-count { display: block; color: var(--muted); line-height: 20px; }
+
+    .resource-header { flex: 0 0 120px; padding: 16px 20px 0; border-bottom: 1px solid var(--line); }
+    .resource-header-copy { display: flex; flex-direction: column; gap: 4px; }
+    .resource-tabs { height: 44px; margin-top: 8px; display: flex; align-items: flex-end; gap: 12px; }
+    .resource-tab { height: 44px; padding: 0 12px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); background: transparent; font-weight: 500; }
+    .resource-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+    .resource-tab[hidden] { display: none; }
+    .count-badge { min-width: 20px; padding: 2px 4px; border: 1px solid #eae7fe; border-radius: 4px; color: var(--purple); background: var(--purple-wash); font-size: 12px; line-height: 16px; text-align: center; }
+    .members-body { min-height: 0; flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+    .members-body[hidden], .resource-body[hidden] { display: none; }
+    .users-audit-body { min-height: 0; flex: 1; display: flex; align-items: flex-start; justify-content: center; overflow: auto; padding: 16px; background: #fff; }
+    .users-audit-body[hidden] { display: none; }
+    .users-audit-body.detail-mode { align-items: flex-start; padding-top: 24px; }
+    .users-audit-content { width: min(640px, 100%); display: flex; flex-direction: column; align-items: center; }
+    .users-audit-body.detail-mode .users-audit-content { width: 100%; align-items: stretch; }
+    .users-audit-search-view { width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .users-audit-search-view[hidden], .users-audit-detail-view[hidden] { display: none; }
+    .users-audit-heading { padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+    .users-audit-icon { width: 40px; height: 40px; padding: 10px; border-radius: 20px; display: grid; place-items: center; background: var(--purple-wash); }
+    .users-audit-icon img { width: 20px; height: 20px; }
+    .users-audit-heading h2 { margin: 0; font-size: 20px; line-height: 30px; font-weight: 600; }
+    .users-audit-heading p { max-width: 640px; margin: 0; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .users-audit-search { width: 100%; min-height: 48px; margin-top: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 3px 12px -2px rgba(16,24,40,.06), 0 4px 12px -4px rgba(16,24,40,.05); }
+    .users-audit-search:focus-within { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-wash); }
+    .users-audit-search img { width: 16px; height: 16px; }
+    .users-audit-search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); font: inherit; font-size: 16px; }
+    .users-audit-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    .users-audit-search-clear { width: 24px; height: 24px; padding: 0; border: 0; display: grid; flex: 0 0 24px; place-items: center; border-radius: 4px; background: transparent; }
+    .users-audit-search-clear:hover { background: var(--purple-wash); }
+    .users-audit-search-clear img { width: 24px; height: 24px; display: block; }
+    .users-audit-search-clear[hidden] { display: none; }
+    .users-audit-search input::placeholder { color: #97a0b4; }
+    .users-audit-results, .users-audit-detail { margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .users-audit-results { width: 100%; margin-top: 12px; border: 0; border-radius: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; overflow: visible; }
+    .users-audit-results[hidden], .users-audit-detail[hidden] { display: none; }
+    .users-audit-direct-grants { width: 100%; margin-top: 16px; }
+    .users-audit-direct-header { min-height: 24px; display: flex; align-items: center; gap: 8px; }
+    .users-audit-direct-header h3 { margin: 0; font-size: 16px; line-height: 24px; font-weight: 500; }
+    .users-audit-direct-count { min-width: 20px; padding: 2px 8px; border-radius: 6px; color: var(--purple); background: var(--purple-light); font-size: 14px; line-height: 20px; font-weight: 500; text-align: center; }
+    .users-audit-result { min-height: 64px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px; color: var(--ink); background: #fff; font: inherit; text-align: left; }
+    .users-audit-result:hover { background: #f9fafb; }
+    .users-audit-result-avatar { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; object-fit: cover; }
+    .users-audit-result-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .users-audit-result-copy strong { font-weight: 500; }
+    .users-audit-result-copy small { color: var(--muted); font-size: 12px; }
+    .users-audit-empty { grid-column: 1 / -1; padding: 24px 16px; color: var(--muted); text-align: center; }
+    .users-audit-detail-view { width: 100%; max-width: 1024px; margin: 0 auto; }
+    .users-audit-back { height: 28px; padding: 4px 0 3px; border: 0; border-bottom: 1px solid transparent; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); background: transparent; font: inherit; font-size: 14px; font-weight: 500; }
+    .users-audit-back img { width: 16px; height: 16px; }
+    .users-audit-back:hover { color: var(--muted); background: transparent; border-bottom-color: var(--line-strong); }
+    .users-audit-detail { width: 100%; margin: 24px auto 0; padding: 0; border: 0; overflow: visible; }
+    .users-audit-detail-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .users-audit-detail-user { min-width: 0; flex: 1; display: flex; align-items: center; gap: 12px; }
+    .users-audit-detail-avatar { width: 56px; height: 56px; flex: 0 0 56px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #f2ad0d; font-size: 18px; font-weight: 600; }
+    .users-audit-detail-user h3 { margin: 0; color: #343839; font-size: 24px; line-height: 32px; }
+    .users-audit-detail-user p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .users-audit-detail-meta { display: flex; align-items: stretch; gap: 32px; }
+    .users-audit-meta-item { min-width: 70px; padding: 0; display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .users-audit-meta-item:nth-child(2), .users-audit-meta-item:nth-child(3) { padding-left: 32px; }
+    .users-audit-meta-item + .users-audit-meta-item { border-left: 1px solid var(--line); }
+    .users-audit-meta-item strong { color: #343839; font-size: 14px; line-height: 20px; }
+    .users-audit-role-badge { width: fit-content; padding: 2px 8px; border: 1px solid #fecba9; border-radius: 6px; color: #e34600; background: #fff4eb; font-size: 14px; line-height: 20px; font-weight: 500; }
+    .users-audit-resource-list { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .users-audit-source-group { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+    .users-audit-source-group + .users-audit-source-group { border-top: 1px solid var(--line); }
+    .users-audit-source-header { width: 100%; min-height: 80px; padding: 20px; border: 0; display: flex; align-items: center; gap: 12px; color: var(--ink); background: #fff; font: inherit; text-align: left; }
+    .users-audit-source-header:hover { background: #f5f6f8; }
+    .users-audit-source-icon { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 20px; display: grid; place-items: center; background: var(--purple-wash); }
+    .users-audit-source-icon img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .users-audit-source-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .users-audit-source-copy strong { font-size: 16px; line-height: 24px; font-weight: 500; }
+    .users-audit-source-copy span { overflow: hidden; color: var(--muted); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+    .users-audit-source-chevron { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; }
+    .users-audit-source-chevron img { width: 16px; height: 16px; display: block; object-fit: contain; }
+    .users-audit-source-content { padding: 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 24px; }
+    .users-audit-source-content[hidden] { display: none; }
+    .users-audit-main-feature { width: 100%; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .users-audit-main-feature:last-child { padding-bottom: 0; border-bottom: 0; }
+    .users-audit-main-feature-header { min-height: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .users-audit-main-feature-header strong { font-size: 14px; line-height: 20px; font-weight: 600; }
+    .users-audit-feature-badge { padding: 2px 8px; border-radius: 6px; color: #343839; background: #f2f4f7; font-size: 14px; line-height: 20px; font-weight: 500; }
+    .users-audit-feature-badge.full { color: #054f31; background: #d1fadf; }
+    .users-audit-subfeature-list { width: 100%; margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 8px; }
+    .users-audit-resource-row { min-height: 20px; padding: 0; }
+    .users-audit-resource-copy { min-width: 0; }
+    .users-audit-resource-copy strong { color: #343839; font-size: 14px; line-height: 20px; font-weight: 400; }
+    .members-toolbar { min-height: 72px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+    .member-stats, .member-stat, .member-actions, .pagination-actions { display: flex; align-items: center; }
+    .member-stats { gap: 12px; color: var(--muted); font-size: 14px; }
+    .member-stat { gap: 4px; white-space: nowrap; }
+    .member-stat img { width: 16px; height: 16px; object-fit: contain; }
+    .member-stat-divider { width: 4px !important; height: 4px !important; }
+    .member-actions { gap: 8px; }
+    .member-search { width: 180px; height: 40px; padding: 0 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; }
+    .member-search img { width: 16px; height: 16px; }
+    .member-search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font: inherit; }
+    .member-search input::placeholder { color: #97a0b4; }
+    .member-add-button { height: 40px; padding: 0 16px; border: 0; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; color: #fff; background: var(--purple); font-weight: 500; white-space: nowrap; }
+    .member-add-button:hover { background: #5d49e4; }
+    .member-add-button img { width: 16px; height: 16px; filter: brightness(0) invert(1); }
+    .members-table { min-height: 0; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .member-table-head, .member-table-row { display: grid; grid-template-columns: 52px minmax(180px, 1fr) minmax(180px, 1fr) 200px 140px 56px; }
+    .member-table-head { flex: 0 0 48px; padding-right: 8px; overflow: hidden; background: #f9fafb; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 14px; }
+    .member-table-scroll { min-height: 0; flex: 1; overflow: overlay; scrollbar-gutter: auto; }
+    .member-table-row { min-height: 72px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 14px; }
+    .member-table-row:hover { background: #fcfcfd; }
+    .member-cell { min-width: 0; padding: 12px 16px; display: flex; align-items: center; overflow: hidden; white-space: nowrap; }
+    .member-check-cell { justify-content: center; padding-left: 16px; padding-right: 16px; }
+    .member-checkbox { width: 16px; height: 16px; min-width: 16px; flex: 0 0 16px; padding: 0; border: 1px solid #d0d5dd; border-radius: 4px; background: #fff; }
+    .member-checkbox:hover { border-color: var(--purple); }
+    .member-person { gap: 8px; }
+    .member-avatar { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 600; }
+    .avatar-coral { background: #ef476f; }
+    .avatar-teal { background: #128277; }
+    .avatar-blue { background: #3f88ea; }
+    .avatar-cyan { background: #09a8c7; }
+    .avatar-indigo { background: #3f88ea; }
+    .member-role { width: 100%; height: 32px; padding: 0 28px 0 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: #fff url("assets/figma-teams/chevrons-up-down.svg") no-repeat right 16px center / 8px 12px; appearance: none; font: inherit; }
+    .member-menu-cell { justify-content: flex-end; padding-left: 8px; padding-right: 8px; }
+    .member-menu { width: 32px; height: 32px; min-width: 32px; flex: 0 0 32px; padding: 0; border: 0; border-radius: 6px; display: grid; place-items: center; background: transparent; line-height: 0; }
+    .member-menu:hover { background: var(--purple-wash); }
+    .member-menu img { display: block; width: 16px; height: 16px; object-fit: fill; }
+    .members-pagination { min-height: 56px; padding: 12px 20px; display: flex; align-items: center; justify-content: flex-end; gap: 24px; color: var(--muted); font-size: 14px; }
+    .pagination-actions { gap: 8px; }
+    .pagination-actions button { width: 32px; height: 32px; padding: 0; border: 1px solid var(--line); border-radius: 6px; display: grid; place-items: center; background: #fff; }
+    .pagination-actions button:hover { background: var(--purple-wash); }
+    .pagination-actions img { width: 16px; height: 16px; }
+    .resource-access-layout { height: calc(100% - 76px); margin-top: 16px; min-height: 440px; display: grid; grid-template-columns: 360px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .resource-access-layout[hidden] { display: none; }
+    .resource-picker-panel, .resource-access-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+    .resource-access-panel { border-left: 1px solid var(--line); }
+    .resource-picker-header { flex: 0 0 104px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+    .resource-access-header { flex: 0 0 120px; padding: 16px 20px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+    .resource-picker-header h2, .resource-access-header h2 { margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; }
+    .resource-picker-header p, .resource-access-header p { margin: 0; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .resource-access-header > div:first-child { width: 100%; display: flex; flex-direction: column; gap: 4px; }
+    .resource-picker-search { height: 40px; margin-top: 12px; padding: 0 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; }
+    .resource-picker-search img { width: 16px; height: 16px; }
+    .resource-picker-search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font: inherit; }
+    .resource-picker-search input::placeholder { color: #97a0b4; }
+    .resource-picker-list { min-height: 0; flex: 1; padding: 0; overflow-y: auto; }
+    .resource-picker-tree-group { margin-bottom: 0; overflow: hidden; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: #fff; }
+    .resource-picker-tree-group:last-child { margin-bottom: 0; border-bottom: 0; }
+    .resource-picker-tree-group .resource-picker-item { border-radius: 0; }
+    .resource-picker-tree-group .resource-picker-item + .resource-picker-item { border-top: 0; }
+    .resource-picker-item { width: 100%; min-height: 52px; padding: 8px 12px; border: 0; border-radius: 8px; display: flex; align-items: center; gap: 12px; color: var(--ink); background: #fff; text-align: left; font-weight: 500; }
+    .resource-picker-tree-group > .resource-picker-item[data-tree-id]:not([data-tree-parent]) { min-height: 72px; padding: 16px; font-size: 16px; line-height: 24px; }
+    .resource-picker-tree-group > .resource-picker-item[data-tree-id]:not([data-tree-parent]) .resource-picker-icon { width: 40px; height: 40px; flex-basis: 40px; padding: 10px; background: #f6f7fe; }
+    .resource-picker-tree-group > .resource-picker-item[data-tree-id]:not([data-tree-parent]) .resource-picker-icon img { width: auto; max-width: 20px; height: 20px; object-fit: contain; }
+    .resource-picker-tree-group > .resource-picker-item[data-tree-id]:not([data-tree-parent]) .resource-picker-chevron { width: 32px; height: 32px; flex-basis: 32px; }
+    .resource-picker-item:hover { background: #fafaff; }
+    .resource-picker-item.selected { color: var(--purple); background: var(--purple-wash); }
+    .resource-picker-item[hidden], .resource-picker-item.tree-hidden, .resource-picker-item.search-hidden { display: none; }
+    .resource-picker-item[data-tree-parent] { min-height: 44px; padding: 12px 16px 12px 68px; font-size: 14px; line-height: 20px; font-weight: 400; }
+    .resource-picker-item.subfeature-deep { padding-left: 96px; }
+    .resource-picker-item[data-tree-parent] .resource-picker-icon { width: 16px; height: 16px; flex-basis: 16px; padding: 0; border-radius: 0; background: transparent; }
+    .resource-picker-item[data-tree-parent] .resource-picker-icon img { width: auto; max-width: 16px; height: 16px; object-fit: contain; }
+    .resource-picker-item[data-tree-parent] { position: relative; }
+    .resource-picker-item[data-tree-parent]::before { content: ""; position: absolute; top: 0; bottom: 0; left: 36px; width: 1px; background: #e7ebee; }
+    .resource-picker-item.subfeature-deep::before { left: 36px; box-shadow: 40px 0 0 #e7ebee; }
+    .resource-picker-item[data-tree-parent="vault"], .resource-picker-item[data-tree-parent="proposals"], .resource-picker-item[data-tree-parent="proposal-template"], .resource-picker-item[data-tree-parent="employee-benefits"] { padding-left: 96px; }
+    .resource-picker-item[data-tree-parent="vault"]::before, .resource-picker-item[data-tree-parent="proposals"]::before, .resource-picker-item[data-tree-parent="proposal-template"]::before, .resource-picker-item[data-tree-parent="employee-benefits"]::before { left: 36px; box-shadow: 40px 0 0 #e7ebee; }
+    .resource-picker-item.tree-leaf[data-tree-parent="workflow"]::before { bottom: 50%; }
+    .resource-picker-item.tree-leaf.subfeature-deep::before { bottom: 50%; }
+    .resource-picker-icon { width: 32px; height: 32px; padding: 8px; flex: 0 0 32px; border-radius: 8px; display: grid; place-items: center; background: #f2f4f7; }
+    .resource-picker-item.selected .resource-picker-icon { background: #fff; }
+    .resource-picker-item[data-tree-parent].selected .resource-picker-icon { background: transparent; }
+    .resource-picker-item[data-tree-parent].selected .resource-picker-icon::after { display: none; }
+    .resource-picker-item[data-tree-parent].selected .resource-picker-icon img { display: block; filter: url(#brand-icon-color); }
+    .resource-picker-icon img { width: auto; max-width: 16px; height: 16px; object-fit: contain; display: block; }
+    .resource-picker-tree-group > .resource-picker-item[data-tree-id]:not([data-tree-parent]) .resource-picker-icon::after { display: none; }
+    .resource-picker-tree-group > .resource-picker-item[data-tree-id]:not([data-tree-parent]) .resource-picker-icon img { display: block; filter: url(#brand-icon-color); }
+    .resource-picker-icon img[src$="nav-benefits.svg"] { filter: brightness(0) saturate(100%) invert(35%) sepia(9%) saturate(521%) hue-rotate(176deg) brightness(90%) contrast(88%); }
+    .resource-picker-chevron { width: 24px; height: 24px; margin-left: auto; padding: 4px; flex: 0 0 24px; border-radius: 6px; display: grid; place-items: center; }
+    .resource-picker-chevron:hover { background: #eae7fe; }
+    .resource-picker-chevron img { width: 16px; height: 16px; transition: transform .15s ease; }
+    .resource-picker-item[data-expanded="false"] .resource-picker-chevron img { transform: rotate(180deg); }
+    .resource-access-tabs { width: 100%; height: 44px; min-height: 44px; padding: 0; display: flex; align-items: flex-end; gap: 12px; border-bottom: 0; }
+    .resource-access-tab { height: 44px; padding: 12px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); background: transparent; font-weight: 500; }
+    .resource-access-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+    .resource-access-tab span { min-width: 20px; padding: 2px 4px; border: 1px solid #eae7fe; border-radius: 4px; color: var(--purple); background: var(--purple-wash); font-size: 12px; line-height: 16px; text-align: center; }
+    .resource-access-content { min-height: 0; flex: 1; overflow: auto; scrollbar-gutter: auto; }
+    .resource-access-toolbar { min-height: 64px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+    .resource-access-summary { color: var(--muted); font-size: 14px; }
+    .grant-access-button { height: 40px; padding: 0 12px; border: 0; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; color: #fff; background: var(--purple); font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .grant-access-button:hover { background: #5d49e4; }
+    .grant-access-button img { width: 16px; height: 16px; filter: brightness(0) invert(1); }
+    .access-subject-list[hidden] { display: none; }
+    .access-subject-row { min-height: 72px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); }
+    .access-subject-icon { width: 32px; height: 32px; padding: 8px; flex: 0 0 32px; border-radius: 50%; display: grid; place-items: center; background: #f2f4f7; }
+    .access-subject-icon img { width: 16px; height: 16px; max-width: 16px; max-height: 16px; object-fit: contain; display: block; }
+    .access-subject-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .access-subject-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    .access-subject-copy small { color: var(--muted); font-size: 12px; line-height: 16px; }
+    .access-row-actions { display: flex; align-items: center; gap: 12px; }
+    .access-revoke { height: 32px; padding: 8px 12px; border: 0; border-radius: 8px; color: #525965; background: transparent; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font: inherit; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; }
+    .access-revoke img { width: 16px; height: 16px; display: block; flex: 0 0 16px; }
+    .access-revoke:hover { background: #f9fafb; }
+    .access-empty { padding: 32px 20px; color: var(--muted); font-size: 14px; text-align: center; }
+    .access-dialog[hidden] { display: none; }
+    .access-dialog { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: rgba(16,24,40,.28); }
+    .access-dialog-card { width: min(420px, 100%); padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 20px 48px rgba(16,24,40,.18); }
+    .access-dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .access-dialog-header h2 { margin: 0; font-size: 18px; line-height: 28px; }
+    .access-dialog-header p { margin: 4px 0 0; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .access-dialog-close { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; color: var(--muted); background: transparent; font-size: 22px; line-height: 1; }
+    .access-dialog-close:hover { background: var(--purple-wash); }
+    .access-dialog-form { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .access-dialog-form label { display: flex; flex-direction: column; gap: 6px; color: var(--ink); font-size: 14px; font-weight: 500; }
+    .access-dialog-form select { height: 40px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--ink); background: #fff; font: inherit; }
+    .access-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+    .access-dialog-actions button { height: 40px; padding: 0 14px; border-radius: 8px; font: inherit; font-size: 14px; font-weight: 500; }
+    .access-dialog-cancel { border: 1px solid var(--line-strong); color: var(--ink); background: #fff; }
+    .access-dialog-confirm { border: 0; color: #fff; background: var(--purple); }
+    .resource-body { min-height: 0; flex: 1; padding: 16px 20px 0; overflow: hidden; }
+    .resource-toolbar { height: 40px; display: flex; align-items: center; justify-content: space-between; }
+    .access-copy { color: var(--muted); }
+    .access-copy strong { color: var(--ink); font-weight: 500; }
+    .resource-search { width: 200px; height: 40px; padding: 0 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; }
+    .resource-search img { width: 16px; height: 16px; }
+    .resource-search input { min-width: 0; flex: 1; border: 0; outline: 0; color: var(--ink); background: transparent; }
+    .resource-search input::placeholder { color: #97a0b4; }
+    .resource-scroll { height: calc(100% - 56px); margin-right: -8px; overflow-y: auto; padding: 16px 0 24px; }
+    .teams-list, .users-audit-body, .member-table-scroll, .resource-picker-list, .resource-access-content, .resource-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+    .teams-list, .users-audit-body, .resource-picker-list, .resource-scroll { scrollbar-gutter: stable; }
+    .teams-list::-webkit-scrollbar, .users-audit-body::-webkit-scrollbar, .member-table-scroll::-webkit-scrollbar, .resource-picker-list::-webkit-scrollbar, .resource-access-content::-webkit-scrollbar, .resource-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .teams-list::-webkit-scrollbar-thumb, .users-audit-body::-webkit-scrollbar-thumb, .member-table-scroll::-webkit-scrollbar-thumb, .resource-picker-list::-webkit-scrollbar-thumb, .resource-access-content::-webkit-scrollbar-thumb, .resource-scroll::-webkit-scrollbar-thumb { border-radius: 999px; background: transparent; }
+    .teams-list:hover, .users-audit-body:hover, .member-table-scroll:hover, .resource-picker-list:hover, .resource-access-content:hover, .resource-scroll:hover { scrollbar-color: #d0d5dd transparent; }
+    .teams-list:hover::-webkit-scrollbar-thumb, .users-audit-body:hover::-webkit-scrollbar-thumb, .member-table-scroll:hover::-webkit-scrollbar-thumb, .resource-picker-list:hover::-webkit-scrollbar-thumb, .resource-access-content:hover::-webkit-scrollbar-thumb, .resource-scroll:hover::-webkit-scrollbar-thumb { background: #d0d5dd; }
+    .resource-group { overflow: hidden; margin-bottom: 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .resource-group-title { height: 72px; display: grid; grid-template-columns: minmax(0,1fr) 220px 68px 64px; align-items: center; cursor: pointer; }
+    .resource-group-title:hover { background: #fcfcfd; }
+    .resource-cell { min-width: 0; height: 100%; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .resource-cell.icon-cell { gap: 12px; }
+    .resource-cell:last-child { justify-content: flex-end; }
+    .featured-icon { width: 40px; height: 40px; flex: 0 0 40px; padding: 10px; border-radius: 8px; display: grid; place-items: center; background: var(--purple-wash); }
+    .featured-icon::after { display: none; }
+    .featured-icon img { width: 20px; height: 20px; display: block; object-fit: contain; filter: url(#brand-icon-color); }
+    .resource-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; line-height: 24px; font-weight: 500; }
+    .progress-cell { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+    .progress { min-width: 0; flex: 1; height: 8px; border-radius: 999px; background: #f2f4f7; overflow: hidden; }
+    .progress > span { display: block; height: 100%; border-radius: inherit; background: #8375f4; }
+    .progress-count { width: 64px; flex: 0 0 64px; color: var(--ink); text-align: right; white-space: nowrap; }
+    .empty-cell { height: 100%; }
+    .chevron-button { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; display: grid; place-items: center; background: transparent; }
+    .chevron-button:hover { background: var(--purple-wash); }
+    .chevron-button img { width: 16px; height: 16px; transition: transform .15s ease; }
+    .resource-group.collapsed .chevron-button img { transform: rotate(180deg); }
+    .resource-rows { border-top: 1px solid var(--line-subtle); }
+    .resource-row { height: 44px; display: grid; grid-template-columns: 56px minmax(0,1fr) 220px 68px 64px; align-items: stretch; }
+    .resource-row.accordion-row { cursor: pointer; }
+    .resource-row:hover { background: #fcfcfd; }
+    .resource-row.search-hidden, .resource-row.child-hidden { display: none; }
+    .tree-indent { position: relative; }
+    .tree-indent::before { content: ""; position: absolute; top: 0; bottom: 0; left: 36px; width: 1px; background: #e7ebee; }
+    .tree-indent.depth-2::after { content: ""; position: absolute; top: 0; bottom: 0; left: 76px; width: 1px; background: #e7ebee; }
+    .tree-indent.depth-3::after { content: ""; position: absolute; top: 0; bottom: 0; left: 104px; width: 1px; background: #e7ebee; box-shadow: -28px 0 0 #e7ebee; }
+    .tree-indent.tree-leaf:not(.depth-2)::before { bottom: 22px; }
+    .tree-indent.depth-2.tree-leaf::after { bottom: 0; }
+    .tree-indent.depth-3.tree-leaf::after { bottom: 0; }
+    .tree-indent.depth-3.tree-leaf::before { bottom: 0; }
+    .resource-row.depth-2 { grid-template-columns: 84px minmax(0,1fr) 0 68px 64px; }
+    .resource-row.depth-3 { grid-template-columns: 112px minmax(0,1fr) 0 68px 64px; }
+    .resource-row:not(.depth-2) .resource-name, .resource-row.depth-2 .resource-name, .resource-row.depth-3 .resource-name { padding-left: 12px; }
+    .resource-name { min-width: 0; padding: 12px 16px; display: flex; align-items: center; gap: 12px; overflow: hidden; }
+    .resource-name img { width: 16px; height: 16px; flex: 0 0 16px; object-fit: contain; }
+    .resource-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    .row-progress { height: 44px; }
+    .row-progress .progress-cell { padding: 12px 16px; }
+    .row-toggle { height: 44px; padding: 12px 16px; display: flex; align-items: center; justify-content: center; }
+    .row-chevron { height: 44px; padding: 6px 16px; display: flex; align-items: center; justify-content: flex-end; }
+    .resource-row .chevron-button img { transform: none; }
+    .resource-row.is-collapsed .chevron-button img { transform: rotate(180deg); }
+    .resource-row.depth-2 .row-progress { display: none; }
+    .resource-row.depth-2 .row-toggle { grid-column: 4; }
+    .resource-row.depth-2 .row-chevron { grid-column: 5; }
+    .resource-row.depth-3 .row-toggle { grid-column: 4; }
+    .resource-row.depth-3 .row-chevron { grid-column: 5; }
+    .resource-group.collapsed .resource-rows { display: none; }
+    .teams-shell.page-view-resources .resource-group-title { grid-template-columns: minmax(0, 1fr) 64px; }
+    .teams-shell.page-view-resources .resource-group-title > .progress-cell,
+    .teams-shell.page-view-resources .resource-group-title > .empty-cell,
+    .teams-shell.page-view-resources .row-progress,
+    .teams-shell.page-view-resources .row-toggle { display: none; }
+    .teams-shell.page-view-resources .resource-row { grid-template-columns: 56px minmax(0, 1fr) 64px; }
+    .teams-shell.page-view-resources .resource-row.depth-2 { grid-template-columns: 84px minmax(0, 1fr) 64px; }
+
+    .toast { position: fixed; right: 24px; bottom: 24px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: #fff; box-shadow: 0 10px 30px rgba(16,24,40,.12); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1180px) {
+      .content { padding: 20px; }
+      .teams-shell { grid-template-columns: 320px minmax(0, 1fr); }
+      .resource-access-layout { grid-template-columns: 320px minmax(0, 1fr); }
+      .resource-group-title { grid-template-columns: minmax(0,1fr) 180px 48px 48px; }
+      .resource-row { grid-template-columns: 48px minmax(0,1fr) 180px 48px 48px; }
+      .resource-row.depth-2 { grid-template-columns: 76px minmax(0,1fr) 0 48px 48px; }
+      .resource-row.depth-3 { grid-template-columns: 104px minmax(0,1fr) 0 48px 48px; }
+      .resource-row:not(.depth-2) .resource-name, .resource-row.depth-2 .resource-name, .resource-row.depth-3 .resource-name { padding-left: 20px; }
+      .teams-shell.page-view-resources .resource-row.depth-2 { grid-template-columns: 76px minmax(0,1fr) 64px; }
+      .teams-shell.page-view-resources .resource-row.depth-3 { grid-template-columns: 104px minmax(0,1fr) 64px; }
+      .member-table-head, .member-table-row { grid-template-columns: 48px minmax(150px,1fr) minmax(170px,1fr) 160px 120px 48px; }
+      .member-search { width: 160px; }
+      .member-add-button { padding-left: 12px; padding-right: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" class="icon-defs" width="0" height="0" focusable="false">
+    <defs>
+      <filter id="brand-icon-color" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0 0 0 0 0.415686 0 0 0 0 0.337255 0 0 0 0 0.941176 0 0 0 1 0"></feColorMatrix>
+      </filter>
+    </defs>
+  </svg>
+  <div class="app">
+    <aside class="rail" aria-label="Primary navigation">
+      <div class="brand" aria-label="Outmarket"><span class="brand-mark"></span></div>
+      <div class="rail-divider"></div>
+      <div class="rail-scroll">
+        <div class="rail-group">
+          <button class="rail-item active" aria-label="Teams" title="Teams"><img src="icons/renewal/nav-briefcase.svg" alt=""></button>
+          <button class="rail-item" aria-label="Proposals" title="Proposals"><img src="icons/renewal/nav-proposals.svg" alt=""></button>
+          <button class="rail-item" aria-label="Benefits" title="Benefits"><img src="icons/renewal/nav-benefits.svg" alt=""></button>
+          <button class="rail-item" aria-label="Personal lines" title="Personal lines"><img src="icons/renewal/nav-personal.svg" alt=""></button>
+          <button class="rail-item" aria-label="Vault" title="Vault"><img src="icons/renewal/nav-vault.svg" alt=""></button>
+          <button class="rail-item" aria-label="Market" title="Market"><img src="icons/renewal/nav-list.svg" alt=""></button>
+          <button class="rail-item" aria-label="Assistant" title="Assistant"><img src="icons/renewal/nav-assistant.svg" alt=""></button>
+          <button class="rail-item" aria-label="Policy check" title="Policy check"><img src="icons/renewal/nav-policy.svg" alt=""></button>
+        </div>
+        <div class="rail-group">
+          <button class="rail-item" aria-label="Ask AI" title="Ask AI"><img src="icons/renewal/nav-message.svg" alt=""></button>
+          <button class="rail-item" aria-label="360 view" title="360 view"><img src="icons/renewal/nav-360.svg" alt=""></button>
+          <button class="rail-item" aria-label="Analysis" title="Analysis"><img src="icons/renewal/nav-analysis.svg" alt=""></button>
+        </div>
+        <div class="rail-group">
+          <button class="rail-item" aria-label="Forecast" title="Forecast"><img src="icons/renewal/nav-chart-line.svg" alt=""></button>
+          <button class="rail-item" aria-label="Benchmarking" title="Benchmarking"><img src="icons/renewal/nav-chart-bar.svg" alt=""></button>
+          <button class="rail-item" aria-label="Data explorer" title="Data explorer"><img src="icons/renewal/nav-database.svg" alt=""></button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="topbar-title">Settings</div>
+        <div class="topbar-actions">
+          <button class="top-icon" aria-label="Saved views"><img src="icons/renewal/book-marked.svg" alt=""></button>
+          <button class="top-icon" aria-label="Documentation"><img src="icons/renewal/book-text.svg" alt=""></button>
+          <button class="top-icon" aria-label="Notifications"><img src="icons/renewal/bell.svg" alt=""><span class="notification-dot"></span></button>
+          <div class="avatar"><img src="assets/outmarket-avatar.png" alt="User profile"></div>
+        </div>
+      </header>
+
+      <nav class="settings-tabs" aria-label="Settings sections">
+        <button class="settings-tab">Profile</button>
+        <button class="settings-tab">Company</button>
+        <button class="settings-tab">Users &amp; Billing</button>
+        <button class="settings-tab active" aria-current="page">Teams</button>
+        <button class="settings-tab">API Key</button>
+        <button class="settings-tab">Entity Groups</button>
+        <button class="settings-tab">Integration</button>
+        <button class="settings-tab">Feedback</button>
+      </nav>
+
+      <section class="content">
+        <div class="page-heading">
+          <div>
+            <h1>Access &amp; Permissions</h1>
+            <p>Manage who can access what, from whichever angle makes sense for the task.</p>
+          </div>
+          <div class="page-view-tabs" role="tablist" aria-label="Access views">
+            <button class="page-view-tab active" data-page-view="teams" role="tab" aria-selected="true">Teams</button>
+            <button class="page-view-tab" data-page-view="resources" role="tab" aria-selected="false">Resources</button>
+            <button class="page-view-tab" data-page-view="users" role="tab" aria-selected="false">Users</button>
+          </div>
+        </div>
+
+        <div class="teams-shell page-view-teams" id="teams-shell">
+          <section class="teams-panel" aria-label="Teams">
+            <header class="teams-panel-header">
+              <div class="panel-title-row">
+                <div class="panel-title-copy">
+                  <h2>Teams</h2>
+                  <p id="team-total">4 teams</p>
+                </div>
+                <div class="panel-actions">
+                  <button class="plain-icon-button" id="team-search-button" aria-label="Search teams"><img src="assets/figma-teams/search.svg" alt=""></button>
+                  <button class="plain-icon-button" id="team-add-button" aria-label="Add team"><img src="assets/figma-teams/plus.svg" alt=""></button>
+                </div>
+              </div>
+              <div class="teams-panel-divider" aria-hidden="true"></div>
+              <div class="team-filter">
+                <label for="only-my-team">Only show my team</label>
+                <button class="switch" id="only-my-team" aria-pressed="false" aria-label="Only show my team"></button>
+              </div>
+            </header>
+            <div class="teams-list" id="teams-list"></div>
+          </section>
+
+          <section class="teams-panel" aria-label="Resources">
+            <header class="resource-header">
+              <div class="resource-header-copy">
+                <h2 id="resource-title">All Members</h2>
+                <p id="resource-description">System team containing all members of the instance</p>
+              </div>
+              <div class="resource-tabs">
+                <button class="resource-tab active" data-view="members">Team members <span class="count-badge" id="member-count">200</span></button>
+                <button class="resource-tab" data-view="resources">Resources</button>
+              </div>
+            </header>
+
+            <div class="users-audit-body" id="users-audit-view" hidden>
+              <div class="users-audit-content">
+                <div class="users-audit-search-view" id="users-audit-search-view">
+                  <div class="users-audit-heading">
+                    <span class="users-audit-icon"><img src="assets/figma-user-audit/user-search.svg" alt=""></span>
+                    <h2>Find a user to audit their access</h2>
+                    <p>This view is for investigation, not day-to-day management. Prefer the Teams or Resources tabs for granting and revoking.</p>
+                  </div>
+                  <label class="users-audit-search" aria-label="Search users by name or email">
+                    <img src="assets/figma-user-audit/search.svg" alt="">
+                    <input id="users-audit-search" type="search" placeholder="Search by name or email">
+                    <button class="users-audit-search-clear" id="users-audit-search-clear" type="button" aria-label="Clear user search" hidden><img src="assets/figma-user-audit/close.svg" alt=""></button>
+                  </label>
+                  <section class="users-audit-direct-grants" id="users-audit-direct-grants">
+                    <header class="users-audit-direct-header"><h3 id="users-audit-direct-title">Users with direct grants</h3><span class="users-audit-direct-count" id="users-audit-direct-count">9</span></header>
+                    <div class="users-audit-results" id="users-audit-results" hidden></div>
+                  </section>
+                </div>
+                <div class="users-audit-detail-view" id="users-audit-detail-view" hidden>
+                  <button class="users-audit-back" id="users-audit-back" type="button"><img src="assets/figma-user-audit/back.svg" alt="">Back</button>
+                  <div class="users-audit-detail" id="users-audit-detail">
+                    <div class="users-audit-detail-header"><div class="users-audit-detail-user"><span class="users-audit-detail-avatar">AB</span><div><h3>Elena Voss</h3><p>elena@company.com</p></div></div><div class="users-audit-detail-meta"><div class="users-audit-meta-item"><span>Role</span><span class="users-audit-role-badge">Admin</span></div><div class="users-audit-meta-item"><span>Teams</span><strong>2</strong></div><div class="users-audit-meta-item"><span>Resources</span><strong>40</strong></div></div></div>
+                    <div class="users-audit-resource-list">
+                      <section class="users-audit-source-group"><button class="users-audit-source-header" type="button" aria-expanded="true"><span class="users-audit-source-icon"><img src="assets/figma-user-audit/access-team-header.svg" alt=""></span><span class="users-audit-source-copy"><strong>Product Development Team</strong><span>40 resources granted through this team</span></span><span class="users-audit-source-chevron"><img src="assets/figma-user-audit/chevron-up-header.svg" alt=""></span></button><div class="users-audit-source-content"><section class="users-audit-main-feature"><div class="users-audit-main-feature-header"><strong>Workflow Management</strong><span class="users-audit-feature-badge">14/16 resources</span></div><div class="users-audit-subfeature-list"><div class="users-audit-resource-row"><span class="users-audit-resource-copy"><strong>Commercial Insurance</strong></span></div></div></section></div></section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="members-body" id="members-view">
+              <div class="members-toolbar">
+                <div class="member-stats">
+                  <span class="member-stat"><img src="assets/figma-teams/members.svg" alt=""><span>160 members</span></span>
+                  <img class="member-stat-divider" src="assets/figma-teams/divider.svg" alt="">
+                  <span class="member-stat"><img src="assets/figma-teams/shield.svg" alt=""><span>40 admins</span></span>
+                </div>
+                <div class="member-actions">
+                  <label class="member-search" aria-label="Search members">
+                    <img src="assets/figma-teams/search.svg" alt="">
+                    <input id="member-search" type="search" placeholder="Search members">
+                  </label>
+                  <button class="member-add-button" id="member-add-button"><img src="assets/figma-teams/users-plus.svg" alt="">Add members</button>
+                </div>
+              </div>
+              <div class="members-table">
+                <div class="member-table-head" role="row">
+                  <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select all members"></button></div>
+                  <div class="member-cell">Name</div>
+                  <div class="member-cell">Email</div>
+                  <div class="member-cell">Role</div>
+                  <div class="member-cell">Joined</div>
+                  <div class="member-cell"></div>
+                </div>
+                <div class="member-table-scroll" id="member-table-scroll">
+                  <div class="member-table-row" data-member-search="elena voss elena@company.com admin">
+                    <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select Elena Voss"></button></div>
+                    <div class="member-cell member-person"><span class="member-avatar avatar-coral">AB</span><span>Elena Voss</span></div>
+                    <div class="member-cell">elena@company.com</div>
+                    <div class="member-cell"><select class="member-role" aria-label="Elena Voss role"><option>Admin</option><option>Member</option><option>Guest</option></select></div>
+                    <div class="member-cell">Jan 16, 2026</div>
+                    <div class="member-cell member-menu-cell"><button class="member-menu" aria-label="More actions for Elena Voss"><img src="assets/figma-teams/more.svg" alt=""></button></div>
+                  </div>
+                  <div class="member-table-row" data-member-search="lucas patel lucas@company.com admin">
+                    <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select Lucas Patel"></button></div>
+                    <div class="member-cell member-person"><span class="member-avatar avatar-teal">AB</span><span>Lucas Patel</span></div>
+                    <div class="member-cell">lucas@company.com</div>
+                    <div class="member-cell"><select class="member-role" aria-label="Lucas Patel role"><option>Admin</option><option>Member</option><option>Guest</option></select></div>
+                    <div class="member-cell">Jan 16, 2026</div>
+                    <div class="member-cell member-menu-cell"><button class="member-menu" aria-label="More actions for Lucas Patel"><img src="assets/figma-teams/more.svg" alt=""></button></div>
+                  </div>
+                  <div class="member-table-row" data-member-search="sofia martinez sofia@company.com member">
+                    <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select Sofia Martinez"></button></div>
+                    <div class="member-cell member-person"><span class="member-avatar avatar-blue">AB</span><span>Sofia Martinez</span></div>
+                    <div class="member-cell">sofia@company.com</div>
+                    <div class="member-cell"><select class="member-role" aria-label="Sofia Martinez role"><option>Member</option><option>Admin</option><option>Guest</option></select></div>
+                    <div class="member-cell">Jan 16, 2026</div>
+                    <div class="member-cell member-menu-cell"><button class="member-menu" aria-label="More actions for Sofia Martinez"><img src="assets/figma-teams/more.svg" alt=""></button></div>
+                  </div>
+                  <div class="member-table-row" data-member-search="liam johnson liam.johnson@company.com member">
+                    <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select Liam Johnson"></button></div>
+                    <div class="member-cell member-person"><span class="member-avatar avatar-cyan">CD</span><span>Liam Johnson</span></div>
+                    <div class="member-cell">liam.johnson@company.com</div>
+                    <div class="member-cell"><select class="member-role" aria-label="Liam Johnson role"><option>Member</option><option>Admin</option><option>Guest</option></select></div>
+                    <div class="member-cell">Feb 3, 2026</div>
+                    <div class="member-cell member-menu-cell"><button class="member-menu" aria-label="More actions for Liam Johnson"><img src="assets/figma-teams/more.svg" alt=""></button></div>
+                  </div>
+                  <div class="member-table-row" data-member-search="ava patel ava.patel@company.com member">
+                    <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select Ava Patel"></button></div>
+                    <div class="member-cell member-person"><span class="member-avatar avatar-indigo">EF</span><span>Ava Patel</span></div>
+                    <div class="member-cell">ava.patel@company.com</div>
+                    <div class="member-cell"><select class="member-role" aria-label="Ava Patel role"><option>Member</option><option>Admin</option><option>Guest</option></select></div>
+                    <div class="member-cell">Mar 21, 2026</div>
+                    <div class="member-cell member-menu-cell"><button class="member-menu" aria-label="More actions for Ava Patel"><img src="assets/figma-teams/more.svg" alt=""></button></div>
+                  </div>
+                  <div class="member-table-row" data-member-search="noah kim noah.kim@company.com guest">
+                    <div class="member-cell member-check-cell"><button class="member-checkbox" aria-label="Select Noah Kim"></button></div>
+                    <div class="member-cell member-person"><span class="member-avatar avatar-blue">GH</span><span>Noah Kim</span></div>
+                    <div class="member-cell">noah.kim@company.com</div>
+                    <div class="member-cell"><select class="member-role" aria-label="Noah Kim role"><option>Guest</option><option>Member</option><option>Admin</option></select></div>
+                    <div class="member-cell">Apr 11, 2026</div>
+                    <div class="member-cell member-menu-cell"><button class="member-menu" aria-label="More actions for Noah Kim"><img src="assets/figma-teams/more.svg" alt=""></button></div>
+                  </div>
+                </div>
+                <div class="members-pagination">
+                  <span>Page 2 of 100</span>
+                  <div class="pagination-actions">
+                    <button aria-label="First page"><img src="assets/figma-teams/chevrons-left.svg" alt=""></button>
+                    <button aria-label="Previous page"><img src="assets/figma-teams/chevron-left.svg" alt=""></button>
+                    <button aria-label="Next page"><img src="assets/figma-teams/chevron-right.svg" alt=""></button>
+                    <button aria-label="Last page"><img src="assets/figma-teams/chevrons-right.svg" alt=""></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="resource-body" id="resources-view" hidden>
+              <div class="resource-toolbar">
+                <div class="access-copy">Access <strong>95 of 111</strong> resources</div>
+                <label class="resource-search" aria-label="Search resources">
+                  <img src="assets/figma-teams/search.svg" alt="">
+                  <input id="resource-search" type="search" placeholder="Search resources">
+                </label>
+              </div>
+
+              <div class="resource-scroll" id="resource-scroll">
+                <section class="resource-group" data-group="workflow">
+                  <div class="resource-group-title">
+                    <div class="resource-cell icon-cell"><span class="featured-icon" style="--featured-icon-mask: url('icons/renewal/nav-briefcase.svg')"><img src="icons/renewal/nav-briefcase.svg" alt=""></span><span class="resource-label">Workflow Management</span></div>
+                    <div class="resource-cell progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">10 of 10</span></div>
+                    <div class="empty-cell"></div>
+                    <div class="resource-cell"><button class="chevron-button" aria-label="Collapse Workflow Management"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                  </div>
+                  <div class="resource-rows">
+                    <div class="resource-row" data-row-id="commercial-insurance" data-search="commercial insurance">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-briefcase.svg" alt=""><span>Commercial Insurance</span></div>
+                      <div class="row-progress"><div class="progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">3 of 3</span></div></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Commercial Insurance access"></button></div>
+                      <div class="row-chevron"><button class="chevron-button" aria-label="Collapse Commercial Insurance"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                    </div>
+                    <div class="resource-row depth-2" data-children-of="commercial-insurance" data-search="compare quotes">
+                      <div class="tree-indent depth-2"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-opportunity.svg" alt=""><span>Compare Quotes</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Compare Quotes access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row depth-2" data-children-of="commercial-insurance" data-search="compare policies">
+                      <div class="tree-indent depth-2"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-policy.svg" alt=""><span>Compare Policies</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Compare Policies access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row depth-2" data-children-of="commercial-insurance" data-search="broker of record letters">
+                      <div class="tree-indent depth-2 tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-proposals.svg" alt=""><span>Broker of Record Letters</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Broker of Record Letters access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row is-collapsed" data-row-id="vault" data-search="vault">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-vault.svg" alt=""><span>Vault</span></div>
+                      <div class="row-progress"><div class="progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">1 of 1</span></div></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Vault access"></button></div>
+                      <div class="row-chevron"><button class="chevron-button" aria-label="Expand Vault"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                    </div>
+                    <div class="resource-row depth-2" data-children-of="vault" data-search="document chat">
+                      <div class="tree-indent depth-2 tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-message.svg" alt=""><span>Document chat</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Document chat access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="market">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-list.svg" alt=""><span>Market</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Market access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="assistant">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-assistant.svg" alt=""><span>Assistant</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Assistant access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-row-id="proposals" data-search="proposals">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-proposals.svg" alt=""><span>Proposals</span></div>
+                      <div class="row-progress"><div class="progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">3 of 3</span></div></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Proposals access"></button></div>
+                      <div class="row-chevron"><button class="chevron-button" aria-label="Collapse Proposals"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                    </div>
+                    <div class="resource-row depth-2" data-children-of="proposals" data-search="proposal">
+                      <div class="tree-indent depth-2"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-proposals.svg" alt=""><span>Proposal</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Proposal access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row depth-2" data-children-of="proposals" data-search="block">
+                      <div class="tree-indent depth-2"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-policy.svg" alt=""><span>Block</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Block access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row depth-2" data-row-id="proposal-template" data-children-of="proposals" data-search="template">
+                      <div class="tree-indent depth-2"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-policy.svg" alt=""><span>Template</span></div>
+                      <div class="row-progress"><div class="progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">1 of 1</span></div></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Template access"></button></div>
+                      <div class="row-chevron"><button class="chevron-button" aria-label="Collapse Template"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                    </div>
+                    <div class="resource-row depth-3" data-children-of="proposal-template" data-search="create teamplate">
+                      <div class="tree-indent depth-3 tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-policy.svg" alt=""><span>Create Teamplate</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Create Teamplate access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="voice command">
+                      <div class="tree-indent tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-message.svg" alt=""><span>Voice Command</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Voice Command access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="resource-group collapsed" data-group="extraction">
+                  <div class="resource-group-title">
+                    <div class="resource-cell icon-cell"><span class="featured-icon" style="--featured-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span class="resource-label">Extraction</span></div>
+                    <div class="resource-cell progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">3 of 3</span></div>
+                    <div class="empty-cell"></div>
+                    <div class="resource-cell"><button class="chevron-button" aria-label="Expand Extraction"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                  </div>
+                  <div class="resource-rows">
+                    <div class="resource-row" data-search="document parsing">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-policy.svg" alt=""><span>Document Parsing</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Document Parsing access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="ocr processing">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-policy.svg" alt=""><span>OCR Processing</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="OCR Processing access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="data mapping">
+                      <div class="tree-indent tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-list.svg" alt=""><span>Data Mapping</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Data Mapping access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="resource-group collapsed" data-group="intelligence">
+                  <div class="resource-group-title">
+                    <div class="resource-cell icon-cell"><span class="featured-icon" style="--featured-icon-mask: url('icons/renewal/nav-assistant.svg')"><img src="icons/renewal/nav-assistant.svg" alt=""></span><span class="resource-label">Intelligence</span></div>
+                    <div class="resource-cell progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">3 of 3</span></div>
+                    <div class="empty-cell"></div>
+                    <div class="resource-cell"><button class="chevron-button" aria-label="Expand Intelligence"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                  </div>
+                  <div class="resource-rows">
+                    <div class="resource-row" data-search="risk insights">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-analysis.svg" alt=""><span>Risk Insights</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Risk Insights access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="coverage recommendations">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-benefits.svg" alt=""><span>Coverage Recommendations</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Coverage Recommendations access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="account summary">
+                      <div class="tree-indent tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-message.svg" alt=""><span>Account Summary</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Account Summary access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="resource-group collapsed" data-group="crm">
+                  <div class="resource-group-title">
+                    <div class="resource-cell icon-cell"><span class="featured-icon" style="--featured-icon-mask: url('icons/renewal/nav-personal.svg')"><img src="icons/renewal/nav-personal.svg" alt=""></span><span class="resource-label">CRM</span></div>
+                    <div class="resource-cell progress-cell"><span class="progress"><span style="width: 100%"></span></span><span class="progress-count">3 of 3</span></div>
+                    <div class="empty-cell"></div>
+                    <div class="resource-cell"><button class="chevron-button" aria-label="Expand CRM"><img src="assets/figma-teams/chevron-up.svg" alt=""></button></div>
+                  </div>
+                  <div class="resource-rows">
+                    <div class="resource-row" data-search="contacts accounts">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-personal.svg" alt=""><span>Contacts &amp; Accounts</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Contacts and Accounts access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="opportunities">
+                      <div class="tree-indent"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-opportunity.svg" alt=""><span>Opportunities</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Opportunities access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                    <div class="resource-row" data-search="activity timeline">
+                      <div class="tree-indent tree-leaf"></div>
+                      <div class="resource-name"><img src="icons/renewal/nav-list.svg" alt=""><span>Activity Timeline</span></div>
+                      <div class="row-progress"></div>
+                      <div class="row-toggle"><button class="switch" aria-pressed="true" aria-label="Activity Timeline access"></button></div>
+                      <div class="row-chevron"></div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="resource-access-layout" id="resource-access-layout" hidden>
+          <section class="resource-picker-panel" aria-label="Resource selection">
+            <header class="resource-picker-header">
+              <div>
+                <h2>Resources</h2>
+                <p>111 resources</p>
+              </div>
+              <label class="resource-picker-search" aria-label="Search resources">
+                <img src="assets/figma-teams/search.svg" alt="">
+                <input id="resource-picker-search" type="search" placeholder="Search resources">
+              </label>
+            </header>
+            <div class="resource-picker-list" id="resource-picker-list">
+              <div class="resource-picker-tree-group" data-tree-group="workflow">
+                <button class="resource-picker-item has-children" data-tree-id="workflow" data-expanded="true" data-resource="Workflow Management" data-resource-description="Manage workflow tools and permissions">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-briefcase.svg')"><img src="icons/renewal/nav-briefcase.svg" alt=""></span><span>Workflow Management</span><span class="resource-picker-chevron" aria-label="Collapse Workflow Management"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item selected subfeature has-children" data-tree-id="commercial" data-tree-parent="workflow" data-expanded="true" data-resource="Commercial Insurance" data-resource-description="Manage commercial insurance resources">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-briefcase.svg')"><img src="icons/renewal/nav-briefcase.svg" alt=""></span><span>Commercial Insurance</span><span class="resource-picker-chevron" aria-label="Collapse Commercial Insurance"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature-deep" data-tree-parent="commercial" data-resource="Compare Quotes" data-resource-description="Compare quote options and results">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-opportunity.svg')"><img src="icons/renewal/nav-opportunity.svg" alt=""></span><span>Compare Quotes</span>
+                </button>
+                <button class="resource-picker-item subfeature-deep" data-tree-parent="commercial" data-resource="Compare Policies" data-resource-description="Compare policy options and details">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Compare Policies</span>
+                </button>
+                <button class="resource-picker-item subfeature-deep" data-tree-parent="commercial" data-resource="Broker of Record Letters" data-resource-description="Manage broker of record letters">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-proposals.svg')"><img src="icons/renewal/nav-proposals.svg" alt=""></span><span>Broker of Record Letters</span>
+                </button>
+                <button class="resource-picker-item subfeature has-children" data-tree-id="vault" data-tree-parent="workflow" data-expanded="false" data-resource="Vault" data-resource-description="Store and manage shared files">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-vault.svg')"><img src="icons/renewal/nav-vault.svg" alt=""></span><span>Vault</span>
+                  <span class="resource-picker-chevron" aria-label="Expand Vault"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="vault" data-resource="Document chat" data-resource-description="Chat with shared documents">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-message.svg')"><img src="icons/renewal/nav-message.svg" alt=""></span><span>Document chat</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="vault" data-resource="Shared Documents" data-resource-description="Manage shared documents">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Shared Documents</span>
+                </button>
+                <button class="resource-picker-item subfeature tree-leaf" data-tree-parent="vault" data-resource="Folders" data-resource-description="Organize shared folders">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-vault.svg')"><img src="icons/renewal/nav-vault.svg" alt=""></span><span>Folders</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="workflow" data-resource="Market" data-resource-description="Browse market insights and data">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-list.svg')"><img src="icons/renewal/nav-list.svg" alt=""></span><span>Market</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="workflow" data-resource="Assistant" data-resource-description="Use Assistant features and tools">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-assistant.svg')"><img src="icons/renewal/nav-assistant.svg" alt=""></span><span>Assistant</span>
+                </button>
+                <button class="resource-picker-item subfeature has-children" data-tree-id="proposals" data-tree-parent="workflow" data-expanded="false" data-resource="Proposals" data-resource-description="Create and manage proposals">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-proposals.svg')"><img src="icons/renewal/nav-proposals.svg" alt=""></span><span>Proposals</span><span class="resource-picker-chevron" aria-label="Expand Proposals"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature-deep" data-tree-parent="proposals" data-resource="Proposal" data-resource-description="Create and manage proposals">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-proposals.svg')"><img src="icons/renewal/nav-proposals.svg" alt=""></span><span>Proposal</span>
+                </button>
+                <button class="resource-picker-item subfeature-deep" data-tree-parent="proposals" data-resource="Block" data-resource-description="Build reusable proposal blocks">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Block</span>
+                </button>
+                <button class="resource-picker-item subfeature-deep has-children" data-tree-id="proposal-template" data-tree-parent="proposals" data-expanded="false" data-resource="Template" data-resource-description="Use proposal templates">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Template</span><span class="resource-picker-chevron" aria-label="Expand Template"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature-deep tree-leaf" data-tree-parent="proposal-template" data-resource="Create Teamplate" data-resource-description="Create a proposal template">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Create Teamplate</span>
+                </button>
+                <button class="resource-picker-item subfeature has-children" data-tree-id="employee-benefits" data-tree-parent="workflow" data-expanded="false" data-resource="Employee Benefits" data-resource-description="Manage employee benefits resources">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-benefits.svg')"><img src="icons/renewal/nav-benefits.svg" alt=""></span><span>Employee Benefits</span><span class="resource-picker-chevron" aria-label="Expand Employee Benefits"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="employee-benefits" data-resource="Benefits Overview" data-resource-description="Review benefits overview">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-benefits.svg')"><img src="icons/renewal/nav-benefits.svg" alt=""></span><span>Benefits Overview</span>
+                </button>
+                <button class="resource-picker-item subfeature tree-leaf" data-tree-parent="employee-benefits" data-resource="Plan Comparison" data-resource-description="Compare benefit plans">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-opportunity.svg')"><img src="icons/renewal/nav-opportunity.svg" alt=""></span><span>Plan Comparison</span>
+                </button>
+                <button class="resource-picker-item subfeature tree-leaf" data-tree-parent="workflow" data-resource="Voice Command" data-resource-description="Use voice commands across the workspace">
+                  <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-message.svg')"><img src="icons/renewal/nav-message.svg" alt=""></span><span>Voice Command</span>
+                </button>
+              </div>
+              <div class="resource-picker-tree-group" data-tree-group="extraction">
+                <button class="resource-picker-item has-children" data-tree-id="extraction" data-expanded="false" data-resource="Extraction" data-resource-description="Extract structured data from documents">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Extraction</span><span class="resource-picker-chevron" aria-label="Expand Extraction"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="extraction" data-resource="Document Parsing" data-resource-description="Parse documents into structured fields">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>Document Parsing</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="extraction" data-resource="OCR Processing" data-resource-description="Process scanned documents with OCR">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-policy.svg')"><img src="icons/renewal/nav-policy.svg" alt=""></span><span>OCR Processing</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="extraction" data-resource="Data Mapping" data-resource-description="Map extracted data to fields">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-list.svg')"><img src="icons/renewal/nav-list.svg" alt=""></span><span>Data Mapping</span>
+                </button>
+              </div>
+              <div class="resource-picker-tree-group" data-tree-group="intelligence">
+                <button class="resource-picker-item has-children" data-tree-id="intelligence" data-expanded="false" data-resource="Intelligence" data-resource-description="View account intelligence and insights">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-analysis.svg')"><img src="icons/renewal/nav-analysis.svg" alt=""></span><span>Intelligence</span><span class="resource-picker-chevron" aria-label="Expand Intelligence"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="intelligence" data-resource="Risk Insights" data-resource-description="Review risk insights and signals">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-analysis.svg')"><img src="icons/renewal/nav-analysis.svg" alt=""></span><span>Risk Insights</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="intelligence" data-resource="Coverage Recommendations" data-resource-description="Review coverage recommendations">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-benefits.svg')"><img src="icons/renewal/nav-benefits.svg" alt=""></span><span>Coverage Recommendations</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="intelligence" data-resource="Account Summary" data-resource-description="View the account summary">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-message.svg')"><img src="icons/renewal/nav-message.svg" alt=""></span><span>Account Summary</span>
+                </button>
+              </div>
+              <div class="resource-picker-tree-group" data-tree-group="crm">
+                <button class="resource-picker-item has-children" data-tree-id="crm" data-expanded="false" data-resource="CRM" data-resource-description="Manage contacts and opportunities">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-personal.svg')"><img src="icons/renewal/nav-personal.svg" alt=""></span><span>CRM</span><span class="resource-picker-chevron" aria-label="Expand CRM"><img src="assets/figma-teams/chevron-up.svg" alt=""></span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="crm" data-resource="Contacts &amp; Accounts" data-resource-description="Manage contacts and accounts">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-personal.svg')"><img src="icons/renewal/nav-personal.svg" alt=""></span><span>Contacts &amp; Accounts</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="crm" data-resource="Opportunities" data-resource-description="Manage CRM opportunities">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-opportunity.svg')"><img src="icons/renewal/nav-opportunity.svg" alt=""></span><span>Opportunities</span>
+                </button>
+                <button class="resource-picker-item subfeature" data-tree-parent="crm" data-resource="Activity Timeline" data-resource-description="Review account activity">
+                <span class="resource-picker-icon" style="--resource-picker-icon-mask: url('icons/renewal/nav-list.svg')"><img src="icons/renewal/nav-list.svg" alt=""></span><span>Activity Timeline</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="resource-access-panel" aria-label="Resource access">
+            <header class="resource-access-header">
+              <div>
+                <h2 id="selected-resource-title">Commercial Insurance</h2>
+                <p id="selected-resource-description">Manage commercial insurance resources</p>
+              </div>
+              <div class="resource-access-tabs" role="tablist" aria-label="Resource access subjects">
+                <button class="resource-access-tab active" data-access-view="teams" role="tab" aria-selected="true">Teams <span>4</span></button>
+                <button class="resource-access-tab" data-access-view="users" role="tab" aria-selected="false">Users <span>160</span></button>
+              </div>
+            </header>
+            <div class="resource-access-content">
+              <div class="resource-access-toolbar">
+                <span class="resource-access-summary" id="resource-access-summary">4 teams with access</span>
+                <button class="grant-access-button" id="grant-access-button" type="button"><img src="assets/figma-teams/plus.svg" alt="">Grant access</button>
+              </div>
+              <div class="access-subject-list" id="resource-team-access">
+                <div class="access-subject-row" data-subject-type="team" data-subject-name="All members"><span class="access-subject-icon"><img src="assets/figma-teams/access-subject-members.svg" alt=""></span><span class="access-subject-copy"><strong>All members</strong><small>200 members</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+                <div class="access-subject-row" data-subject-type="team" data-subject-name="Product Development Team"><span class="access-subject-icon"><img src="assets/figma-teams/access-subject-members.svg" alt=""></span><span class="access-subject-copy"><strong>Product Development Team</strong><small>48 members</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+                <div class="access-subject-row" data-subject-type="team" data-subject-name="Marketing Team"><span class="access-subject-icon"><img src="assets/figma-teams/access-subject-members.svg" alt=""></span><span class="access-subject-copy"><strong>Marketing Team</strong><small>38 members</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+                <div class="access-subject-row" data-subject-type="team" data-subject-name="Claims Processing Team"><span class="access-subject-icon"><img src="assets/figma-teams/access-subject-members.svg" alt=""></span><span class="access-subject-copy"><strong>Claims Processing Team</strong><small>24 members</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+              </div>
+              <div class="access-subject-list" id="resource-user-access" hidden>
+                <div class="access-subject-row" data-subject-type="user" data-subject-name="Elena Voss"><span class="member-avatar avatar-coral">AB</span><span class="access-subject-copy"><strong>Elena Voss</strong><small>Admin</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+                <div class="access-subject-row" data-subject-type="user" data-subject-name="Lucas Patel"><span class="member-avatar avatar-teal">AB</span><span class="access-subject-copy"><strong>Lucas Patel</strong><small>Admin</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+                <div class="access-subject-row" data-subject-type="user" data-subject-name="Sofia Martinez"><span class="member-avatar avatar-blue">AB</span><span class="access-subject-copy"><strong>Sofia Martinez</strong><small>Member</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+                <div class="access-subject-row" data-subject-type="user" data-subject-name="Liam Johnson"><span class="member-avatar avatar-cyan">CD</span><span class="access-subject-copy"><strong>Liam Johnson</strong><small>Member</small></span><span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="access-dialog" id="access-dialog" role="dialog" aria-modal="true" aria-labelledby="access-dialog-title" hidden>
+    <div class="access-dialog-card">
+      <div class="access-dialog-header">
+        <div>
+          <h2 id="access-dialog-title">Grant access</h2>
+          <p>Add a team or user to this resource.</p>
+        </div>
+        <button class="access-dialog-close" id="access-dialog-close" type="button" aria-label="Close grant access dialog">×</button>
+      </div>
+      <form class="access-dialog-form" id="access-dialog-form">
+        <label>Access for
+          <select id="grant-access-type">
+            <option value="team">Team</option>
+            <option value="user">User</option>
+          </select>
+        </label>
+        <label>Select a team or user
+          <select id="grant-access-subject"></select>
+        </label>
+        <div class="access-dialog-actions">
+          <button class="access-dialog-cancel" id="access-dialog-cancel" type="button">Cancel</button>
+          <button class="access-dialog-confirm" type="submit">Grant access</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const teams = [
+      { name: 'Product Development Team', count: 48 },
+      { name: 'All members', count: 200, system: true },
+      { name: 'Marketing Team', count: 38 },
+      { name: 'Claims Processing Team', count: 24 },
+      { name: 'Quality Assurance Team', count: 29 }
+    ];
+    const teamList = document.getElementById('teams-list');
+    const title = document.getElementById('resource-title');
+    const description = document.getElementById('resource-description');
+    const memberCount = document.getElementById('member-count');
+    const toast = document.getElementById('toast');
+    let teamFilter = '';
+    let selectedTeam = 'All members';
+
+    function teamMarkup(team) {
+      const selected = team.name === selectedTeam;
+      return `<button class="team-item${selected ? ' selected' : ''}" data-team="${team.name}">
+        <span class="team-icon"><img src="${selected ? 'assets/figma-teams/users-active.svg' : 'assets/figma-teams/users.svg'}" alt=""></span>
+        <span class="team-copy"><span class="team-name">${team.name}</span><span class="team-count">${team.count} members</span></span>
+      </button>`;
+    }
+
+    function renderTeams() {
+      const filtered = teams.filter(team => !teamFilter || team.system || team.name.toLowerCase().includes(teamFilter));
+      teamList.innerHTML = filtered.map(teamMarkup).join('');
+      teamList.querySelectorAll('[data-team]').forEach(item => item.addEventListener('click', () => {
+        selectedTeam = item.dataset.team;
+        const team = teams.find(entry => entry.name === selectedTeam);
+        title.textContent = selectedTeam;
+        description.textContent = team.system ? 'System team containing all members of the instance' : `Team with ${team.count} members and shared resource permissions`;
+        memberCount.textContent = team.count;
+        renderTeams();
+      }));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    const membersView = document.getElementById('members-view');
+    const resourcesView = document.getElementById('resources-view');
+    const resourceTabs = [...document.querySelectorAll('.resource-tab[data-view]')];
+    function showPanelView(view) {
+      resourceTabs.forEach(item => item.classList.toggle('active', item.dataset.view === view));
+      membersView.hidden = view !== 'members';
+      resourcesView.hidden = view !== 'resources';
+    }
+    resourceTabs.forEach(tab => tab.addEventListener('click', event => showPanelView(event.currentTarget.dataset.view)));
+
+    const teamsShell = document.getElementById('teams-shell');
+    const resourceAccessLayout = document.getElementById('resource-access-layout');
+    const usersAuditView = document.getElementById('users-audit-view');
+    document.querySelectorAll('.page-view-tab[data-page-view]').forEach(tab => tab.addEventListener('click', event => {
+      const view = event.currentTarget.dataset.pageView;
+      document.querySelectorAll('.page-view-tab[data-page-view]').forEach(item => {
+        const active = item === event.currentTarget;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      teamsShell.classList.remove('page-view-teams', 'page-view-resources', 'page-view-users');
+      teamsShell.classList.add(`page-view-${view}`);
+      teamsShell.hidden = view === 'resources';
+      resourceAccessLayout.hidden = view !== 'resources';
+      usersAuditView.hidden = view !== 'users';
+      if (view === 'users') resetUsersAudit();
+      resourceTabs.forEach(item => { item.hidden = view !== 'teams' && item.dataset.view !== (view === 'users' ? 'members' : 'resources'); });
+      showPanelView(view === 'users' ? 'members' : view === 'resources' ? 'resources' : 'members');
+    }));
+
+    const auditIcons = {
+      'Workflow Management': 'icons/renewal/nav-briefcase.svg', 'Commercial Insurance': 'icons/renewal/nav-briefcase.svg', 'Compare Quotes': 'icons/renewal/nav-opportunity.svg', 'Compare Policies': 'icons/renewal/nav-policy.svg', 'Broker of Record Letters': 'icons/renewal/nav-proposals.svg', 'Vault': 'icons/renewal/nav-vault.svg', 'Market': 'icons/renewal/nav-list.svg', 'Assistant': 'icons/renewal/nav-assistant.svg', 'Proposals': 'icons/renewal/nav-proposals.svg', 'Proposal': 'icons/renewal/nav-proposals.svg', 'Block': 'icons/renewal/nav-policy.svg', 'Template': 'icons/renewal/nav-policy.svg', 'Create Teamplate': 'icons/renewal/nav-policy.svg', 'Voice Command': 'icons/renewal/nav-message.svg',
+      'Extraction': 'icons/renewal/nav-policy.svg', 'Document Parsing': 'icons/renewal/nav-policy.svg', 'OCR Processing': 'icons/renewal/nav-policy.svg', 'Data Mapping': 'icons/renewal/nav-list.svg',
+      'Intelligence': 'icons/renewal/nav-analysis.svg', 'Risk Insights': 'icons/renewal/nav-analysis.svg', 'Coverage Recommendations': 'icons/renewal/nav-benefits.svg',
+      'CRM': 'icons/renewal/nav-personal.svg', 'Contacts & Accounts': 'icons/renewal/nav-personal.svg', 'Opportunities': 'icons/renewal/nav-opportunity.svg'
+    };
+    const auditFeatureResources = {
+      'Workflow Management': ['Commercial Insurance', 'Compare Quotes', 'Compare Policies', 'Broker of Record Letters', 'Vault', 'Market', 'Assistant', 'Proposals', 'Proposal', 'Block', 'Template', 'Create Teamplate', 'Voice Command', 'Renewals', 'Submissions', 'Carrier Portal', 'Policy Review', 'Task Queue', 'Document Center', 'Activity Feed'],
+      'Extraction': ['Document Parsing', 'OCR Processing', 'Data Mapping', 'Classification Rules', 'Validation Queue', 'Field Extraction', 'Template Manager', 'Batch Processing', 'Data Review', 'Import History', 'Export Mapping', 'Exception Handling', 'Confidence Scores', 'Source Connections'],
+      'Intelligence': ['Risk Insights', 'Coverage Recommendations', 'Account Summary', 'Market Trends', 'Renewal Forecast', 'Risk Scorecards', 'Carrier Appetite', 'Revenue Insights', 'Loss Analysis', 'Opportunity Signals', 'Coverage Gaps', 'Book Analytics', 'Portfolio Health', 'Benchmarking'],
+      'CRM': ['Contacts & Accounts', 'Opportunities', 'Activity Timeline', 'Notes', 'Tasks', 'Email Sync', 'Companies', 'Lead Management', 'Relationship Map', 'Account Plans', 'Pipeline Board', 'Custom Fields']
+    };
+    const auditFeature = (name, count) => ({ name, resources: auditFeatureResources[name].slice(0, count) });
+    const threeSourceAccessGroups = features => [
+      { source: 'Product Development Team', features: [auditFeature(...features[0])] },
+      { source: 'Claims Processing Team', features: [auditFeature(...features[1])] },
+      { source: 'Direct access', features: features.slice(2).map(feature => auditFeature(...feature)) }
+    ];
+    const directAuditUsers = [
+      ['Sarah Chen', 'sarah.chen@company.com', 'Member', 'avatar-coral', 'SC', 3, 'sarah-chen.png', [['Workflow Management', 16], ['Extraction', 14], ['Intelligence', 10]]],
+      ['Marcus Rivera', 'marcus.rivera@company.com', 'Admin', 'avatar-teal', 'MR', 2, 'marcus-rivera.png', [['CRM', 12], ['Intelligence', 14], ['Workflow Management', 14]]],
+      ['Aisha Patel', 'aisha.patel@company.com', 'Member', 'avatar-indigo', 'AP', 1, 'aisha-patel.png', [['Extraction', 14], ['CRM', 12], ['Workflow Management', 16]]],
+      ['James Okonkwo', 'james.okonkwo@company.com', 'Member', 'avatar-cyan', 'JO', 1, 'james-okonkwo.png', [['Intelligence', 14], ['CRM', 12], ['Extraction', 14]]],
+      ['Elena Voronova', 'elena.voronova@company.com', 'Admin', 'avatar-blue', 'EV', 2, 'elena-voronova.png', [['Workflow Management', 16], ['Intelligence', 14], ['CRM', 12]]],
+      ['David Kim', 'david.kim@company.com', 'Member', 'avatar-teal', 'DK', 2, 'david-kim.png', [['Extraction', 14], ['Workflow Management', 16], ['Intelligence', 10]]],
+      ['Priya Sharma', 'priya.sharma@company.com', 'Member', 'avatar-coral', 'PS', 1, 'priya-sharma.png', [['CRM', 12], ['Extraction', 14], ['Workflow Management', 14]]],
+      ['Tom Henriksson', 'tom.henriksson@company.com', 'Member', 'avatar-indigo', 'TH', 3, 'tom-henriksson.png', [['Intelligence', 14], ['Workflow Management', 16], ['CRM', 10]]],
+      ['Mia Tanaka', 'mia.tanaka@company.com', 'Member', 'avatar-cyan', 'MT', 3, 'mia-tanaka.png', [['CRM', 12], ['Extraction', 14], ['Intelligence', 14]]],
+      ['Jared Stone', 'jared.stone@company.com', 'Admin', 'avatar-blue', 'JS', 2, 'jared-stone.png', [['Workflow Management', 16], ['Extraction', 14], ['CRM', 12], ['Intelligence', 12]]]
+    ].map(([name, email, role, avatar, initials, directGrants, avatarImage, features]) => ({ name, email, role, avatar, initials, directGrants, avatarImage: `assets/figma-user-audit/${avatarImage}`, accessGroups: threeSourceAccessGroups(features) }));
+    const quickAuditUsers = directAuditUsers.slice(0, 9);
+    const auditUsers = [
+      { name: 'Elena Voss', email: 'elena@company.com', role: 'Admin', avatar: 'avatar-coral', initials: 'AB', accessGroups: [
+        { source: 'Product Development Team', features: [auditFeature('Workflow Management', 14), auditFeature('Intelligence', 12)] },
+        { source: 'Direct access', features: [auditFeature('Extraction', 14)] }
+      ] },
+      { name: 'Lucas Patel', email: 'lucas@company.com', role: 'Admin', avatar: 'avatar-teal', initials: 'AB', accessGroups: [
+        { source: 'All members', features: [auditFeature('Workflow Management', 16), auditFeature('CRM', 12)] },
+        { source: 'Product Development Team', features: [auditFeature('Intelligence', 14)] },
+        { source: 'Direct access', features: [auditFeature('Extraction', 10)] }
+      ] },
+      { name: 'Sofia Martinez', email: 'sofia@company.com', role: 'Member', avatar: 'avatar-blue', initials: 'AB', accessGroups: [
+        { source: 'Marketing Team', features: [auditFeature('Workflow Management', 12), auditFeature('Intelligence', 12)] },
+        { source: 'Direct access', features: [auditFeature('CRM', 10), auditFeature('Extraction', 8)] }
+      ] },
+      { name: 'Liam Johnson', email: 'liam@company.com', role: 'Member', avatar: 'avatar-cyan', initials: 'CD', accessGroups: [
+        { source: 'Claims Processing Team', features: [auditFeature('Extraction', 14), auditFeature('Intelligence', 14)] },
+        { source: 'Direct access', features: [auditFeature('CRM', 12), auditFeature('Workflow Management', 14)] }
+      ] },
+      { name: 'Ava Patel', email: 'ava@company.com', role: 'Member', avatar: 'avatar-indigo', initials: 'AP', accessGroups: [
+        { source: 'Product Development Team', features: [auditFeature('Workflow Management', 16), auditFeature('Intelligence', 10)] },
+        { source: 'Direct access', features: [auditFeature('Extraction', 12), auditFeature('CRM', 8)] }
+      ] },
+      { name: 'Noah Kim', email: 'noah@company.com', role: 'Guest', avatar: 'avatar-blue', initials: 'NK', accessGroups: [
+        { source: 'All members', features: [auditFeature('Workflow Management', 12), auditFeature('CRM', 10)] },
+        { source: 'Direct access', features: [auditFeature('Extraction', 10), auditFeature('Intelligence', 10)] }
+      ] },
+      ...directAuditUsers
+    ];
+    const usersAuditSearch = document.getElementById('users-audit-search');
+    const usersAuditResults = document.getElementById('users-audit-results');
+    const usersAuditDetail = document.getElementById('users-audit-detail');
+    const usersAuditBody = document.getElementById('users-audit-view');
+    const usersAuditSearchView = document.getElementById('users-audit-search-view');
+    const usersAuditDetailView = document.getElementById('users-audit-detail-view');
+    const usersAuditDirectTitle = document.getElementById('users-audit-direct-title');
+    const usersAuditDirectCount = document.getElementById('users-audit-direct-count');
+    const usersAuditSearchClear = document.getElementById('users-audit-search-clear');
+
+    function syncUsersAuditSearchClear() {
+      usersAuditSearchClear.hidden = !usersAuditSearch.value;
+    }
+
+    function renderAuditDetail(user) {
+      const resourceCount = user.accessGroups.reduce((total, group) => total + group.features.reduce((featureTotal, feature) => featureTotal + feature.resources.length, 0), 0);
+      const teamCount = user.accessGroups.filter(group => group.source !== 'Direct access').length;
+      const sourceGroups = user.accessGroups.map((group, groupIndex) => {
+        const count = group.features.reduce((total, feature) => total + feature.resources.length, 0);
+        const isDirect = group.source === 'Direct access';
+        const isExpanded = groupIndex === 0;
+        const sourceTitle = isDirect ? 'Via direct grant' : group.source;
+        const sourceDescription = `${count} ${count === 1 ? 'resource' : 'resources'} granted ${isDirect ? 'directly to this user' : 'through this team'}`;
+        const features = group.features.map(feature => {
+          const featureTotal = auditFeatureResources[feature.name]?.length || feature.resources.length;
+          const isFullAccess = feature.resources.length >= featureTotal;
+          const badge = isFullAccess ? 'Full access' : `${feature.resources.length}/${featureTotal} resources`;
+          return `<section class="users-audit-main-feature"><div class="users-audit-main-feature-header"><strong>${feature.name}</strong><span class="users-audit-feature-badge ${isFullAccess ? 'full' : ''}">${badge}</span></div><div class="users-audit-subfeature-list">${feature.resources.map(resource => `<div class="users-audit-resource-row"><span class="users-audit-resource-copy"><strong>${resource}</strong></span></div>`).join('')}</div></section>`;
+        }).join('');
+        const contentId = `users-audit-source-content-${groupIndex}`;
+        return `<section class="users-audit-source-group${isExpanded ? ' is-expanded' : ''}"><button class="users-audit-source-header" type="button" aria-expanded="${isExpanded}" aria-controls="${contentId}"><span class="users-audit-source-icon"><img src="assets/figma-user-audit/${isDirect ? 'access-direct.svg' : 'access-team-header.svg'}" alt=""></span><span class="users-audit-source-copy"><strong>${sourceTitle}</strong><span>${sourceDescription}</span></span><span class="users-audit-source-chevron" aria-hidden="true"><img src="assets/figma-user-audit/${isExpanded ? 'chevron-up-header.svg' : 'chevron-down.svg'}" alt=""></span></button><div class="users-audit-source-content" id="${contentId}"${isExpanded ? '' : ' hidden'}>${features}</div></section>`;
+      }).join('');
+      usersAuditDetail.innerHTML = `<div class="users-audit-detail-header"><div class="users-audit-detail-user"><span class="users-audit-detail-avatar">${user.initials}</span><div><h3>${user.name}</h3><p>${user.email}</p></div></div><div class="users-audit-detail-meta"><div class="users-audit-meta-item"><span>Role</span><span class="users-audit-role-badge">${user.role}</span></div><div class="users-audit-meta-item"><span>Teams</span><strong>${teamCount}</strong></div><div class="users-audit-meta-item"><span>Resources</span><strong>${resourceCount}</strong></div></div></div><div class="users-audit-resource-list">${sourceGroups}</div>`;
+      usersAuditDetail.hidden = false;
+      usersAuditSearchView.hidden = true;
+      usersAuditDetailView.hidden = false;
+      usersAuditBody.classList.add('detail-mode');
+    }
+
+    function auditUserRows(users) {
+      return users.map(user => {
+        const avatar = user.avatarImage
+          ? `<img class="users-audit-result-avatar" src="${user.avatarImage}" alt="">`
+          : `<span class="member-avatar ${user.avatar}">${user.initials}</span>`;
+        const grantCount = user.directGrants;
+        const subtitle = grantCount ? `${grantCount} direct grant${grantCount === 1 ? '' : 's'}` : user.email;
+        return `<button class="users-audit-result" type="button" data-audit-user="${user.email}">${avatar}<span class="users-audit-result-copy"><strong>${user.name}</strong><small>${subtitle}</small></span></button>`;
+      }).join('');
+    }
+
+    function renderAuditResults(query) {
+      const normalized = query.trim().toLowerCase();
+      if (!normalized) {
+        usersAuditResults.hidden = false;
+        usersAuditDetail.hidden = true;
+        usersAuditDirectTitle.textContent = 'Users with direct grants';
+        usersAuditDirectCount.textContent = quickAuditUsers.length;
+        usersAuditResults.innerHTML = auditUserRows(quickAuditUsers);
+        usersAuditSearchView.hidden = false;
+        usersAuditDetailView.hidden = true;
+        usersAuditBody.classList.remove('detail-mode');
+        return;
+      }
+      const matches = auditUsers.filter(user => `${user.name} ${user.email}`.toLowerCase().includes(normalized));
+      usersAuditResults.hidden = false;
+      usersAuditDirectTitle.textContent = 'Search results';
+      usersAuditDirectCount.textContent = matches.length;
+      usersAuditResults.innerHTML = matches.length
+        ? auditUserRows(matches)
+        : '<div class="users-audit-empty">No users match that name or email.</div>';
+      usersAuditDetailView.hidden = true;
+      usersAuditSearchView.hidden = false;
+      usersAuditBody.classList.remove('detail-mode');
+    }
+
+    usersAuditSearch.addEventListener('input', event => {
+      renderAuditResults(event.currentTarget.value);
+      syncUsersAuditSearchClear();
+    });
+    usersAuditSearchClear.addEventListener('click', () => {
+      usersAuditSearch.value = '';
+      renderAuditResults('');
+      syncUsersAuditSearchClear();
+      usersAuditSearch.focus();
+    });
+    usersAuditDetail.addEventListener('click', event => {
+      const header = event.target.closest('.users-audit-source-header');
+      if (!header) return;
+      const content = header.nextElementSibling;
+      const isExpanded = header.getAttribute('aria-expanded') === 'true';
+      const group = header.closest('.users-audit-source-group');
+      header.setAttribute('aria-expanded', String(!isExpanded));
+      group.classList.toggle('is-expanded', !isExpanded);
+      content.hidden = isExpanded;
+      header.querySelector('.users-audit-source-chevron img').src = `assets/figma-user-audit/${isExpanded ? 'chevron-down.svg' : 'chevron-up-header.svg'}`;
+    });
+    usersAuditResults.addEventListener('click', event => {
+      const button = event.target.closest('[data-audit-user]');
+      if (!button) return;
+      const user = auditUsers.find(entry => entry.email === button.dataset.auditUser);
+      if (user) renderAuditDetail(user);
+    });
+    function resetUsersAudit() {
+      usersAuditSearch.value = '';
+      renderAuditResults('');
+      syncUsersAuditSearchClear();
+    }
+    document.getElementById('users-audit-back').addEventListener('click', () => {
+      resetUsersAudit();
+      usersAuditSearch.focus();
+    });
+
+    const selectedResourceTitle = document.getElementById('selected-resource-title');
+    const selectedResourceDescription = document.getElementById('selected-resource-description');
+    function firstResourceChild(parent) {
+      return Array.from(document.querySelectorAll('.resource-picker-item[data-tree-parent]'))
+        .find(item => item.dataset.treeParent === parent.dataset.treeId);
+    }
+    function selectResourceItem(item) {
+      document.querySelectorAll('.resource-picker-item').forEach(option => option.classList.toggle('selected', option === item));
+      selectedResourceTitle.textContent = item.dataset.resource;
+      selectedResourceDescription.textContent = item.dataset.resourceDescription;
+    }
+    document.querySelectorAll('.resource-picker-item').forEach(item => item.addEventListener('click', event => {
+      const clicked = event.currentTarget;
+      selectResourceItem(clicked.classList.contains('has-children') ? (firstResourceChild(clicked) || clicked) : clicked);
+    }));
+    function syncResourcePickerTree() {
+      document.querySelectorAll('.resource-picker-item[data-tree-parent]').forEach(item => {
+        let parentId = item.dataset.treeParent;
+        let visible = true;
+        while (parentId) {
+          const parent = document.querySelector(`[data-tree-id="${parentId}"]`);
+          if (!parent || parent.dataset.expanded === 'false') visible = false;
+          parentId = parent?.dataset.treeParent || '';
+        }
+        item.classList.toggle('tree-hidden', !visible);
+      });
+    }
+    document.querySelectorAll('.resource-picker-item.has-children').forEach(item => {
+      const chevron = item.querySelector('.resource-picker-chevron');
+      item.addEventListener('click', () => {
+        const expanded = item.dataset.expanded !== 'true';
+        item.dataset.expanded = String(expanded);
+        chevron.setAttribute('aria-label', `${expanded ? 'Collapse' : 'Expand'} ${item.dataset.resource}`);
+        syncResourcePickerTree();
+      });
+    });
+    document.getElementById('resource-picker-search').addEventListener('input', event => {
+      const query = event.target.value.trim().toLowerCase();
+      if (query) document.querySelectorAll('.resource-picker-item.has-children').forEach(item => { item.dataset.expanded = 'true'; });
+      document.querySelectorAll('.resource-picker-item').forEach(item => {
+        item.classList.toggle('search-hidden', Boolean(query && !item.dataset.resource.toLowerCase().includes(query)));
+      });
+      syncResourcePickerTree();
+    });
+    syncResourcePickerTree();
+    const resourceTeamAccess = document.getElementById('resource-team-access');
+    const resourceUserAccess = document.getElementById('resource-user-access');
+    document.querySelectorAll('.resource-access-tab[data-access-view]').forEach(tab => tab.addEventListener('click', event => {
+      const view = event.currentTarget.dataset.accessView;
+      document.querySelectorAll('.resource-access-tab[data-access-view]').forEach(item => {
+        const active = item === event.currentTarget;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      resourceTeamAccess.hidden = view !== 'teams';
+      resourceUserAccess.hidden = view !== 'users';
+      updateAccessCounts();
+    }));
+
+    const resourceAccessSummary = document.getElementById('resource-access-summary');
+    const grantAccessButton = document.getElementById('grant-access-button');
+    const accessDialog = document.getElementById('access-dialog');
+    const accessDialogForm = document.getElementById('access-dialog-form');
+    const accessDialogType = document.getElementById('grant-access-type');
+    const accessDialogSubject = document.getElementById('grant-access-subject');
+    const accessDirectory = {
+      team: teams.map(team => team.name),
+      user: ['Elena Voss', 'Lucas Patel', 'Sofia Martinez', 'Liam Johnson', 'Ava Patel', 'Noah Kim']
+    };
+    const avatarClasses = ['avatar-coral', 'avatar-teal', 'avatar-blue', 'avatar-cyan', 'avatar-indigo'];
+
+    function activeAccessList(type) {
+      return type === 'team' ? resourceTeamAccess : resourceUserAccess;
+    }
+
+    function updateAccessCounts() {
+      const teamCount = resourceTeamAccess.querySelectorAll('.access-subject-row').length;
+      const userCount = resourceUserAccess.querySelectorAll('.access-subject-row').length;
+      document.querySelector('.resource-access-tab[data-access-view="teams"] span').textContent = teamCount;
+      document.querySelector('.resource-access-tab[data-access-view="users"] span').textContent = userCount;
+      const activeType = resourceUserAccess.hidden ? 'team' : 'user';
+      const activeCount = activeType === 'team' ? teamCount : userCount;
+      resourceAccessSummary.textContent = `${activeCount} ${activeType}${activeCount === 1 ? '' : 's'} with access`;
+    }
+
+    function bindRevokeButton(button) {
+      button.addEventListener('click', () => {
+        const row = button.closest('.access-subject-row');
+        const name = row.dataset.subjectName;
+        row.remove();
+        updateAccessCounts();
+        updateGrantSubjects();
+        showToast(`Revoked access for ${name}`);
+      });
+    }
+
+    document.querySelectorAll('.access-revoke').forEach(bindRevokeButton);
+
+    function updateGrantSubjects() {
+      const type = accessDialogType.value;
+      const assigned = new Set([...activeAccessList(type).querySelectorAll('.access-subject-row')].map(row => row.dataset.subjectName));
+      const available = accessDirectory[type].filter(name => !assigned.has(name));
+      accessDialogSubject.innerHTML = available.length
+        ? available.map(name => `<option value="${name}">${name}</option>`).join('')
+        : `<option value="">No ${type}s available</option>`;
+    }
+
+    function closeAccessDialog() {
+      accessDialog.hidden = true;
+    }
+
+    grantAccessButton.addEventListener('click', () => {
+      updateGrantSubjects();
+      accessDialog.hidden = false;
+      accessDialogSubject.focus();
+    });
+    accessDialogType.addEventListener('change', updateGrantSubjects);
+    document.getElementById('access-dialog-close').addEventListener('click', closeAccessDialog);
+    document.getElementById('access-dialog-cancel').addEventListener('click', closeAccessDialog);
+    accessDialog.addEventListener('click', event => {
+      if (event.target === accessDialog) closeAccessDialog();
+    });
+    accessDialogForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const type = accessDialogType.value;
+      const name = accessDialogSubject.value;
+      if (!name) return;
+      const list = activeAccessList(type);
+      const row = document.createElement('div');
+      row.className = 'access-subject-row';
+      row.dataset.subjectType = type;
+      row.dataset.subjectName = name;
+      const details = type === 'team'
+        ? `<span class="access-subject-icon"><img src="assets/figma-teams/access-subject-members.svg" alt=""></span><span class="access-subject-copy"><strong>${name}</strong><small>${(teams.find(team => team.name === name)?.count || 0)} members</small></span>`
+        : `<span class="member-avatar ${avatarClasses[list.querySelectorAll('.access-subject-row').length % avatarClasses.length]}">${name.split(' ').map(part => part[0]).join('').slice(0, 2)}</span><span class="access-subject-copy"><strong>${name}</strong><small>Member</small></span>`;
+      row.innerHTML = `${details}<span class="access-row-actions"><button class="access-revoke" type="button"><img src="https://www.figma.com/api/mcp/asset/8e05750e-e04f-4dba-b371-cf71883cf770.svg" alt="">Revoke</button></span>`;
+      list.appendChild(row);
+      bindRevokeButton(row.querySelector('.access-revoke'));
+      updateAccessCounts();
+      updateGrantSubjects();
+      closeAccessDialog();
+      showToast(`Granted access to ${name}`);
+    });
+    updateAccessCounts();
+
+    document.querySelectorAll('.settings-tab').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('.settings-tab').forEach(item => item.classList.remove('active'));
+      tab.classList.add('active');
+      showToast(`${tab.textContent.trim()} settings selected`);
+    }));
+    document.getElementById('only-my-team').addEventListener('click', event => {
+      const pressed = event.currentTarget.getAttribute('aria-pressed') === 'true';
+      event.currentTarget.setAttribute('aria-pressed', String(!pressed));
+      teamFilter = pressed ? '' : 'product';
+      renderTeams();
+    });
+    document.getElementById('team-search-button').addEventListener('click', () => {
+      const query = window.prompt('Search teams', teamFilter);
+      if (query === null) return;
+      teamFilter = query.trim().toLowerCase();
+      renderTeams();
+    });
+    document.getElementById('team-add-button').addEventListener('click', () => showToast('Create team flow opened'));
+    document.getElementById('member-add-button').addEventListener('click', () => showToast('Invite members flow opened'));
+    const resourceCheckboxes = document.querySelectorAll('.resource-row .switch');
+    resourceCheckboxes.forEach(button => {
+      button.classList.add('resource-checkbox');
+      button.setAttribute('role', 'checkbox');
+      button.setAttribute('aria-checked', button.getAttribute('aria-pressed') === 'true' ? 'true' : 'false');
+      button.removeAttribute('aria-pressed');
+    });
+    function childRows(row) {
+      return [...document.querySelectorAll(`.resource-row[data-children-of="${row.dataset.rowId}"]`)];
+    }
+    function checkboxState(button) {
+      return button?.getAttribute('aria-checked') || 'false';
+    }
+    function syncResourceCheckboxes() {
+      document.querySelectorAll('.resource-row[data-row-id]').forEach(row => {
+        const children = childRows(row);
+        if (!children.length) return;
+        const states = children.map(child => checkboxState(child.querySelector('.resource-checkbox')));
+        const state = states.every(value => value === 'true')
+          ? 'true'
+          : states.every(value => value === 'false')
+            ? 'false'
+            : 'mixed';
+        row.querySelector('.resource-checkbox')?.setAttribute('aria-checked', state);
+      });
+    }
+    function syncResourceProgress() {
+      document.querySelectorAll('.resource-row[data-row-id]').forEach(row => {
+        const count = row.querySelector('.progress-count');
+        const progress = row.querySelector('.progress > span');
+        const children = childRows(row).filter(child => child.querySelector('.resource-checkbox'));
+        if (!count || !progress || !children.length) return;
+        const total = children.length;
+        const currentAccess = children.filter(child => checkboxState(child.querySelector('.resource-checkbox')) === 'true').length;
+        count.textContent = `${currentAccess} of ${total}`;
+        progress.style.width = `${(currentAccess / total) * 100}%`;
+      });
+      document.querySelectorAll('.resource-group').forEach(group => {
+        const count = group.querySelector('.resource-group-title .progress-count');
+        const progress = group.querySelector('.resource-group-title .progress > span');
+        const leafRows = [...group.querySelectorAll('.resource-row:not([data-row-id])')].filter(row => row.querySelector('.resource-checkbox'));
+        if (!count || !progress) return;
+        const total = leafRows.length;
+        const currentAccess = leafRows.filter(row => checkboxState(row.querySelector('.resource-checkbox')) === 'true').length;
+        const safeAccess = Math.max(0, Math.min(total, currentAccess));
+        count.textContent = `${safeAccess} of ${total}`;
+        progress.style.width = `${total ? (safeAccess / total) * 100 : 0}%`;
+      });
+    }
+    resourceCheckboxes.forEach(button => button.addEventListener('click', event => {
+      event.stopPropagation();
+      const row = button.closest('.resource-row');
+      const children = row?.dataset.rowId ? childRows(row) : [];
+      const nextState = checkboxState(button) === 'true' ? 'false' : 'true';
+      if (children.length) {
+        children.forEach(child => child.querySelector('.resource-checkbox')?.setAttribute('aria-checked', nextState));
+      } else {
+        button.setAttribute('aria-checked', nextState);
+      }
+      syncResourceCheckboxes();
+      syncResourceProgress();
+    }));
+    syncResourceCheckboxes();
+    syncResourceProgress();
+    function syncNestedRows() {
+      document.querySelectorAll('.resource-row[data-children-of]').forEach(child => {
+        const parent = document.querySelector(`[data-row-id="${child.dataset.childrenOf}"]`);
+        child.classList.toggle('child-hidden', Boolean(parent && parent.classList.contains('is-collapsed')));
+      });
+    }
+
+    document.querySelectorAll('.resource-group-title').forEach(header => header.addEventListener('click', event => {
+      const group = event.currentTarget.closest('.resource-group');
+      const collapsed = group.classList.toggle('collapsed');
+      event.currentTarget.querySelector('.chevron-button').setAttribute('aria-expanded', String(!collapsed));
+    }));
+    document.querySelectorAll('.resource-row').forEach(row => {
+      const button = row.querySelector('.chevron-button');
+      if (!button) return;
+      row.classList.add('accordion-row');
+      row.addEventListener('click', event => {
+        if (event.target.closest('.switch')) return;
+        const collapsed = row.classList.toggle('is-collapsed');
+        button.setAttribute('aria-expanded', String(!collapsed));
+        syncNestedRows();
+      });
+    });
+    document.getElementById('resource-search').addEventListener('input', event => {
+      const query = event.target.value.trim().toLowerCase();
+      document.querySelectorAll('.resource-row[data-search]').forEach(row => {
+        row.classList.toggle('search-hidden', Boolean(query && !row.dataset.search.includes(query)));
+      });
+    });
+    document.getElementById('member-search').addEventListener('input', event => {
+      const query = event.target.value.trim().toLowerCase();
+      document.querySelectorAll('.member-table-row[data-member-search]').forEach(row => {
+        row.hidden = Boolean(query && !row.dataset.memberSearch.includes(query));
+      });
+    });
+    const memberTableScroll = document.getElementById('member-table-scroll');
+    const memberTableHead = document.querySelector('.member-table-head');
+    if (memberTableScroll && memberTableHead) {
+      const syncMemberTableHeader = () => {
+        memberTableHead.style.transform = `translateX(${-memberTableScroll.scrollLeft}px)`;
+      };
+      memberTableScroll.addEventListener('scroll', syncMemberTableHeader, { passive: true });
+      syncMemberTableHeader();
+    }
+    syncNestedRows();
+    renderTeams();
+  </script>
+</body>
+</html>

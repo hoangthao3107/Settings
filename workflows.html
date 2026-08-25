@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workflows — Outmarket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:#1b1d1d;
+      --muted:#525965;
+      --faint:#6a758a;
+      --disabled:#97a0b4;
+      --line:#e7ebee;
+      --line-strong:#d0d5dd;
+      --canvas:#fff;
+      --nav:#f9fafb;
+      --purple:#6a56f0;
+      --workflow-icon:#6A56F0;
+      --purple-light:#eae7fe;
+      --purple-wash:#f6f7fe;
+      --radius:8px;
+    }
+
+    * { box-sizing:border-box; }
+    html, body { height:100%; }
+    body {
+      margin:0;
+      overflow:hidden;
+      color:var(--ink);
+      background:var(--canvas);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:12px;
+    }
+    button, input { font:inherit; }
+    button { cursor:pointer; }
+    button:focus-visible, input:focus-visible { outline:2px solid rgba(106,86,240,.45); outline-offset:2px; }
+
+    .app { height:100vh; display:flex; min-width:1440px; }
+
+    /* The source prototype already includes this icon set. Keeping the icons as
+       image assets preserves the shared Outmarket glyphs and their dimensions. */
+    .icon { width:18px; height:18px; object-fit:contain; display:block; }
+    .icon.small { width:16px; height:16px; }
+    .icon.tiny { width:14px; height:14px; }
+    .purple-icon { filter:brightness(0) saturate(100%) invert(42%) sepia(68%) saturate(1847%) hue-rotate(226deg) brightness(96%) contrast(91%); }
+
+    .nav-rail {
+      width:76px;
+      flex:0 0 76px;
+      height:100vh;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      background:var(--nav);
+      border-right:1px solid var(--line);
+      position:relative;
+      z-index:3;
+    }
+    .brand-mark {
+      width:76px;
+      height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 64px;
+    }
+    .brand-mark span {
+      width:16px;
+      height:10px;
+      border-top:3px solid #ff5a36;
+      border-bottom:3px solid #ff5a36;
+      border-radius:50%;
+      transform:skewX(-16deg);
+      position:relative;
+    }
+    .brand-mark span::after {
+      content:"";
+      position:absolute;
+      left:5px;
+      top:1px;
+      width:6px;
+      height:4px;
+      background:#ff5a36;
+      border-radius:50%;
+    }
+    .rail-divider { width:44px; height:1px; background:var(--line-strong); flex:0 0 1px; margin:0 0 7px; }
+    .rail-scroll { flex:1; width:100%; overflow-y:auto; overflow-x:hidden; padding:0 16px 16px; scrollbar-width:none; }
+    .rail-scroll::-webkit-scrollbar { display:none; }
+    .rail-group { display:flex; flex-direction:column; gap:2px; }
+    .rail-group + .rail-group { margin-top:7px; padding-top:7px; border-top:1px solid var(--line-strong); }
+    .rail-item {
+      width:44px;
+      height:40px;
+      border:0;
+      border-radius:6px;
+      padding:0;
+      background:transparent;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      transition:background .12s,color .12s;
+    }
+    .rail-item:hover { background:var(--purple-wash); }
+    .rail-item.active { background:var(--purple-light); }
+    .rail-item.active .icon { filter:brightness(0) saturate(100%) invert(42%) sepia(68%) saturate(1847%) hue-rotate(226deg) brightness(96%) contrast(91%); }
+    .workflow-nav-popover {
+      position:fixed;
+      z-index:9;
+      width:360px;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      border-radius:16px;
+      background:var(--canvas);
+      box-shadow:0 0 24px rgba(16,24,40,.18);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transform:translateX(-4px);
+      transition:opacity .12s ease,transform .12s ease,visibility .12s ease;
+    }
+    .workflow-nav-popover::before {
+      content:"";
+      position:absolute;
+      z-index:0;
+      left:-7px;
+      top:32px;
+      width:16px;
+      height:16px;
+      border-radius:3px;
+      background:var(--canvas);
+      transform:rotate(45deg);
+    }
+    .workflow-nav-popover.is-visible { opacity:1; visibility:visible; pointer-events:auto; transform:translateX(0); }
+    .workflow-nav-popover h2 { position:relative; z-index:1; margin:0 0 4px; font-size:18px; line-height:28px; font-weight:600; color:var(--ink); }
+    .workflow-nav-popover p { position:relative; z-index:1; margin:0; font-size:14px; line-height:20px; color:var(--muted); }
+    .workflow-nav-popover button { position:relative; z-index:1; align-self:flex-end; height:40px; margin-top:16px; padding:8px 16px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--muted); font-size:14px; font-weight:500; }
+    .workflow-nav-popover button:hover { background:#f5f6f7; }
+
+    .workspace { min-width:0; flex:1; height:100vh; display:flex; flex-direction:column; }
+    .topbar {
+      height:64px;
+      flex:0 0 64px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 32px;
+      border-bottom:1px solid var(--line);
+      background:#fff;
+    }
+    .topbar-title { font-size:16px; font-weight:400; color:var(--ink); }
+    .topbar-actions { display:flex; align-items:center; gap:12px; }
+    .top-icon {
+      width:40px;
+      height:40px;
+      border:0;
+      padding:0;
+      display:grid;
+      place-items:center;
+      background:transparent;
+      border-radius:5px;
+      position:relative;
+    }
+    .top-icon:hover { background:var(--purple-wash); }
+    .notification-dot { position:absolute; width:6px; height:6px; top:7px; right:7px; background:#f04438; border:1px solid white; border-radius:50%; }
+    .avatar {
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      overflow:hidden;
+      background:#ffdbc8;
+      display:grid;
+      place-items:center;
+      color:#9e5b3f;
+      font-size:10px;
+      font-weight:600;
+    }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    .body { min-height:0; flex:1; display:flex; }
+    .history {
+      width:280px;
+      flex:0 0 280px;
+      min-height:0;
+      border-right:1px solid var(--line);
+      background:#fff;
+      padding:0 16px;
+      overflow:auto;
+    }
+    .history-header { height:40px; display:flex; align-items:center; justify-content:space-between; margin-top:12px; margin-bottom:0; }
+    .history-title { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:var(--muted); }
+    .history-search { width:40px; height:40px; border:0; background:transparent; color:var(--muted); display:grid; place-items:center; border-radius:4px; }
+    .history-search:hover { background:var(--purple-wash); }
+    .magnifier { width:11px; height:11px; border:1.4px solid currentColor; border-radius:50%; position:relative; display:block; }
+    .magnifier::after { content:""; width:5px; height:1.4px; background:currentColor; position:absolute; right:-4px; bottom:-2px; transform:rotate(45deg); transform-origin:left center; }
+    .history-period { height:30px; display:flex; align-items:center; font-size:12px; color:var(--faint); padding:0 12px; }
+    .history-list { display:flex; flex-direction:column; gap:0; }
+    .history-item { height:56px; display:flex; gap:12px; align-items:center; padding:0 12px; border-radius:6px; color:var(--muted); cursor:pointer; }
+    .history-item:hover { background:var(--purple-wash); }
+    .history-item.selected { background:#fafaff; }
+    .history-icon { width:36px; height:36px; border-radius:8px; background:var(--purple-wash); display:grid; place-items:center; flex:0 0 36px; }
+    .history-icon img { width:20px; height:20px; object-fit:contain; filter:brightness(0) saturate(100%) invert(42%) sepia(68%) saturate(1847%) hue-rotate(226deg) brightness(96%) contrast(91%); }
+    .history-name { font-size:12px; line-height:20px; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+    .content {
+      min-width:0;
+      min-height:0;
+      flex:1;
+      overflow:auto;
+      position:relative;
+      z-index:8;
+      background:#fff;
+      padding:0 0 48px;
+    }
+    .content-header { height:40px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin:24px 24px; }
+    h1 { font-size:24px; line-height:32px; font-weight:600; margin:0; letter-spacing:-.02em; }
+    .content-tools { display:flex; align-items:center; gap:8px; }
+    .content-tools { gap:12px; }
+    .search-box { width:180px; height:40px; display:flex; align-items:center; gap:8px; padding:0 12px; border:1px solid var(--line); border-radius:8px; color:var(--faint); background:#fff; }
+    .search-box input { min-width:0; width:100%; border:0; outline:0; color:var(--ink); font-size:12px; }
+    .search-box input::placeholder { color:var(--faint); }
+    .tool-button { height:40px; padding:0 16px; display:inline-flex; align-items:center; gap:8px; border-radius:8px; border:1px solid var(--line); background:white; color:var(--ink); font-size:14px; white-space:nowrap; }
+    .tool-button:hover { background:var(--purple-wash); border-color:#cbc4fb; }
+    .tool-button.primary { border-color:var(--purple); background:var(--purple); color:white; padding:0 16px; }
+    .tool-button.primary:hover { background:#5d49e4; }
+    .grid-icon { width:12px; height:12px; display:grid; grid-template-columns:repeat(2,4px); gap:2px; }
+    .grid-icon i { border:1px solid currentColor; border-radius:1px; }
+
+    .tabs { height:32px; display:flex; align-items:flex-end; gap:0; border-bottom:1px solid var(--line); margin:0 24px; }
+    .tab { height:32px; padding:0 8px 9px; margin-right:12px; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--muted); font-size:14px; cursor:grab; display:inline-flex; align-items:center; justify-content:center; text-align:center; user-select:none; touch-action:none; transition:color .12s,opacity .12s,box-shadow .12s; }
+    .tab:hover { color:var(--purple); }
+    .tab.active { color:var(--purple); border-bottom-color:var(--purple); font-weight:500; }
+    .tab:active, .tab.dragging { cursor:grabbing; }
+    .tab.dragging { opacity:0; }
+    .tab-placeholder { height:32px; flex:0 0 auto; margin-right:12px; border-radius:6px; background:var(--purple-wash); transition:width .12s ease; }
+    .tab-drag-ghost { position:fixed; z-index:20; display:inline-flex; align-items:center; justify-content:center; padding:12px; border:0; border-radius:8px; background:#fff; color:var(--purple); font-size:14px; font-weight:500; white-space:nowrap; pointer-events:none; box-shadow:0 8px 20px rgba(16,24,40,.16); transform:rotate(1deg) scale(1.02); transform-origin:center; }
+    .tutorial-backdrop { position:fixed; inset:0; z-index:7; background:rgba(15,23,42,.14); pointer-events:none; opacity:1; visibility:visible; transition:opacity .16s ease,visibility .16s ease; }
+    .tutorial-backdrop.is-hidden { opacity:0; visibility:hidden; }
+    .content-header { position:relative; z-index:8; }
+    .tabs-wrap { position:relative; z-index:8; }
+
+    .tutorial-popover {
+      position:fixed;
+      z-index:8;
+      width:360px;
+      color:var(--ink);
+      background:var(--canvas);
+      border-radius:16px;
+      box-shadow:0 0 24px rgba(16,24,40,.18);
+      overflow:visible;
+    }
+    .tutorial-popover::after {
+      content:"";
+      position:absolute;
+      z-index:0;
+      top:28px;
+      left:-7px;
+      width:16px;
+      height:16px;
+      border-radius:3px;
+      background:var(--canvas);
+      transform:rotate(45deg);
+    }
+    .tutorial-popover.is-hidden { display:none; }
+    .tutorial-media { position:relative; z-index:1; padding:8px 8px 0; }
+    .tutorial-media video { position:relative; z-index:1; display:block; width:100%; height:auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.65); }
+    .tutorial-body { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:20px; position:relative; z-index:1; }
+    .tutorial-title { margin:0; font-size:18px; line-height:28px; font-weight:600; color:var(--ink); }
+    .tutorial-copy { margin:0; font-size:14px; line-height:20px; color:var(--muted); }
+    .tutorial-done { align-self:flex-end; height:40px; margin-top:16px; padding:8px 16px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--muted); font-size:14px; font-weight:500; }
+    .tutorial-done:hover { background:#f5f6f7; }
+
+    .section { margin:24px 12px 0; }
+    .section + .section { margin-top:16px; }
+    .section-title { font-size:14px; line-height:20px; font-weight:600; color:var(--ink); margin:0 12px 8px; }
+    .workflow-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .workflow-card {
+      position:relative;
+      min-width:0;
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px;
+      border:1px solid transparent;
+      border-radius:8px;
+      background:#fff;
+      text-align:left;
+      transition:background .12s,border-color .12s,box-shadow .12s;
+    }
+    .workflow-card:hover, .workflow-card:focus-within, .workflow-card.selected { z-index:2; background:var(--purple-wash); border-color:transparent; border-radius:12px; box-shadow:none; }
+    .workflow-icon { width:32px; height:32px; flex:0 0 32px; border-radius:8px; background:var(--purple-light); display:grid; place-items:center; }
+    .workflow-icon img { width:16px; height:16px; object-fit:contain; }
+    .workflow-copy { min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .workflow-name { font-size:14px; line-height:20px; color:var(--ink); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .workflow-description { font-size:12px; line-height:16px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .workflow-star { position:absolute; right:4px; top:4px; width:28px; height:28px; display:grid; place-items:center; padding:0; border:0; border-radius:6px; background:transparent; color:var(--muted); opacity:0; visibility:hidden; transition:opacity .12s,visibility .12s,background .12s,color .12s; }
+    .workflow-card:hover .workflow-star, .workflow-card:focus-within .workflow-star, .workflow-card.selected .workflow-star, .workflow-star.is-starred { opacity:1; visibility:visible; }
+    .workflow-star:hover, .workflow-star:focus-visible { background:#fff; color:var(--purple); }
+    .workflow-star.is-starred, .workflow-star.is-starred:hover, .workflow-star.is-starred:focus-visible { color:#F0B100; }
+    .workflow-star svg { width:16px; height:16px; display:block; }
+    .workflow-star-tooltip { position:absolute; right:0; top:calc(100% + 6px); z-index:4; padding:6px 8px; border-radius:6px; background:var(--ink); color:#fff; font-size:11px; line-height:14px; white-space:nowrap; opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-2px); transition:opacity .12s,visibility .12s,transform .12s; }
+    .workflow-star:hover .workflow-star-tooltip, .workflow-star:focus-visible .workflow-star-tooltip { opacity:1; visibility:visible; transform:translateY(0); }
+    .empty { grid-column:1/-1; color:var(--faint); padding:20px 0; }
+
+    .disclaimer {
+      position:fixed;
+      bottom:0;
+      left:356px;
+      right:0;
+      height:48px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:6px;
+      background:#fff;
+      color:var(--muted);
+      font-size:14px;
+      border-top:1px solid rgba(231,235,238,.35);
+      z-index:2;
+    }
+    .disclaimer strong { font-weight:600; }
+    .disclaimer a { color:var(--purple); text-decoration:none; }
+    .disclaimer a:hover { text-decoration:underline; }
+
+    .modal-backdrop { position:fixed; inset:0; background:rgba(27,29,29,.22); display:none; align-items:center; justify-content:center; z-index:10; }
+    .modal-backdrop.open { display:flex; }
+    .modal { width:360px; background:#fff; border-radius:12px; box-shadow:0 18px 60px rgba(16,24,40,.2); overflow:hidden; }
+    .modal-head { padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+    .modal-head h2 { font-size:14px; margin:0; }
+    .modal-close { width:28px; height:28px; border:0; background:transparent; font-size:18px; color:var(--muted); border-radius:5px; }
+    .modal-close:hover { background:var(--purple-wash); }
+    .modal-body { padding:14px 18px; display:flex; flex-direction:column; gap:9px; }
+    .modal-row { display:flex; align-items:center; gap:10px; color:var(--ink); font-size:11px; }
+    .modal-row input { accent-color:var(--purple); }
+    .modal-foot { display:flex; justify-content:flex-end; gap:8px; padding:12px 18px; border-top:1px solid var(--line); }
+
+    @media (max-width:900px) {
+      .history { width:174px; flex-basis:174px; }
+      .disclaimer { left:228px; }
+      .content-tools { gap:5px; }
+      .search-box { width:112px; }
+    }
+    @media (max-width:780px) {
+      .workflow-grid { gap:6px; }
+      .workflow-card { padding:6px; gap:6px; }
+      .history { width:160px; flex-basis:160px; }
+      .disclaimer { left:214px; }
+      .disclaimer { font-size:9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="tutorial-backdrop" id="tabTutorialBackdrop" aria-hidden="true"></div>
+  <div class="app">
+    <nav class="nav-rail" aria-label="Primary navigation">
+      <div class="brand-mark" aria-label="Outmarket"><span></span></div>
+      <div class="rail-divider"></div>
+      <div class="rail-scroll">
+        <div class="rail-group">
+          <button class="rail-item active" data-workflow-nav title="Commercial Insurance"><img class="icon" src="icons/renewal/nav-briefcase.svg" alt=""></button>
+          <button class="rail-item" title="Proposals"><img class="icon" src="icons/renewal/nav-proposals.svg" alt=""></button>
+          <button class="rail-item" title="Vault"><img class="icon" src="icons/renewal/nav-vault.svg" alt=""></button>
+          <button class="rail-item" title="Workflows"><img class="icon" src="icons/renewal/nav-list.svg" alt=""></button>
+          <button class="rail-item" title="Assistant"><img class="icon" src="icons/renewal/nav-assistant.svg" alt=""></button>
+          <button class="rail-item" title="Policy Check"><img class="icon" src="icons/renewal/nav-policy.svg" alt=""></button>
+        </div>
+        <div class="rail-group">
+          <button class="rail-item" title="Ask AI"><img class="icon" src="icons/renewal/nav-message.svg" alt=""></button>
+          <button class="rail-item" title="360 View"><img class="icon" src="icons/renewal/nav-360.svg" alt=""></button>
+          <button class="rail-item" title="Endorsement Analysis"><img class="icon" src="icons/renewal/nav-analysis.svg" alt=""></button>
+          <button class="rail-item" title="Forecast"><img class="icon" src="icons/renewal/nav-chart-line.svg" alt=""></button>
+          <button class="rail-item" title="Benchmarking"><img class="icon" src="icons/renewal/nav-chart-bar.svg" alt=""></button>
+          <button class="rail-item" title="Opportunities"><img class="icon" src="icons/renewal/nav-opportunity.svg" alt=""></button>
+          <button class="rail-item" title="Data Explorer"><img class="icon" src="icons/renewal/nav-database.svg" alt=""></button>
+          <button class="rail-item" title="Documents"><img class="icon" src="icons/renewal/book-text.svg" alt=""></button>
+        </div>
+      </div>
+    </nav>
+
+    <aside class="workflow-nav-popover" id="workflowNavPopover" role="status" aria-hidden="true">
+      <h2>Workflows are now in one place</h2>
+      <p>Quick workflow access has moved to the Workflows page. Browse all workflow types there.</p>
+      <button class="tool-button primary" id="dismissWorkflowNavPopover" type="button">Got it</button>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <span class="topbar-title">Workflows</span>
+        <div class="topbar-actions">
+          <button class="top-icon" title="Documentation"><img class="icon tiny" src="icons/renewal/book-marked.svg" alt=""></button>
+          <button class="top-icon" title="Notes"><img class="icon tiny" src="icons/renewal/book-text.svg" alt=""></button>
+          <button class="top-icon bell" title="Notifications"><img class="icon tiny" src="icons/renewal/bell.svg" alt=""><span class="notification-dot"></span></button>
+          <div class="avatar" title="Account"><img src="assets/outmarket-avatar.png" alt="Account"></div>
+        </div>
+      </header>
+
+      <div class="body">
+        <aside class="history" aria-label="Workflow history">
+          <div class="history-header">
+            <div class="history-title"><img class="icon tiny" src="icons/renewal/nav-message.svg" alt=""> <span>History</span></div>
+            <button class="history-search" title="Search history"><span class="magnifier"></span></button>
+          </div>
+          <div class="history-period">Previous 30 Days</div>
+          <div class="history-list">
+            <div class="history-item selected" tabindex="0">
+              <div class="history-icon"><img src="icons/renewal/nav-chart-line.svg" alt=""></div>
+              <div class="history-name">Insurance Quote Analysis - CFC vs CHUBB Tech Corp</div>
+            </div>
+            <div class="history-item" tabindex="0">
+              <div class="history-icon"><img src="icons/renewal/nav-policy.svg" alt=""></div>
+              <div class="history-name">Policies Review - Client Portfolio Audit</div>
+            </div>
+            <div class="history-item" tabindex="0">
+              <div class="history-icon"><img src="icons/renewal/nav-proposals.svg" alt=""></div>
+              <div class="history-name">Smart Proposal Builder - Proposal for Henry Corp</div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="content">
+          <div class="content-header">
+            <h1>Workflows</h1>
+            <div class="content-tools">
+              <label class="search-box" aria-label="Search workflow">
+                <span class="magnifier"></span>
+                <input id="workflowSearch" type="search" placeholder="Search workflow">
+              </label>
+              <button class="tool-button" id="viewButton"><span class="grid-icon"><i></i><i></i><i></i><i></i></span>Customize View</button>
+              <button class="tool-button primary" id="manageButton">Manage Workflows</button>
+            </div>
+          </div>
+
+          <div class="tabs-wrap">
+            <div class="tabs" id="workflowTabs" role="tablist" aria-label="Workflow categories">
+              <button class="tab active" draggable="false" data-category="Commercial Insurance" role="tab" aria-selected="true" title="Drag to reorder">Commercial Insurance</button>
+              <button class="tab" draggable="false" data-category="Employee Benefits" role="tab" aria-selected="false" title="Drag to reorder">Employee Benefits</button>
+              <button class="tab" draggable="false" data-category="Personal Lines" role="tab" aria-selected="false" title="Drag to reorder">Personal Lines</button>
+              <button class="tab" draggable="false" data-category="Surety" role="tab" aria-selected="false" title="Drag to reorder">Surety</button>
+            </div>
+            <aside class="tutorial-popover" id="tabTutorial" role="dialog" aria-labelledby="tabTutorialTitle" aria-describedby="tabTutorialCopy">
+              <div class="tutorial-media"><video src="assets/workflow-guide.mp4" autoplay loop muted playsinline preload="auto" aria-label="Animated demonstration of dragging a tab to a new position"></video></div>
+              <div class="tutorial-body">
+                <h2 class="tutorial-title" id="tabTutorialTitle">Reorder tabs</h2>
+                <p class="tutorial-copy" id="tabTutorialCopy">Drag and drop tabs to organize them in the order that works best for you.</p>
+                <button class="tool-button primary tutorial-done" id="dismissTabTutorial" type="button">Got it</button>
+              </div>
+            </aside>
+          </div>
+
+          <section class="section">
+            <div class="section-title">Starred</div>
+            <div class="workflow-grid" id="starredGrid"></div>
+          </section>
+          <section class="section">
+            <div class="section-title">All Workflows</div>
+            <div class="workflow-grid" id="allGrid"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <img class="icon tiny" src="icons/renewal/info.svg" alt="">
+    <span><strong>Disclaimer:</strong> AI results may contain errors — please review and verify all outputs before using.</span>
+    <a href="#learn-more" id="learnMore">Learn more</a>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head"><h2 id="modalTitle">Manage Workflows</h2><button class="modal-close" id="closeModal" aria-label="Close">×</button></div>
+      <div class="modal-body">
+        <label class="modal-row"><input type="checkbox" checked> Show starred workflows first</label>
+        <label class="modal-row"><input type="checkbox" checked> Show descriptions</label>
+        <label class="modal-row"><input type="checkbox"> Show shared workflows</label>
+      </div>
+      <div class="modal-foot"><button class="tool-button" id="cancelModal">Cancel</button><button class="tool-button primary" id="saveModal">Save changes</button></div>
+    </div>
+  </div>
+
+  <script>
+    const workflows = {
+      starred: [
+        ['Template Filling', 'Review historical claims data and processing times to anticipate client experiences with different insurers.', 'template.svg'],
+        ['Generate Certificate of Insurance', 'Set up the request, then run a compliance check before the certificate is generated.', 'Frame.svg'],
+        ['Advanced Quote Comparer', 'Pick quote documents and a template, then run the comparison in one click.', 'Commercial Insurance - Outmarket AI 1.svg']
+      ],
+      all: [
+        ['Compare Quotes', 'Compare quotes across multiple providers to identify the best options for your clients, streamlining the quoting process for optimal client solutions.', 'Workflow icon.svg'],
+        ['Compare Policies', 'Compare quotes across multiple providers to identify the best options for your clients, streamlining the quoting process for optimal client solutions.', 'Workflow icon-1.svg'],
+        ['Review Policies', 'Review and analyze insurance policies with AI-driven insights to ensure accuracy, compliance, and better coverage recommendations.', 'Workflow icon-2.svg'],
+        ['Generate Broker of Record Letter', 'Effortlessly generate compliant, pre-filled Broker of Record letters to streamline client onboarding and transitions.', 'Workflow icon-3.svg'],
+        ['Verify Policy Against Quote', 'Generate comprehensive submission reports with detailed property analysis, coverage breakdowns, and risk assessments.', 'Workflow icon-4.svg'],
+        ['Verify Quote Against Application', 'Verify that the quote or policy provided by the underwriter/insurer accurately reflects the information submitted in the insurance application, ensuring all key details match the submitted information.', 'Workflow icon-5.svg']
+      ]
+    };
+
+    const asset = icon => icon.includes('.svg')
+      ? `assets/workflow-icons/${encodeURIComponent(icon)}`
+      : `icons/renewal/${icon}.svg`;
+    let activeCategory = 'Commercial Insurance';
+    let searchTerm = '';
+    let pointerTabDrag = null;
+    let suppressTabClick = false;
+    const tabStorageKey = 'outmarket-workflow-tab-order';
+
+    function tabElements() {
+      return [...document.querySelectorAll('.tab')];
+    }
+
+    function saveTabOrder() {
+      try {
+        localStorage.setItem(tabStorageKey, JSON.stringify(tabElements().map(tab => tab.dataset.category)));
+      } catch (error) {
+        // Persistence is optional; reordering still works for the current session.
+      }
+    }
+
+    function restoreTabOrder() {
+      try {
+        const savedOrder = JSON.parse(localStorage.getItem(tabStorageKey) || 'null');
+        if (!Array.isArray(savedOrder)) return;
+        const tabs = tabElements();
+        const tabByCategory = new Map(tabs.map(tab => [tab.dataset.category, tab]));
+        savedOrder.forEach(category => {
+          const tab = tabByCategory.get(category);
+          if (tab) document.getElementById('workflowTabs').appendChild(tab);
+        });
+      } catch (error) {
+        // Ignore malformed or unavailable saved order.
+      }
+    }
+
+    function moveTab(tab, target, insertBefore = true) {
+      if (!tab || !target || tab === target) return;
+      const tabsContainer = document.getElementById('workflowTabs');
+      tabsContainer.insertBefore(tab, insertBefore ? target : target.nextElementSibling);
+      saveTabOrder();
+    }
+
+    function setActiveTab(tab) {
+      tabElements().forEach(other => { other.classList.remove('active'); other.setAttribute('aria-selected', 'false'); });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      activeCategory = tab.dataset.category;
+    }
+
+    const tabTutorial = document.getElementById('tabTutorial');
+    const tabTutorialBackdrop = document.getElementById('tabTutorialBackdrop');
+    const workflowNavPopover = document.getElementById('workflowNavPopover');
+    let workflowNavHideTimer = null;
+
+    function positionWorkflowNavPopover(item) {
+      if (!workflowNavPopover || !item) return;
+      const itemRect = item.getBoundingClientRect();
+      const left = itemRect.right + 12;
+      const pointerCenterOffset = 40;
+      const top = Math.min(window.innerHeight - workflowNavPopover.offsetHeight - 12, Math.max(12, itemRect.top + itemRect.height / 2 - pointerCenterOffset));
+      workflowNavPopover.style.left = `${left}px`;
+      workflowNavPopover.style.top = `${top}px`;
+    }
+
+    function showWorkflowNavPopover(item) {
+      clearTimeout(workflowNavHideTimer);
+      workflowNavPopover.classList.add('is-visible');
+      workflowNavPopover.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => positionWorkflowNavPopover(item));
+    }
+
+    function scheduleHideWorkflowNavPopover() {
+      clearTimeout(workflowNavHideTimer);
+      workflowNavHideTimer = setTimeout(() => {
+        workflowNavPopover.classList.remove('is-visible');
+        workflowNavPopover.setAttribute('aria-hidden', 'true');
+      }, 120);
+    }
+
+    function setupWorkflowNavPopover() {
+      document.querySelectorAll('[data-workflow-nav]').forEach(item => {
+        item.addEventListener('pointerenter', () => showWorkflowNavPopover(item));
+        item.addEventListener('focus', () => showWorkflowNavPopover(item));
+        item.addEventListener('pointerleave', scheduleHideWorkflowNavPopover);
+        item.addEventListener('blur', scheduleHideWorkflowNavPopover);
+      });
+      workflowNavPopover.addEventListener('pointerenter', () => clearTimeout(workflowNavHideTimer));
+      workflowNavPopover.addEventListener('pointerleave', scheduleHideWorkflowNavPopover);
+      document.getElementById('dismissWorkflowNavPopover').addEventListener('click', () => {
+        workflowNavPopover.classList.remove('is-visible');
+        workflowNavPopover.setAttribute('aria-hidden', 'true');
+      });
+      window.addEventListener('resize', () => {
+        const activeItem = document.querySelector('[data-workflow-nav]:hover');
+        if (activeItem) positionWorkflowNavPopover(activeItem);
+      });
+    }
+
+    function positionTabTutorial() {
+      if (!tabTutorial || tabTutorial.classList.contains('is-hidden')) return;
+      const tabs = tabElements();
+      const lastTab = tabs[tabs.length - 1];
+      if (!lastTab) return;
+      const tabRect = lastTab.getBoundingClientRect();
+      const left = Math.max(12, Math.min(window.innerWidth - tabTutorial.offsetWidth - 12, tabRect.right + 40));
+      const top = Math.max(12, tabRect.top - 24);
+      tabTutorial.style.left = `${left}px`;
+      tabTutorial.style.top = `${top}px`;
+    }
+
+    function dismissTabTutorial() {
+      tabTutorial.classList.add('is-hidden');
+      tabTutorialBackdrop?.classList.add('is-hidden');
+    }
+
+    function setupTabTutorial() {
+      document.getElementById('dismissTabTutorial').addEventListener('click', dismissTabTutorial);
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') dismissTabTutorial(); });
+      window.addEventListener('resize', positionTabTutorial);
+      document.querySelector('.content').addEventListener('scroll', positionTabTutorial);
+      requestAnimationFrame(positionTabTutorial);
+    }
+
+    function updateTabDragGhost(event) {
+      if (!pointerTabDrag?.active) return;
+      pointerTabDrag.ghost.style.left = `${event.clientX - pointerTabDrag.offsetX}px`;
+      pointerTabDrag.ghost.style.top = `${event.clientY - pointerTabDrag.offsetY}px`;
+    }
+
+    function startPointerTabDrag(event, tab) {
+      const rect = tab.getBoundingClientRect();
+      const placeholder = document.createElement('span');
+      placeholder.className = 'tab-placeholder';
+      placeholder.style.width = `${rect.width}px`;
+      placeholder.setAttribute('aria-hidden', 'true');
+
+      const ghost = tab.cloneNode(true);
+      ghost.className = 'tab-drag-ghost';
+      ghost.removeAttribute('id');
+      ghost.removeAttribute('draggable');
+      ghost.removeAttribute('role');
+      ghost.removeAttribute('aria-selected');
+      ghost.setAttribute('aria-hidden', 'true');
+
+      tab.parentNode.insertBefore(placeholder, tab);
+      tab.remove();
+      tab.classList.add('dragging');
+      document.body.appendChild(ghost);
+
+      pointerTabDrag.active = true;
+      pointerTabDrag.ghost = ghost;
+      pointerTabDrag.placeholder = placeholder;
+      pointerTabDrag.offsetX = event.clientX - rect.left;
+      pointerTabDrag.offsetY = event.clientY - rect.top;
+      updateTabDragGhost(event);
+    }
+
+    function handleTabPointerDown(event) {
+      if (event.button !== 0 || pointerTabDrag) return;
+      const tab = event.currentTarget;
+      pointerTabDrag = {
+        tab,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        offsetX: 0,
+        offsetY: 0,
+        active: false,
+        ghost: null,
+        placeholder: null
+      };
+      tab.setPointerCapture?.(event.pointerId);
+    }
+
+    function handleTabPointerMove(event) {
+      if (!pointerTabDrag || event.pointerId !== pointerTabDrag.pointerId) return;
+      const drag = pointerTabDrag;
+      if (!drag.active) {
+        const distance = Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY);
+        if (distance < 5) return;
+        startPointerTabDrag(event, drag.tab);
+      }
+
+      event.preventDefault();
+      updateTabDragGhost(event);
+      const tabsContainer = document.getElementById('workflowTabs');
+      const target = tabElements().find(tab => {
+        const rect = tab.getBoundingClientRect();
+        return event.clientX < rect.left + rect.width * 0.85;
+      });
+      if (target) tabsContainer.insertBefore(drag.placeholder, target);
+      else tabsContainer.appendChild(drag.placeholder);
+    }
+
+    function finishTabPointerDrag(event) {
+      if (!pointerTabDrag || event.pointerId !== pointerTabDrag.pointerId) return;
+      const drag = pointerTabDrag;
+      if (drag.active) {
+        drag.placeholder.parentNode.insertBefore(drag.tab, drag.placeholder);
+        drag.placeholder.remove();
+        drag.ghost.remove();
+        drag.tab.classList.remove('dragging');
+        saveTabOrder();
+        suppressTabClick = true;
+        setTimeout(() => { suppressTabClick = false; }, 0);
+      }
+      drag.tab.releasePointerCapture?.(drag.pointerId);
+      pointerTabDrag = null;
+    }
+
+    function setupTabReordering() {
+      restoreTabOrder();
+      const firstTab = tabElements()[0];
+      if (firstTab) setActiveTab(firstTab);
+      tabElements().forEach(tab => {
+        tab.addEventListener('click', event => {
+          if (suppressTabClick) {
+            event.preventDefault();
+            return;
+          }
+          setActiveTab(tab);
+        });
+        tab.addEventListener('pointerdown', handleTabPointerDown);
+        tab.addEventListener('keydown', event => {
+          if (!event.altKey || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+          event.preventDefault();
+          const tabs = tabElements();
+          const index = tabs.indexOf(tab);
+          const target = event.key === 'ArrowLeft' ? tabs[index - 1] : tabs[index + 1];
+          if (!target) return;
+          moveTab(tab, target, event.key === 'ArrowLeft');
+          tab.focus();
+        });
+      });
+      document.addEventListener('pointermove', handleTabPointerMove, { passive: false });
+      document.addEventListener('pointerup', finishTabPointerDrag);
+      document.addEventListener('pointercancel', finishTabPointerDrag);
+      window.addEventListener('blur', () => {
+        if (pointerTabDrag) finishTabPointerDrag({ pointerId: pointerTabDrag.pointerId });
+      });
+    }
+
+    function cardMarkup(item) {
+      const [name, description, icon] = item;
+      const isStarred = workflows.starred.some(workflow => workflow[0] === name);
+      const starLabel = isStarred ? 'Remove from starred' : 'Add to starred';
+      const starPath = isStarred
+        ? '<path d="m12 3.7 2.55 5.17 5.71.83-4.13 4.03.98 5.69L12 16.73l-5.11 2.69.98-5.69-4.13-4.03 5.71-.83L12 3.7Z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'
+        : '<path d="m12 3.7 2.55 5.17 5.71.83-4.13 4.03.98 5.69L12 16.73l-5.11 2.69.98-5.69-4.13-4.03 5.71-.83L12 3.7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>';
+      return `<div class="workflow-card" role="button" tabindex="0" data-name="${name.toLowerCase()}" data-workflow="${encodeURIComponent(name)}" aria-label="Open ${name}">
+        <span class="workflow-icon"><img src="${asset(icon)}" alt=""></span>
+        <span class="workflow-copy"><span class="workflow-name">${name}</span><span class="workflow-description">${description}</span></span>
+        <button class="workflow-star${isStarred ? ' is-starred' : ''}" type="button" data-workflow-star="${encodeURIComponent(name)}" aria-label="${starLabel}" aria-pressed="${isStarred}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">${starPath}</svg>
+          <span class="workflow-star-tooltip" role="tooltip">${starLabel}</span>
+        </button>
+      </div>`;
+    }
+
+    function toggleStar(name) {
+      const starredIndex = workflows.starred.findIndex(workflow => workflow[0] === name);
+      if (starredIndex >= 0) {
+        workflows.starred.splice(starredIndex, 1);
+      } else {
+        const workflow = workflows.all.find(item => item[0] === name);
+        if (workflow) workflows.starred.push(workflow);
+      }
+      render();
+    }
+
+    function render() {
+      const match = item => !searchTerm || item[0].toLowerCase().includes(searchTerm) || item[1].toLowerCase().includes(searchTerm);
+      const starred = workflows.starred.filter(match);
+      const all = workflows.all.filter(match);
+      document.getElementById('starredGrid').innerHTML = starred.length ? starred.map(cardMarkup).join('') : '<div class="empty">No starred workflows match your search.</div>';
+      document.getElementById('allGrid').innerHTML = all.length ? all.map(cardMarkup).join('') : '<div class="empty">No workflows match your search.</div>';
+      document.querySelectorAll('.workflow-card').forEach(card => {
+        const selectCard = () => {
+          document.querySelectorAll('.workflow-card').forEach(other => other.classList.remove('selected'));
+          card.classList.add('selected');
+        };
+        card.addEventListener('click', event => {
+          if (event.target.closest('.workflow-star')) return;
+          selectCard();
+        });
+        card.addEventListener('keydown', event => {
+          if (!['Enter', ' '].includes(event.key) || event.target.closest('.workflow-star')) return;
+          event.preventDefault();
+          selectCard();
+        });
+      });
+      document.querySelectorAll('[data-workflow-star]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        toggleStar(decodeURIComponent(button.dataset.workflowStar));
+      }));
+    }
+
+    document.getElementById('workflowSearch').addEventListener('input', event => {
+      searchTerm = event.target.value.trim().toLowerCase();
+      render();
+    });
+    const backdrop = document.getElementById('modalBackdrop');
+    const avatarImage = document.querySelector('.avatar img');
+    avatarImage.addEventListener('error', () => { avatarImage.remove(); document.querySelector('.avatar').textContent = 'LC'; });
+    const openModal = () => backdrop.classList.add('open');
+    const closeModal = () => backdrop.classList.remove('open');
+    document.getElementById('manageButton').addEventListener('click', openModal);
+    document.getElementById('viewButton').addEventListener('click', openModal);
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('cancelModal').addEventListener('click', closeModal);
+    document.getElementById('saveModal').addEventListener('click', closeModal);
+    backdrop.addEventListener('click', event => { if (event.target === backdrop) closeModal(); });
+    document.getElementById('learnMore').addEventListener('click', event => { event.preventDefault(); openModal(); });
+    setupWorkflowNavPopover();
+    setupTabReordering();
+    setupTabTutorial();
+    render();
+  </script>
+</body>
+</html>
